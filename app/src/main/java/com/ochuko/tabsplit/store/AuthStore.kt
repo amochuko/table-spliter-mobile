@@ -29,9 +29,15 @@ class AuthStore(ctx: Context): ViewModel() {
         loadToken()
     }
 
+    fun getToken(): String?{
+        val token = prefs.getString(JWT_KEY ,null)
+        return token
+    }
+
     fun loadToken(){
         viewModelScope.launch {
-            val token = prefs.getString(JWT_KEY ,null)
+            val token = getToken()
+
             if(token != null){
                 println("{AuthStore} loadToken -> found token: $token")
                 _authState.value = AuthState(token = token, loading = false)
