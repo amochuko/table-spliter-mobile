@@ -5,7 +5,6 @@ import android.content.Context
 
 import com.ochuko.tabsplit.data.api.AuthApi
 import com.ochuko.tabsplit.data.api.LoginRequest
-import com.ochuko.tabsplit.data.api.LoginResponse
 import com.ochuko.tabsplit.data.api.RegisterRequest
 import com.ochuko.tabsplit.data.local.SecurePrefs
 import com.ochuko.tabsplit.models.User
@@ -23,19 +22,22 @@ class AuthRepository(private val api: AuthApi, private val ctx: Context) {
             val (body, token) = res.body() ?: return null
             val user = User(body.id, body.username, body.email, body.zaddr)
 
+            saveToken(token)
             return Pair(user, token)
         }
 
         return null;
     }
 
-    suspend fun signup(email: String, password: String): User? {
+    suspend fun signup(email: String, password: String): Pair<User, String>? {
         val res = api.register(RegisterRequest(email, password))
 
         if (res.isSuccessful) {
-//            res.body().?.token?.let {saveToken(it)}
+            val (body, token) = res.body() ?: return null
+            val user = User(body.id, body.username, body.email, body.zaddr)
 
-            res.body()
+            saveToken(token)
+            return Pair(user, token)
         }
 
         return null;
@@ -51,6 +53,6 @@ class AuthRepository(private val api: AuthApi, private val ctx: Context) {
 
     fun logout() {
         SecurePrefs.clearToken(ctx)
-        SecurePrefs.clearZAddr(ctx) // also clear zaddr if tied to account
+//        SecurePrefs.clearZAddr(ctx) // also clear zaddr if tied to account
     }
 }
