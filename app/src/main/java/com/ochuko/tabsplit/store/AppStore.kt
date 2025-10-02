@@ -1,8 +1,6 @@
 package com.ochuko.tabsplit.store
 
 import android.util.Log
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ochuko.tabsplit.data.api.ApiClient
@@ -125,11 +123,22 @@ class AppStore(ctx: Context) : ViewModel() {
     // --- Auth ---
     fun login(email: String, password: String) = viewModelScope.launch {
         try {
-            val u = authRepo.login(email, password)
-            if (u != null) {
-                _user.value = u
-                _token.value = u.token
+
+            authRepo.login(email, password)?.let { (user, token) ->
+                // This block is only executed if the login was successful
+                // You can use the user and token variables here
+                _user.value = user
+                _token.value = token
+
+
+                loadSessions()
+            } ?: run {
+                // This block is executed if loginResult is null
+                // Handle the failed
+                throw IllegalStateException("Login failed!")
             }
+
+
         } catch (e: Exception) {
             Log.e("AppStore", "Login failed", e)
         }
@@ -137,10 +146,11 @@ class AppStore(ctx: Context) : ViewModel() {
 
     fun signup(email: String, password: String) = viewModelScope.launch {
         try {
-            val u = authRepo.register(email, password)
+            val u = authRepo.signup(email, password)
             if (u != null) {
-                _user.value = u
-                _token.value = u.token
+                val (user, token) = u
+                _user.value = user
+                _token.value = token
             }
         } catch (e: Exception) {
             Log.e("AppStore", "Register failed", e)
