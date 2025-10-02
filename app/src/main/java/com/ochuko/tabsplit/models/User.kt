@@ -7,4 +7,3 @@ data class User(
     val zaddr: String
 )
 
-
