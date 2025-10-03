@@ -8,11 +8,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import androidx.navigation.navigation
-import com.ochuko.tabsplit.store.AppStore
-import com.ochuko.tabsplit.ui.auth.SignupScreen
+import com.ochuko.tabsplit.ui.screens.auth.SignupScreen
 import com.ochuko.tabsplit.ui.join.JoinSessionScreen
-import com.ochuko.tabsplit.ui.screens.*
 import com.ochuko.tabsplit.ui.screens.auth.LoginScreen
 import com.ochuko.tabsplit.ui.screens.sessions.SessionDetailsScreen
 import com.ochuko.tabsplit.ui.screens.sessions.SessionScreen
