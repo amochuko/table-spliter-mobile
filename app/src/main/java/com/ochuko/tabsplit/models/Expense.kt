@@ -6,7 +6,7 @@ data class Expense(
     val memo: String,
     val amount: Double,
     val payerId: String,
-    val createdAt: String,
+    val createdAt: Long = System.currentTimeMillis(),
 )
 
 
