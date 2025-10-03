@@ -16,6 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ochuko.tabsplit.store.AppStore
 import com.ochuko.tabsplit.store.AuthViewModel
 import kotlinx.coroutines.launch
+import android.util.Log
 
 @Composable
 fun LoginScreen(
@@ -38,9 +39,6 @@ fun LoginScreen(
     LaunchedEffect(token) {
         if (!token.isNullOrEmpty()) {
             onLoginSuccess()
-//            navController.navigate("sessions") {
-//                popUpTo("login") { inclusive = true }
-//            }
         }
     }
 
@@ -119,10 +117,13 @@ fun LoginScreen(
 
                             appStore.loadSessions()
                             onLoginSuccess()
+
                         } catch (e: Exception) {
-                            error = "Invalid credentials!"
-                            e.printStackTrace()
                             Toast.makeText(context, "Login failed", Toast.LENGTH_SHORT).show()
+                            error = "Unknown error"
+                            Log.e("LoginError", e.message.toString())
+                            e.printStackTrace()
+
                         }
                     }
                 },
