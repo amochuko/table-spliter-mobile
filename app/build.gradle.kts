@@ -16,6 +16,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // This will generate BuildConfig.API_BASE_URL
+        buildConfigField("String", "API_BASE_URL", "\"http://10.0.0.2/\"")
     }
 
     buildTypes {
@@ -36,6 +39,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true // Used to enable BuildConfig.API_BASE_URL feature
     }
 }
 
@@ -49,12 +53,12 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-
-    // QR Code scanning
-    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
-
-    // QR Code generation
-    implementation("com.google.zxing:core:3.5.3")
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -63,4 +67,30 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+
+    implementation(libs.security.crypto)
+
+
+    // Compose core
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+
+    // Material3
+    implementation(libs.androidx.compose.material3)
+
+    // Navigation
+    implementation(libs.androidx.compose.navigation)
+
+    // ZXing for QR code generation
+    implementation(libs.zxing.core)
+
+    // Optional: for preview & debugging
+    debugImplementation(libs.androidx.compose.ui.tooling)
+
 }
