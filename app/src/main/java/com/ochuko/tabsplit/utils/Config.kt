@@ -1,6 +1,6 @@
 package com.ochuko.tabsplit.utils
 
-import com.google.zxing.client.android.BuildConfig
+import com.ochuko.tabsplit.BuildConfig
 
 object Config
 {
