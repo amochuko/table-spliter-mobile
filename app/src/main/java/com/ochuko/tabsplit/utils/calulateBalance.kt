@@ -1,25 +1,32 @@
 package com.ochuko.tabsplit.utils
 
 import com.ochuko.tabsplit.models.Expense
+import com.ochuko.tabsplit.models.Participant
 
-typealias Balances = MutableMap<String, Double>
+fun calculateBalances(
+    sessionId: String,
+    participants: Map<String, List<Participant>>,
+    expenses: Map<String, List<Expense>>
+): Map<String, Double> {
+    val balances = mutableMapOf<String, Double>()
+    val sessionParticipants = participants[sessionId].orEmpty()
+    val sessionExpenses = expenses[sessionId].orEmpty()
 
-fun calculateBalances(expenses:List<Expense>,participants: List<String> ): Balances{
-    val balances: Balances = mutableMapOf();
+    // Init everyone to 0
+    sessionParticipants.forEach { balances[it.id] = 0.0 }
 
-    participants.forEach { balances[it]=0.0 }
+    // Apply each expense
+    sessionExpenses.forEach { e ->
+        val amount = e.amount.toDouble()
+        val share =
+            if (sessionParticipants.isNotEmpty()) amount / sessionParticipants.size else 0.0
 
-val total = expenses.sumOf { it.amount }
-    val share = if (participants.isNotEmpty()) total / participants.size else 0.0
-
-    for(expense in expenses){
-        balances[expense.payerId] = (balances[expense.payerId]?: 0.0)+ expense.amount
-    }
-
-    for(part in participants){
-        balances[part]= (balances[part]) ?: (0.0 - share)
+        sessionParticipants.forEach { p ->
+            balances[p.id] = balances[p.id]?.let { current ->
+                if (p.id == e.payerId) current + amount - share else current - share
+            } ?: 0.0
+        }
     }
 
     return balances
 }
-
