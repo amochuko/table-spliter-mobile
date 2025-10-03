@@ -1,6 +1,5 @@
-package com.ochuko.tabsplit.ui.auth
+package com.ochuko.tabsplit.ui.screens.auth
 
-import android.R
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -40,9 +39,6 @@ fun SignupScreen(
     // Redirect if already signed up/logged in
     LaunchedEffect(token) {
         if (!token.isNullOrEmpty()) {
-//            navController.navigate("home") {
-//                popUpTo("signup") { inclusive = true }
-//            }
             onSignupSuccess()
         }
     }
