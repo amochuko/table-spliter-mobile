@@ -24,6 +24,9 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material3.*
+
 
 @Composable
 fun SessionQRCode(inviteUrl: String) {
