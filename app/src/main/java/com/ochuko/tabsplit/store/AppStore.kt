@@ -1,5 +1,6 @@
 package com.ochuko.tabsplit.store
 
+import android.app.Application
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import android.content.Context
+import androidx.lifecycle.AndroidViewModel
 import com.ochuko.tabsplit.BuildConfig
 import com.ochuko.tabsplit.data.api.AuthApi
 import com.ochuko.tabsplit.data.api.SessionApi
@@ -18,15 +20,15 @@ import com.ochuko.tabsplit.data.repository.SessionRepository
 
 const val BASE_URL = BuildConfig.API_BASE_URL
 
-class AppStore(ctx: Context) : ViewModel() {
+class AppStore(app: Application) : AndroidViewModel(app) {
 
     // APIs
-    private val sessionApi = ApiClient.create<SessionApi>(ctx, BASE_URL)
-    private val authApi = ApiClient.create<AuthApi>(ctx, BASE_URL)
+    private val sessionApi = ApiClient.create<SessionApi>(app, BASE_URL)
+    private val authApi = ApiClient.create<AuthApi>(app, BASE_URL)
 
     // Repo
     private val sessionRepo = SessionRepository(sessionApi)
-    private val authRepo = AuthRepository(authApi, ctx)
+    private val authRepo = AuthRepository(authApi, app)
 
 
     // -- State
