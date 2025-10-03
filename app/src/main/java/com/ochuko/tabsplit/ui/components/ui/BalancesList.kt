@@ -52,8 +52,8 @@ fun BalancesList(
             ) {
                 Text(
                     text = when {
-                        !p.username.isNullOrEmpty() -> p.username!!
-                        !p.user_id.isNullOrEmpty() -> shortString(p.user_id!!)
+                        !p.username.isNotEmpty() -> p.username
+                        !p.userId.isNullOrEmpty() -> shortString(p.userId)
                         else -> "Unnamed"
                     },
                     style = MaterialTheme.typography.bodyMedium.copy(
