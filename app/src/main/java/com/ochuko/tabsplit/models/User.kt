@@ -7,3 +7,4 @@ data class User(
     val zaddr: String
 )
 
+data class UserToken (val user: User, val token: String)
