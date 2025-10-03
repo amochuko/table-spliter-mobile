@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">TabSplit</string>
     <string name="title_activity_app_nav_host">AppNavHost</string>
+    <string name="title_activity_balance_list">BalanceList</string>
 </resources>

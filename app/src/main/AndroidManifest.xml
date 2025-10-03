@@ -13,6 +13,17 @@
         android:theme="@style/Theme.TabSplit"
         tools:targetApi="31">
         <activity
+            android:name=".components.SessionModal"
+            android:exported="false" />
+        <activity
+            android:name=".components.BalanceList"
+            android:exported="false"
+            android:label="@string/title_activity_balance_list"
+            android:theme="@style/Theme.TabSplit" />
+        <activity
+            android:name=".components.AddExpenseDialog"
+            android:exported="false" />
+        <activity
             android:name=".AppNavHost"
             android:exported="false"
             android:label="@string/title_activity_app_nav_host"
