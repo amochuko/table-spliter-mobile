@@ -20,7 +20,7 @@ import com.ochuko.tabsplit.store.AppStore
 
 
 @Composable
-fun SessionScreen(
+fun SessionsScreen(
     onRequireAuth: () -> Unit,
     onSessionClick: (String) -> Unit,
     onCreateSession: (Session) -> Unit,
