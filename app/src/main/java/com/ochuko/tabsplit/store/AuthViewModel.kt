@@ -1,29 +1,24 @@
 package com.ochuko.tabsplit.store
 
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ochuko.tabsplit.data.api.ApiClient
 import com.ochuko.tabsplit.data.api.AuthApi
-import com.ochuko.tabsplit.data.api.AuthResponse
-import com.ochuko.tabsplit.data.local.SecurePrefs
 import com.ochuko.tabsplit.data.repository.AuthRepository
 import com.ochuko.tabsplit.models.AuthUiState
-import com.ochuko.tabsplit.models.User
 import com.ochuko.tabsplit.models.UserToken
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
+import com.ochuko.tabsplit.utils.Config
 
 
 class AuthViewModel(app: Application) : AndroidViewModel(app) {
     private val repo = AuthRepository(
-        ApiClient.getRetrofit(app, "http://10.0.0.2").create
+        ApiClient.getRetrofit(app, Config.API_BASE_URL).create
             (
             AuthApi::class
                 .java
