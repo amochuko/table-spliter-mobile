@@ -20,7 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ochuko.tabsplit.ui.viewmodel.ZcashViewModel
+import com.ochuko.tabsplit.store.ZcashViewModel
 
 @Composable
 fun ZcashAddressSettings(vm: ZcashViewModel = viewModel()) {
@@ -59,7 +59,7 @@ fun ZcashAddressSettings(vm: ZcashViewModel = viewModel()) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = shortString(state.currentZAddr),
+                        text = shortString(state.currentZAddr!!),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color(0xFF666666)

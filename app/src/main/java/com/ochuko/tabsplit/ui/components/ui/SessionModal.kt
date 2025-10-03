@@ -9,17 +9,20 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.ochuko.tabsplit.models.Session
 import com.ochuko.tabsplit.store.SessionViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun SessionModal(
-    navController: NavController,
     showCreateModal: Boolean,
     setShowCreateModal: (Boolean) -> Unit,
+    onSessionCreated: (Session) -> Unit,
     sessionViewModel: SessionViewModel = viewModel(),
 ) {
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
 
     if (showCreateModal) {
         AlertDialog(
@@ -57,17 +60,20 @@ fun SessionModal(
                 TextButton(
                     onClick = {
                         if (title.isNotBlank()) {
-                            // call your AppStore createSession
-                            val result = sessionViewModel.createSession(title, description)
+                            scope.launch {
 
-                            // close + reset state
-                            setShowCreateModal(false)
-                            title = ""
-                            description = ""
+                                // call your AppStore createSession
+                                val result = sessionViewModel.createSession(title, description)
 
-                            // navigate to SessionDetails
-                            result?.let {
-                                navController.navigate("sessionDetails/${it.session.id}")
+                                // close + reset state
+                                setShowCreateModal(false)
+                                title = ""
+                                description = ""
+
+                                // navigate to SessionDetails
+                                result?.let {
+                                    onSessionCreated(it)
+                                }
                             }
                         }
                     }
