@@ -8,16 +8,15 @@ import com.ochuko.tabsplit.models.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import android.app.Application
 import android.content.Context
+import com.ochuko.tabsplit.BuildConfig
 import com.ochuko.tabsplit.data.api.AuthApi
 import com.ochuko.tabsplit.data.api.SessionApi
 import com.ochuko.tabsplit.data.api.SessionRequest
 import com.ochuko.tabsplit.data.repository.AuthRepository
 import com.ochuko.tabsplit.data.repository.SessionRepository
-import kotlinx.coroutines.flow.update
 
-const val BASE_URL = "http://10.0.0.2:4000"
+const val BASE_URL = BuildConfig.API_BASE_URL
 
 class AppStore(ctx: Context) : ViewModel() {
 
@@ -96,22 +95,25 @@ class AppStore(ctx: Context) : ViewModel() {
         }
     }
 
-    fun createSession(title: String, description: String) = viewModelScope.launch {
-        try {
+    suspend fun createSession(title: String, description: String): Session? {
+        return try {
             val session = sessionRepo.createSession(SessionRequest(title, description))
-            session?.let { _sessions.value = _sessions.value + it }
+            session?.also { _sessions.value = _sessions.value + it }
+
         } catch (e: Exception) {
             Log.e("AppStore", "createSession failed", e)
+            null
         }
     }
 
-    fun joinSession(code: String) = viewModelScope.launch {
-        try {
+    suspend fun joinSessionByInvite(code: String): Session? {
+        return try {
             val session = sessionRepo.joinByInvite(code)
-            session?.let { _sessions.value = _sessions.value + it }
+            session?.also { _sessions.value = _sessions.value + it }
 
         } catch (e: Exception) {
             Log.e("AppStore", "joinSession failed", e)
+            null
         }
     }
 
