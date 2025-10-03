@@ -20,8 +20,9 @@ class SessionViewModel(private val store: AppStore) : ViewModel() {
 
     }
 
-    fun createSession(title: String, description: String) {
-        viewModelScope.launch { store.createSession(title, description) }
+    suspend fun createSession(title: String, description: String): Session? {
+       val sess = store.createSession(title, description)
+        return sess
     }
 
 }
