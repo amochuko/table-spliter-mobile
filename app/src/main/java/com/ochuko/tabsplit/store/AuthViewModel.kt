@@ -1,6 +1,7 @@
 package com.ochuko.tabsplit.store
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.ochuko.tabsplit.data.api.ApiClient
@@ -51,6 +52,7 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
 
         val res = repo.login(email, password)
 
+        Log.i("Login caller", email)
         return if (res != null) {
             val token = repo.getSavedToken()
             val (user, _t) = res
