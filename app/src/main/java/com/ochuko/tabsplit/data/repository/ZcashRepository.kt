@@ -2,8 +2,6 @@ package com.ochuko.tabsplit.data.repository
 
 
 import android.content.Context
-import com.ochuko.tabsplit.data.api.ApiClient
-import com.ochuko.tabsplit.data.api.SessionApi
 import com.ochuko.tabsplit.data.api.UserApi
 import com.ochuko.tabsplit.data.local.SecurePrefs
 import com.ochuko.tabsplit.models.User
@@ -19,7 +17,7 @@ class ZcashRepository(private val api: UserApi, private val ctx: Context) {
             val user = res.body()?.user
 
             if (user?.zaddr != null) {
-                SecurePrefs.saveZAddr(ctx, user.zaddr!!)
+                SecurePrefs.saveZAddr(ctx, user.zaddr)
             }
 
             user
