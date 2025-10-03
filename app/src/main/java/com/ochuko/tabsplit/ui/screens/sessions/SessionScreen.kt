@@ -10,17 +10,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.ochuko.tabsplit.ui.components.ui.SessionModal
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.Button
+import com.ochuko.tabsplit.models.Session
 import com.ochuko.tabsplit.store.AppStore
 
 
 @Composable
-fun SessionScreen(navController: NavController, appStore: AppStore = viewModel()) {
+fun SessionScreen(
+    onRequireAuth: () -> Unit,
+    onSessionClick: (String) -> Unit,
+    onCreateSession: (Session) -> Unit,
+    appStore: AppStore = viewModel()
+) {
 
     // Reactive state
     val sessions by appStore.sessions.collectAsState()
@@ -31,20 +36,24 @@ fun SessionScreen(navController: NavController, appStore: AppStore = viewModel()
     LaunchedEffect(token) {
         if (token == null) {
             // navigate to login
-            navController.navigate("LoginScreen")
+            onRequireAuth()
         } else {
             appStore.loadSessions()
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
         Text("Welcome to TableSplit!", fontSize = 20.sp)
 
         if (sessions.isNotEmpty()) {
             sessions.forEach { s ->
-                Card(modifier = Modifier.fillMaxWidth().clickable {
-                    // navigate to session detail
-                }) {
+                Card(modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        // navigate to session detail
+                    }) {
                     Text(s.title, modifier = Modifier.padding(12.dp))
                 }
             }
@@ -60,9 +69,13 @@ fun SessionScreen(navController: NavController, appStore: AppStore = viewModel()
 
         if (showCreateModal) {
             SessionModal(
-                navController,
                 showCreateModal = showCreateModal,
-                setShowCreateModal = { showCreateModal = it }
+                setShowCreateModal = { showCreateModal = it },
+                onSessionCreated = { newSession ->
+                    showCreateModal = false
+                    onCreateSession(newSession)
+                    onSessionClick(newSession.id)
+                }
             )
         }
     }
