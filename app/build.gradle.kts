@@ -18,10 +18,19 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // This will generate BuildConfig.API_BASE_URL
-        buildConfigField("String", "API_BASE_URL", "\"http://10.0.0.2/\"")
+        buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2/\"")
     }
 
     buildTypes {
+        getByName("debug") {
+            manifestPlaceholders["network_security_config"] = "network_security_config_debug"
+        }
+
+        getByName("release") {
+            manifestPlaceholders["network_security_config"] =
+                "network_security_config_release"
+        }
+
         release {
             isMinifyEnabled = false
             proguardFiles(
