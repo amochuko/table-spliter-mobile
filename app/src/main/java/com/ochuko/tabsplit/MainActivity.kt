@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ochuko.tabsplit.ui.join.JoinSessionScreen
 import com.ochuko.tabsplit.ui.screens.auth.LoginScreen
+import com.ochuko.tabsplit.ui.screens.auth.SignupScreen
 import com.ochuko.tabsplit.ui.screens.sessions.SessionScreen
 import com.ochuko.tabsplit.ui.screens.sessions.SessionDetailsScreen
 
@@ -45,6 +46,17 @@ fun MyApp() {
                         }
                     },
                     onSignupClick = { navController.navigate("signup") })
+            }
+
+            composable("signup") {
+                SignupScreen(
+                    onSignupSuccess = {
+                        navController.navigate("session") {
+                            popUpTo("signup") { inclusive = true }
+                        }
+                    },
+                    onLoginClick = { navController.navigate("login") }
+                )
             }
 
             composable("sessions") {
