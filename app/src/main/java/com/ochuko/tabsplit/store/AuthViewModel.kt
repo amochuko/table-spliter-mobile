@@ -1,6 +1,8 @@
 package com.ochuko.tabsplit.store
 
+import android.app.Application
 import android.content.Context
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ochuko.tabsplit.data.api.ApiClient
@@ -19,13 +21,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 
-class AuthViewModel(ctx: Context) : ViewModel() {
+class AuthViewModel(app: Application) : AndroidViewModel(app) {
     private val repo = AuthRepository(
-        ApiClient.getRetrofit(ctx, "http://10.0.0.2").create
+        ApiClient.getRetrofit(app, "http://10.0.0.2").create
             (
             AuthApi::class
                 .java
-        ), ctx
+        ), app
     )
 
     private val _uiState = MutableStateFlow(
