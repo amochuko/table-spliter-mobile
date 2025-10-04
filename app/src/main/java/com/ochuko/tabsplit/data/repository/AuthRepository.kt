@@ -2,12 +2,14 @@ package com.ochuko.tabsplit.data.repository
 
 
 import android.content.Context
+import android.util.Log
 
 import com.ochuko.tabsplit.data.api.AuthApi
 import com.ochuko.tabsplit.data.api.LoginRequest
 import com.ochuko.tabsplit.data.api.RegisterRequest
 import com.ochuko.tabsplit.data.local.SecurePrefs
 import com.ochuko.tabsplit.models.User
+import kotlin.toString
 
 
 class AuthRepository(private val api: AuthApi, private val ctx: Context) {
@@ -34,10 +36,9 @@ class AuthRepository(private val api: AuthApi, private val ctx: Context) {
 
         if (res.isSuccessful) {
             val (body, token) = res.body() ?: return null
-            val user = User(body.id, body.username, body.email, body.zaddr)
 
             saveToken(token)
-            return Pair(user, token)
+            return Pair(body, token)
         }
 
         return null;
