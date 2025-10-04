@@ -74,9 +74,9 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
             val (user, _t) = res
 
             _uiState.value = AuthUiState(token = token, isLoggedIn = true)
-            UserToken(user, token.toString())
+            UserToken(user, token!!)
         } else {
-            _uiState.value = AuthUiState(error = "Login failed")
+            _uiState.value = AuthUiState(error = "Signup failed")
             null
         }
     }
