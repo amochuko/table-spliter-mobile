@@ -1,5 +1,6 @@
 package com.ochuko.tabsplit.ui.screens.auth
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,18 +15,23 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.ochuko.tabsplit.store.AppStore
 import kotlinx.coroutines.launch
 import com.ochuko.tabsplit.store.AuthViewModel
+import com.ochuko.ui.navigation.tabsplit.Screen
 
 
 @Composable
 fun SignupScreen(
+    navController: NavHostController,
     onSignupSuccess: () -> Unit,
     onLoginClick: () -> Unit,
     authViewModel: AuthViewModel = viewModel(),
     appStore: AppStore = viewModel()
 ) {
+
+
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -39,7 +45,7 @@ fun SignupScreen(
     // Redirect if already signed up/logged in
     LaunchedEffect(token) {
         if (!token.isNullOrEmpty()) {
-            onSignupSuccess()
+//            onSignupSuccess()
         }
     }
 
@@ -91,10 +97,10 @@ fun SignupScreen(
                 onClick = {
                     scope.launch {
                         try {
-
                             // Try signup
                             val res = authViewModel.register(email, password)?.let { (user,
                                                                                          token) ->
+
                                 appStore.setUser(user, token)
                             } ?: run {
                                 error = "Signup failed!"
@@ -108,15 +114,21 @@ fun SignupScreen(
                                 val joinedSession = appStore.joinSessionByInvite(code)
 
                                 if (joinedSession != null) {
-
                                     appStore.addSession(joinedSession)
                                     appStore.setPendingInviteCode(null)
                                 }
                             }
 
-                            onSignupSuccess()
+//                            onSignupSuccess()
+                            // Navigate **directly** after successful signup
+                            navController.navigate(Screen.Sessions.route) {
+                                popUpTo(Screen.Signup.route) { inclusive = true }
+                                launchSingleTop = true
+                            }
+
                         } catch (e: Exception) {
                             error = "Invalid credentials!"
+                            Log.e("SignupError", e.message.toString())
                             e.printStackTrace()
                             Toast.makeText(context, "Signup failed", Toast.LENGTH_SHORT).show()
                         }
@@ -131,7 +143,7 @@ fun SignupScreen(
 
             Text(
 
-                "Already got an account? login",
+                "Already got an account? Login",
                 style = MaterialTheme.typography.bodyMedium.copy(
                     color = MaterialTheme
                         .colorScheme.primary
