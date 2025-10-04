@@ -2,7 +2,6 @@ package com.ochuko.ui.navigation.tabsplit
 
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.internal.composableLambda
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -12,7 +11,7 @@ import com.ochuko.tabsplit.ui.screens.auth.SignupScreen
 import com.ochuko.tabsplit.ui.join.JoinSessionScreen
 import com.ochuko.tabsplit.ui.screens.auth.LoginScreen
 import com.ochuko.tabsplit.ui.screens.sessions.SessionDetailsScreen
-import com.ochuko.tabsplit.ui.screens.sessions.SessionScreen
+import com.ochuko.tabsplit.ui.screens.sessions.SessionsScreen
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
@@ -30,23 +29,34 @@ fun AppNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Screen.Login.route) {
         composable(Screen.Login.route) {
             LoginScreen(
-                onLoginSuccess = { navController.navigate((Screen.Sessions.route)) },
+                onLoginSuccess = {
+                    navController.navigate(Screen.Sessions.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
                 onSignupClick = { navController.navigate(Screen.Signup.route) }
             )
         }
 
         composable(Screen.Signup.route) {
             SignupScreen(
-                onSignupSuccess = { navController.navigate(Screen.Sessions.route) },
+                navController = navController,
+                onSignupSuccess = {
+                    navController.navigate(Screen.Sessions.route) {
+                        popUpTo(Screen.Sessions.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
                 onLoginClick = { navController.navigate(Screen.Login.route) }
             )
         }
 
         composable(Screen.Sessions.route) {
-            SessionScreen(
+            SessionsScreen(
                 onRequireAuth = {
                     navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.Sessions.route) { inclusive = true }
+//                        popUpTo(Screen.Sessions.route) { inclusive = true }
                     }
                 },
                 onSessionClick = { sessionId ->
