@@ -53,11 +53,6 @@ fun AppNavHost(navController: NavHostController, appStore: AppStore = viewModel(
 
         composable(Screen.Sessions.route) {
             SessionsScreen(
-                onRequireAuth = {
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.Sessions.route) { inclusive = true }
-                    }
-                },
                 onSessionClick = { sessionId ->
                     navController.navigate(
                         Screen.SessionDetails
