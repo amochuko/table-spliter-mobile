@@ -5,7 +5,6 @@ import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-//import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
@@ -19,7 +18,7 @@ import androidx.navigation.NavHostController
 import com.ochuko.tabsplit.store.AppStore
 import kotlinx.coroutines.launch
 import com.ochuko.tabsplit.store.AuthViewModel
-import com.ochuko.ui.navigation.tabsplit.Screen
+import com.ochuko.tabsplit.ui.navigation.Screen
 
 
 @Composable
@@ -30,7 +29,6 @@ fun SignupScreen(
     authViewModel: AuthViewModel = viewModel(),
     appStore: AppStore = viewModel()
 ) {
-
 
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -45,7 +43,7 @@ fun SignupScreen(
     // Redirect if already signed up/logged in
     LaunchedEffect(token) {
         if (!token.isNullOrEmpty()) {
-//            onSignupSuccess()
+            onSignupSuccess()
         }
     }
 
