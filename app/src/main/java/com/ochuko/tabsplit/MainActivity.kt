@@ -31,6 +31,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             TabSplitTheme {
                 val navController = rememberNavController()
+
+                // Shared AppStore instance
                 val appStore: AppStore = viewModel()
 
                 // Collect toke state
@@ -47,7 +49,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 if (startDestination != null) {
-                    AppNavHost(navController = navController)
+                    AppNavHost(navController, appStore)
                 } else {
                     // Loading screen
                     Box(

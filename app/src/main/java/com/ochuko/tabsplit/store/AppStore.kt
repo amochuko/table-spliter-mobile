@@ -3,7 +3,6 @@ package com.ochuko.tabsplit.store
 import android.annotation.SuppressLint
 import android.app.Application
 import android.util.Log
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ochuko.tabsplit.data.api.ApiClient
 import com.ochuko.tabsplit.models.*

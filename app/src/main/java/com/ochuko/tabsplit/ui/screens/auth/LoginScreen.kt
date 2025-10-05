@@ -38,7 +38,7 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onSignupClick: () -> Unit,
     authViewModel: AuthViewModel = viewModel(),
-    appStore: AppStore = viewModel()
+    appStore: AppStore
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current

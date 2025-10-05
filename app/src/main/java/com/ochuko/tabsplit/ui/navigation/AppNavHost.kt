@@ -2,7 +2,6 @@ package com.ochuko.tabsplit.ui.navigation
 
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -10,7 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.ochuko.tabsplit.store.AppStore
 import com.ochuko.tabsplit.ui.screens.auth.SignupScreen
-import com.ochuko.tabsplit.ui.join.JoinSessionScreen
+import com.ochuko.tabsplit.ui.screens.join.JoinSessionScreen
 import com.ochuko.tabsplit.ui.screens.auth.LoginScreen
 import com.ochuko.tabsplit.ui.screens.sessions.SessionDetailsScreen
 import com.ochuko.tabsplit.ui.screens.sessions.SessionsScreen
@@ -18,7 +17,7 @@ import com.ochuko.tabsplit.ui.screens.splash.SplashScreen
 
 
 @Composable
-fun AppNavHost(navController: NavHostController, appStore: AppStore = viewModel()) {
+fun AppNavHost(navController: NavHostController, appStore: AppStore) {
 
     NavHost(navController, startDestination = Screen.Splash.route) {
 
@@ -34,7 +33,8 @@ fun AppNavHost(navController: NavHostController, appStore: AppStore = viewModel(
                         launchSingleTop = true
                     }
                 },
-                onSignupClick = { navController.navigate(Screen.Signup.route) }
+                onSignupClick = { navController.navigate(Screen.Signup.route) },
+                appStore = appStore
             )
         }
 
@@ -61,14 +61,14 @@ fun AppNavHost(navController: NavHostController, appStore: AppStore = viewModel(
                 },
                 onCreateSession = {
 //                    TODO:  log event or refresh
-                }
+                }, appStore
             )
         }
 
         composable(Screen.SessionDetails.route) { backStackEntry ->
             val sessionId = backStackEntry.arguments?.getString("sessionId")
             sessionId?.let {
-                SessionDetailsScreen(navController, sessionId)
+                SessionDetailsScreen(navController, sessionId, appStore)
             }
         }
 
@@ -79,6 +79,7 @@ fun AppNavHost(navController: NavHostController, appStore: AppStore = viewModel(
             val inviteCode = backStackEntry.arguments?.getString("inviteCode") ?: ""
 
             JoinSessionScreen(
+                appStore,
                 inviteCode = inviteCode,
                 onAuthRequired = { code ->
                     navController.navigate(Screen.Login.route) {
