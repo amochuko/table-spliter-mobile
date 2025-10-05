@@ -16,14 +16,36 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        // This will generate BuildConfig.API_BASE_URL
-        buildConfigField("String", "API_BASE_URL", "\"http://10.0.0.2/\"")
     }
 
     buildTypes {
+        getByName("debug") {
+            // Dev machine (emulator <-> host)
+            manifestPlaceholders["network_security_config"] = "network_security_config_debug"
+
+            // This will generate BuildConfig.API_BASE_URL
+            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:4000/\"")
+        }
+
+        create("staging") {
+            initWith(getByName("debug"))
+
+            // Staging server - test environment
+            buildConfigField("String", "API_BASE_URL", "\"http://staging.tabsplit.com/\"")
+            manifestPlaceholders["network_security_config"] =
+                "network_security_config_release"
+        }
+
+        getByName("release") {
+            isMinifyEnabled = true
+            // Production backend
+            buildConfigField("String", "API_BASE_URL", "\"http://api.tabsplit.com/\"")
+            manifestPlaceholders["network_security_config"] =
+                "network_security_config_release"
+        }
+
         release {
-            isMinifyEnabled = false
+//            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

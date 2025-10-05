@@ -7,21 +7,21 @@ import com.ochuko.tabsplit.models.Session
 import kotlinx.coroutines.launch
 
 
-class SessionViewModel(private val store: AppStore) : ViewModel() {
-    val sessions = store.sessions
+class SessionViewModel(private val appStore: AppStore) : ViewModel() {
+    val sessions = appStore.sessions
 
 
     fun fetchSession(id: String) {
-        viewModelScope.launch { store.fetchSession(id) }
+        viewModelScope.launch { appStore.fetchSession(id) }
     }
 
     fun addSession(session: Session) {
-        viewModelScope.launch { store.addSession(session) }
+        viewModelScope.launch { appStore.addSession(session) }
 
     }
 
     suspend fun createSession(title: String, description: String): Session? {
-       val sess = store.createSession(title, description)
+       val sess = appStore.createSession(title, description)
         return sess
     }
 

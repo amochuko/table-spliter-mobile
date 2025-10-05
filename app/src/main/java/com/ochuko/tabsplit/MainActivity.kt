@@ -4,17 +4,23 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ochuko.tabsplit.ui.theme.TabSplitTheme
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.ochuko.tabsplit.ui.join.JoinSessionScreen
-import com.ochuko.tabsplit.ui.screens.auth.LoginScreen
-import com.ochuko.tabsplit.ui.screens.sessions.SessionScreen
-import com.ochuko.tabsplit.ui.screens.sessions.SessionDetailsScreen
+import com.ochuko.tabsplit.store.AppStore
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import com.ochuko.tabsplit.ui.navigation.AppNavHost
+import com.ochuko.tabsplit.ui.navigation.Screen
+
 
 class MainActivity : ComponentActivity() {
 
@@ -24,72 +30,36 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             TabSplitTheme {
-                MyApp()
-            }
-        }
-    }
-}
+                val navController = rememberNavController()
 
+                // Shared AppStore instance
+                val appStore: AppStore = viewModel()
 
-@Composable
-fun MyApp() {
-    val navController = rememberNavController()
+                // Collect toke state
+                val token by appStore.token.collectAsState(initial = null)
+                var startDestination by remember { mutableStateOf<String?>(null) }
 
-    Surface(color = MaterialTheme.colorScheme.background) {
-        NavHost(navController = navController, startDestination = "login") {
-            composable("login") {
-                LoginScreen(
-                    onLoginSuccess = {
-                        navController.navigate("session") {
-                            popUpTo("Login") { inclusive = true }
-                        }
-                    },
-                    onSignupClick = { navController.navigate("signup") })
-            }
-
-            composable("sessions") {
-                SessionScreen(
-                    onSessionClick = { sessionId ->
-                        navController.navigate("sessionDetails/$sessionId")
-                    },
-                    onCreateSession = { newSession ->
-                        navController.navigate("sessionDetails/${newSession.id}")
-                    },
-                    onRequireAuth = {
-                        // navigate to login
-                        navController.navigate("LoginScreen")
+                // Wait until appStore finishes loading
+                LaunchedEffect(token) {
+                    startDestination = if (token.isNullOrEmpty()) {
+                        Screen.Login.route
+                    } else {
+                        Screen.Sessions.route
                     }
+                }
 
-                )
-            }
+                if (startDestination != null) {
+                    AppNavHost(navController, appStore)
+                } else {
+                    // Loading screen
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
 
-            // Session Details
-            composable("sessionDetails/{sessionId}") { backStackEntry ->
-                val sessionId = backStackEntry.arguments?.getString("sessionId") ?: ""
-                SessionDetailsScreen(navController, sessionId)
-            }
-
-            // Join Session
-            composable("join/{inviteCode}") { backStackEntry ->
-                val inviteCode = backStackEntry.arguments?.getString("inviteCode") ?: ""
-                JoinSessionScreen(
-                    inviteCode = inviteCode,
-                    onJoinSuccess = { session ->
-                        navController.navigate("sessionDetails/${session.id}") {
-                            popUpTo("join/$inviteCode") { inclusive = true }
-                        }
-                    },
-                    onAuthRequired = {
-                        navController.navigate("login") {
-                            popUpTo("join/$inviteCode") { inclusive = true }
-                        }
-                    },
-                    onJoinFailed = {
-                        navController.navigate("sessions") {
-                            popUpTo("join/$inviteCode") { inclusive = true }
-                        }
+                        CircularProgressIndicator()
                     }
-                )
+                }
             }
         }
     }

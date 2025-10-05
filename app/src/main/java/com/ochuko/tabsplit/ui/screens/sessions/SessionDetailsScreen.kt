@@ -1,10 +1,8 @@
 package com.ochuko.tabsplit.ui.screens.sessions
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
@@ -21,10 +19,7 @@ import com.ochuko.tabsplit.ui.components.ui.BalancesList
 import com.ochuko.tabsplit.ui.components.ui.SessionQRCode
 import com.ochuko.tabsplit.ui.components.ui.ZcashIntegration
 import androidx.compose.material3.*
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ochuko.tabsplit.utils.calculateBalances
-import com.ochuko.tabsplit.models.Expense
-import com.ochuko.tabsplit.models.Participant
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,7 +27,7 @@ import com.ochuko.tabsplit.models.Participant
 fun SessionDetailsScreen(
     navController: NavController,
     sessionId: String,
-    appStore: AppStore = viewModel()
+    appStore: AppStore
 ) {
     // Collect reactive state from AppStore
     val sessions by appStore.sessions.collectAsState()

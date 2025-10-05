@@ -5,6 +5,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 import android.content.Context
+import com.ochuko.tabsplit.BuildConfig
 import com.ochuko.tabsplit.store.AuthStore
 import okhttp3.Interceptor
 import kotlinx.coroutines.runBlocking
@@ -13,7 +14,7 @@ import kotlinx.coroutines.runBlocking
 object ApiClient {
     private var retrofit: Retrofit? = null
 
-    fun getRetrofit(context: Context, baseUrl: String ): Retrofit {
+    fun getRetrofit(context: Context, baseUrl: String = BuildConfig.API_BASE_URL): Retrofit {
         if (retrofit == null) {
             val authStore = AuthStore(context) // replace with your actual AuthStore
 

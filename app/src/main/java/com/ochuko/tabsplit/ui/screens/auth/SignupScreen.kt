@@ -1,11 +1,10 @@
-package com.ochuko.tabsplit.ui.auth
+package com.ochuko.tabsplit.ui.screens.auth
 
-import android.R
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-//import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
@@ -15,18 +14,22 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.ochuko.tabsplit.store.AppStore
 import kotlinx.coroutines.launch
 import com.ochuko.tabsplit.store.AuthViewModel
+import com.ochuko.tabsplit.ui.navigation.Screen
 
 
 @Composable
 fun SignupScreen(
+    navController: NavHostController,
     onSignupSuccess: () -> Unit,
     onLoginClick: () -> Unit,
     authViewModel: AuthViewModel = viewModel(),
     appStore: AppStore = viewModel()
 ) {
+
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -40,9 +43,6 @@ fun SignupScreen(
     // Redirect if already signed up/logged in
     LaunchedEffect(token) {
         if (!token.isNullOrEmpty()) {
-//            navController.navigate("home") {
-//                popUpTo("signup") { inclusive = true }
-//            }
             onSignupSuccess()
         }
     }
@@ -95,10 +95,10 @@ fun SignupScreen(
                 onClick = {
                     scope.launch {
                         try {
-
                             // Try signup
                             val res = authViewModel.register(email, password)?.let { (user,
                                                                                          token) ->
+
                                 appStore.setUser(user, token)
                             } ?: run {
                                 error = "Signup failed!"
@@ -112,15 +112,21 @@ fun SignupScreen(
                                 val joinedSession = appStore.joinSessionByInvite(code)
 
                                 if (joinedSession != null) {
-
                                     appStore.addSession(joinedSession)
                                     appStore.setPendingInviteCode(null)
                                 }
                             }
 
-                            onSignupSuccess()
+//                            onSignupSuccess()
+                            // Navigate **directly** after successful signup
+                            navController.navigate(Screen.Sessions.route) {
+                                popUpTo(Screen.Signup.route) { inclusive = true }
+                                launchSingleTop = true
+                            }
+
                         } catch (e: Exception) {
                             error = "Invalid credentials!"
+                            Log.e("SignupError", e.message.toString())
                             e.printStackTrace()
                             Toast.makeText(context, "Signup failed", Toast.LENGTH_SHORT).show()
                         }
@@ -135,7 +141,7 @@ fun SignupScreen(
 
             Text(
 
-                "Already got an account? login",
+                "Already got an account? Login",
                 style = MaterialTheme.typography.bodyMedium.copy(
                     color = MaterialTheme
                         .colorScheme.primary

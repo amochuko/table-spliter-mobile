@@ -1,11 +1,27 @@
 package com.ochuko.tabsplit.ui.screens.auth
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -22,7 +38,7 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onSignupClick: () -> Unit,
     authViewModel: AuthViewModel = viewModel(),
-    appStore: AppStore = viewModel()
+    appStore: AppStore
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -31,18 +47,7 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
     var error by remember { mutableStateOf("") }
 
-    val token by authViewModel.token.collectAsState()
     val pendingInviteCode by appStore.pendingInviteCode.collectAsState()
-
-    // Redirect if already logged in
-    LaunchedEffect(token) {
-        if (!token.isNullOrEmpty()) {
-            onLoginSuccess()
-//            navController.navigate("sessions") {
-//                popUpTo("login") { inclusive = true }
-//            }
-        }
-    }
 
     Box(
         modifier = Modifier
@@ -119,10 +124,13 @@ fun LoginScreen(
 
                             appStore.loadSessions()
                             onLoginSuccess()
+
                         } catch (e: Exception) {
-                            error = "Invalid credentials!"
-                            e.printStackTrace()
                             Toast.makeText(context, "Login failed", Toast.LENGTH_SHORT).show()
+                            error = "Unknown error"
+                            Log.e("LoginError", e.message.toString())
+                            e.printStackTrace()
+
                         }
                     }
                 },
