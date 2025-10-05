@@ -21,7 +21,6 @@ import com.ochuko.tabsplit.store.AppStore
 
 @Composable
 fun SessionsScreen(
-    onRequireAuth: () -> Unit,
     onSessionClick: (String) -> Unit,
     onCreateSession: (Session) -> Unit,
     appStore: AppStore = viewModel()
@@ -29,31 +28,28 @@ fun SessionsScreen(
 
     // Reactive state
     val sessions by appStore.sessions.collectAsState()
-    val token by appStore.token.collectAsState()
     var showCreateModal by remember { mutableStateOf(false) }
 
     // Redirect to Login if not authenticated
-    LaunchedEffect(token) {
-        if (token == null) {
-            // navigate to login
-            onRequireAuth()
-        } else {
-            appStore.loadSessions()
-        }
+    LaunchedEffect(Unit) {
+        appStore.loadSessions()
     }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp)
+    ) {
         Text("Welcome to TableSplit!", fontSize = 20.sp)
 
         if (sessions.isNotEmpty()) {
             sessions.forEach { s ->
-                Card(modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        // navigate to session detail
-                    }) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            // navigate to session detail
+                        }) {
                     Text(s.title, modifier = Modifier.padding(12.dp))
                 }
             }
