@@ -1,32 +1,31 @@
-package com.ochuko.ui.navigation.tabsplit
+package com.ochuko.tabsplit.ui.navigation
 
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.ochuko.tabsplit.store.AppStore
 import com.ochuko.tabsplit.ui.screens.auth.SignupScreen
 import com.ochuko.tabsplit.ui.join.JoinSessionScreen
 import com.ochuko.tabsplit.ui.screens.auth.LoginScreen
 import com.ochuko.tabsplit.ui.screens.sessions.SessionDetailsScreen
 import com.ochuko.tabsplit.ui.screens.sessions.SessionsScreen
+import com.ochuko.tabsplit.ui.screens.splash.SplashScreen
 
-sealed class Screen(val route: String) {
-    object Login : Screen("login")
-    object Signup : Screen("signup")
-    object Sessions : Screen("sessions")
-    object SessionDetails : Screen("sessionDetails/{sessionId}") {
-        fun createRoute(sessionId: String) = "sessionDetails/$sessionId"
-    }
-
-    object Join : Screen("join")
-}
 
 @Composable
-fun AppNavHost(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = Screen.Login.route) {
+fun AppNavHost(navController: NavHostController, appStore: AppStore = viewModel()) {
+
+    NavHost(navController, startDestination = Screen.Splash.route) {
+
+        composable(Screen.Splash.route) {
+            SplashScreen(navController, appStore)
+        }
+
         composable(Screen.Login.route) {
             LoginScreen(
                 onLoginSuccess = {
@@ -56,7 +55,7 @@ fun AppNavHost(navController: NavHostController) {
             SessionsScreen(
                 onRequireAuth = {
                     navController.navigate(Screen.Login.route) {
-//                        popUpTo(Screen.Sessions.route) { inclusive = true }
+                        popUpTo(Screen.Sessions.route) { inclusive = true }
                     }
                 },
                 onSessionClick = { sessionId ->
