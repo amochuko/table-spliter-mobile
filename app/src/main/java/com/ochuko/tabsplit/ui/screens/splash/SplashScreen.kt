@@ -36,16 +36,25 @@ import com.ochuko.tabsplit.ui.navigation.Screen
 
 @Composable
 fun SplashScreen(navController: NavController, appStore: AppStore = viewModel()) {
-    val token by appStore.token.collectAsState(initial = null)
+    val token by appStore.token.collectAsState()
     var hasNavigated by remember { mutableStateOf(false) }
     var visible by remember { mutableStateOf(false) }
 
+    // scale animation for logo
+    val scale by animateFloatAsState(
+        targetValue = if (visible) 1f else 0.6f,
+        animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing),
+        label = "logoScale"
+    )
+
     // Trigger animation
     LaunchedEffect(Unit) {
-        delay(300)
+        visible = true
+        delay(1500)
 
         if (!hasNavigated) {
             hasNavigated = true
+
             if (token.isNullOrEmpty()) {
                 navController.navigate(Screen.Login.route) {
                     popUpTo(Screen.Splash.route) { inclusive = true }
@@ -57,13 +66,6 @@ fun SplashScreen(navController: NavController, appStore: AppStore = viewModel())
             }
         }
     }
-
-    // scale animation for logo
-    val scale by animateFloatAsState(
-        targetValue = if (visible) 1f else 0.6f,
-        animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing),
-        label = "logoScale"
-    )
 
     // Fade + scale combined
     Box(
@@ -96,5 +98,4 @@ fun SplashScreen(navController: NavController, appStore: AppStore = viewModel())
             }
         }
     }
-
 }
