@@ -9,10 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Text
 import com.ochuko.tabsplit.store.AppStore
-import com.ochuko.tabsplit.store.AuthViewModel
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ochuko.tabsplit.models.Session
+import com.ochuko.tabsplit.store.AuthStore
 import kotlinx.coroutines.launch
 
 @Composable
@@ -22,19 +22,19 @@ fun JoinSessionScreen(
     onJoinSuccess: (Session) -> Unit,
     onJoinFailed: () -> Unit,
     inviteCode: String,
-    authViewModel: AuthViewModel = viewModel(),
+    authStore: AuthStore = viewModel(),
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val token by authViewModel.token.collectAsState()
+    val authState by authStore.authState.collectAsState()
 
-    LaunchedEffect(inviteCode, token) {
+    LaunchedEffect(inviteCode, authState.token) {
         if (inviteCode.isBlank()) return@LaunchedEffect
 
         scope.launch {
             try {
-                if (token.isNullOrEmpty()) {
+                if (authState.token.isNullOrEmpty()) {
                     // No token -> redirect to auth
                     appStore.setPendingInviteCode(inviteCode)
                     onAuthRequired(inviteCode)

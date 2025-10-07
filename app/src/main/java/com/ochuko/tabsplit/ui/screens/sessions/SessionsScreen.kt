@@ -36,9 +36,10 @@ fun SessionsScreen(
             .fillMaxSize()
             .padding(32.dp)
     ) {
-        Text("Welcome to TableSplit!", fontSize = 20.sp)
+        val token by appStore.token.collectAsState()
+        Text("Welcome to TableSplit! - $token", fontSize = 20.sp)
 
-        if (sessions.isNotEmpty() && sessions.size > 0) {
+        if (sessions.isNotEmpty()) {
             sessions.forEach { s ->
                 Card(
                     modifier = Modifier
@@ -66,6 +67,7 @@ fun SessionsScreen(
                 onSessionCreated = { newSession ->
                     showCreateModal = false
                     onCreateSession(newSession)
+
                     onSessionClick(newSession.id)
                 }
             )

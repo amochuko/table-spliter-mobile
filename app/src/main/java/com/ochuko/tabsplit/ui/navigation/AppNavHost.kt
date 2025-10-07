@@ -1,6 +1,7 @@
 package com.ochuko.tabsplit.ui.navigation
 
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -8,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.ochuko.tabsplit.store.AppStore
+import com.ochuko.tabsplit.store.AuthStore
 import com.ochuko.tabsplit.ui.screens.auth.SignupScreen
 import com.ochuko.tabsplit.ui.screens.join.JoinSessionScreen
 import com.ochuko.tabsplit.ui.screens.auth.LoginScreen
@@ -17,9 +19,9 @@ import com.ochuko.tabsplit.ui.screens.splash.SplashScreen
 
 
 @Composable
-fun AppNavHost(navController: NavHostController, appStore: AppStore) {
+fun AppNavHost(navController: NavHostController, appStore: AppStore, authStore: AuthStore) {
 
-    NavHost(navController, startDestination = Screen.Splash.route) {
+    NavHost(navController, startDestination = Screen.Login.route) {
 
         composable(Screen.Splash.route) {
             SplashScreen(navController, appStore)
@@ -34,7 +36,8 @@ fun AppNavHost(navController: NavHostController, appStore: AppStore) {
                     }
                 },
                 onSignupClick = { navController.navigate(Screen.Signup.route) },
-                appStore = appStore
+                appStore = appStore,
+                authStore = authStore
             )
         }
 
@@ -47,7 +50,9 @@ fun AppNavHost(navController: NavHostController, appStore: AppStore) {
                         launchSingleTop = true
                     }
                 },
-                onLoginClick = { navController.navigate(Screen.Login.route) }
+                onLoginClick = { navController.navigate(Screen.Login.route) },
+                appStore = appStore,
+                authStore = authStore
             )
         }
 
@@ -61,6 +66,7 @@ fun AppNavHost(navController: NavHostController, appStore: AppStore) {
                 },
                 onCreateSession = {
 //                    TODO:  log event or refresh
+                    Log.i("AppNavHost::onCreateSession", "${it}")
                 }, appStore
             )
         }

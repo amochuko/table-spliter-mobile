@@ -11,7 +11,7 @@ data class SessionsResponse(
 
 data class SessionResponse( val session: Session?)
 
-data class SessionRequest(val title: String, val description: String)
+data class SessionRequest(val title: String, val description: String?)
 
 data class JoinRequest(val inviteCode: String)
 
@@ -23,7 +23,7 @@ interface SessionApi {
     suspend fun getSession(@Path("id") id: String): Response<Session>
 
     @POST("/sessions")
-    suspend fun createSession(@Body request: SessionRequest): Response<Session>
+    suspend fun createSession(@Body body: SessionRequest): Response<Session>
 
     @POST("/sessions/join")
     suspend fun joinByInvite(@Body body: JoinRequest): Response<Session>

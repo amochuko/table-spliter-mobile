@@ -3,10 +3,12 @@ package com.ochuko.tabsplit.store
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ochuko.tabsplit.BuildConfig
 import com.ochuko.tabsplit.data.api.ApiClient
+import com.ochuko.tabsplit.data.api.AuthApi
 import com.ochuko.tabsplit.data.api.UserApi
 import com.ochuko.tabsplit.data.repository.ZcashRepository
+import com.ochuko.tabsplit.utils.Config
+
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -18,12 +20,10 @@ data class ZcashUiState(
     val editMode: Boolean = false
 )
 
-class ZcashViewModel(ctx: Context, baseURL: String = BuildConfig.API_BASE_URL) : ViewModel() {
+class ZcashViewModel(ctx: Context, baseURL: String) : ViewModel() {
+    private val userApi = ApiClient.create<UserApi>(token = null, baseUrl = baseURL)
 
-    private val repo = ZcashRepository(ApiClient.getRetrofit(ctx, baseURL).create
-        (UserApi::class
-        .java),
-        ctx)
+    private val repo = ZcashRepository(userApi, ctx)
 
     private val _uiState = MutableStateFlow(
         ZcashUiState(currentZAddr = repo.loadSavedZAddr())

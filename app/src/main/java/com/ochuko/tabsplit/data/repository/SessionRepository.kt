@@ -1,5 +1,6 @@
 package com.ochuko.tabsplit.data.repository
 
+import android.util.Log
 import com.ochuko.tabsplit.data.api.JoinRequest
 import com.ochuko.tabsplit.data.api.SessionRequest
 import com.ochuko.tabsplit.data.api.SessionApi
@@ -20,7 +21,15 @@ class SessionRepository(private val api: SessionApi) {
     }
 
     suspend fun createSession(req: SessionRequest): Session? {
+        Log.i("SessionRepository1", "Request: $req")
+
         val res = api.createSession(req)
+
+        Log.i("SessionRepository2", "Code: ${res.code()} | Success: ${res.isSuccessful}")
+        Log.i("SessionRepository3", "Body: ${res.body()}")
+        Log.i("SessionRepository4", "ErrorBody: ${res.errorBody()?.string()}")
+        Log.i("SessionRepository5", "Raw: ${res.raw()}")
+
         return if (res.isSuccessful) res.body() else null
     }
 
