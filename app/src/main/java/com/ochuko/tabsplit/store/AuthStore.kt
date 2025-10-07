@@ -5,7 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.util.Log
-import androidx.lifecycle.ViewModel
+
 import androidx.lifecycle.viewModelScope
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
@@ -18,7 +18,9 @@ import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
 import com.ochuko.tabsplit.data.api.ApiClient
 import com.ochuko.tabsplit.data.api.AuthApi
+import com.ochuko.tabsplit.data.api.UserApi
 import com.ochuko.tabsplit.data.repository.AuthRepository
+import com.ochuko.tabsplit.data.repository.UserRepository
 import com.ochuko.tabsplit.utils.Config
 
 class AuthStore(app: Application) : AndroidViewModel(app) {
@@ -43,6 +45,10 @@ class AuthStore(app: Application) : AndroidViewModel(app) {
 
     private val authApi = ApiClient.create<AuthApi>(baseUrl = Config.API_BASE_URL)
     private val authRepo = AuthRepository(authApi, ctx)
+
+
+    private val userApi = ApiClient.create<UserApi>(getToken(), baseUrl = Config.API_BASE_URL)
+    private val userRepo = UserRepository(userApi)
 
 
     init {
@@ -91,7 +97,7 @@ class AuthStore(app: Application) : AndroidViewModel(app) {
     }
 
 
-    fun logout(email: String, password: String) = viewModelScope.launch {
+    fun logout() = viewModelScope.launch {
         try {
             setUser(null, null)
         } catch (e: Exception) {
@@ -122,4 +128,21 @@ class AuthStore(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    suspend fun updateZAddr(zaddr: String): Boolean {
+        return try {
+            val res = userRepo.updateZAddr(zaddr)
+            if (res != null) {
+                val currentUser = authState.value.user
+
+                if (currentUser != null) {
+                    setUser(currentUser.copy(zaddr = zaddr), getToken())
+                }
+                true
+            } else
+                false
+        } catch (e: Exception) {
+            Log.e("AuthStore", "failed to update zaddr $e")
+            false
+        }
+    }
 }

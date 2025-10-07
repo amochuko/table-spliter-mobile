@@ -1,6 +1,5 @@
 package com.ochuko.tabsplit.store
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.viewModelScope
