@@ -13,7 +13,7 @@ data class UserResponse(
 interface UserApi {
 
     @PATCH("/users/me")
-    suspend fun updateZAddr(@Body body: Map<String, String>): Response<UserResponse>
+    suspend fun updateZAddr(@Body body:  Map<String, String>): Response<UserResponse>
 
     @DELETE("/users/me/zaddr")
     suspend fun deleteZAddr(): Response<Unit>
