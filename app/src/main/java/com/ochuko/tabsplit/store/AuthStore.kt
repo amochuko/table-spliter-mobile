@@ -21,9 +21,9 @@ import com.ochuko.tabsplit.data.api.AuthApi
 import com.ochuko.tabsplit.data.repository.AuthRepository
 import com.ochuko.tabsplit.utils.Config
 
-class AuthStore(app: Application) : AndroidViewModel(app){
-@SuppressLint("StaticFieldLeak")
-val ctx: Context = getApplication<Application>().applicationContext;
+class AuthStore(app: Application) : AndroidViewModel(app) {
+    @SuppressLint("StaticFieldLeak")
+    val ctx: Context = getApplication<Application>().applicationContext;
 
     private val JwtKey = "jwt_token"
 
@@ -99,21 +99,26 @@ val ctx: Context = getApplication<Application>().applicationContext;
         }
     }
 
-    fun login(email: String, password: String) = viewModelScope.launch {
-        try {
+    suspend fun login(email: String, password: String): Boolean {
 
-            authRepo.login(email, password)?.let { (user, token) ->
+        return try {
+            val result = authRepo.login(email, password)
+
+            if (result != null) {
+                val (user, token) = result
                 setUser(user, token)
 
                 println("[AuthStore] Login successful -> user: ${user.email}")
-            } ?: run {
+                true
+            } else {
                 // This block is executed if loginResult is null
                 // Handle the failed
                 println("[AuthStore] Login failed -> null result")
-                throw IllegalStateException("Login failed!")
+                false
             }
         } catch (e: Exception) {
             Log.e("AppStore", "Login failed", e)
+            false
         }
     }
 
