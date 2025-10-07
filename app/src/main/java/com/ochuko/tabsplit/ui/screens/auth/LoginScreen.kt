@@ -94,6 +94,15 @@ fun LoginScreen(
 
             Button(
                 onClick = {
+                    if (email.isBlank() || password.isBlank()) {
+                        Toast.makeText(
+                            context, "Email and password required", Toast
+                                .LENGTH_SHORT
+                        ).show()
+
+                        return@Button
+                    }
+
                     scope.launch {
                         try {
 
