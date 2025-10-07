@@ -50,10 +50,6 @@ class AppStore(
     init {
         viewModelScope.launch {
             authStore.authState.collect { state ->
-                Log.d(
-                    "AppStore",
-                    "Auth state updated: token=${state.token}, loading=${state.loading}"
-                )
 
                 if (state.token != null && !state.loading) {
                     _token.value = state.token
@@ -67,7 +63,8 @@ class AppStore(
     fun loadSessions() = viewModelScope.launch {
         try {
             val newSessions = sessionRepo.getSessions()
-            _sessions.value = newSessions
+
+            setSession(newSessions)
         } catch (e: Exception) {
             Log.e("AppStore", "loadSessions failed", e)
         }
@@ -92,8 +89,8 @@ class AppStore(
     }
 
     // --- Sessions ---
-    fun setSession(session: List<Session>) {
-        _sessions.value = session
+    fun setSession(sessions: List<Session>) {
+        _sessions.value = sessions
     }
 
     fun addSession(session: Session) {
