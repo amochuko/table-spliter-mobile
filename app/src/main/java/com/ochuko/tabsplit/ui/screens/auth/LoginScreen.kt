@@ -106,32 +106,39 @@ fun LoginScreen(
                     scope.launch {
                         try {
 
-                            // Try login
-                            authStore.login(email, password)
+                            if (pendingInviteCode != null) {
+                                // Handle pending invite
+                                pendingInviteCode?.let { code ->
+                                    val joinedSession = appStore.joinSessionByInvite(code)
 
-                            // Handle pending invite
-                            pendingInviteCode?.let { code ->
-                                val joinedSession = appStore.joinSessionByInvite(code)
+                                    if (joinedSession != null) {
+                                        appStore.addSession(joinedSession)
+                                        appStore.setPendingInviteCode(null)
 
-                                if (joinedSession != null) {
-                                    appStore.addSession(joinedSession)
-                                    appStore.setPendingInviteCode(null)
+                                        // On success, trigger navigation
+                                        onLoginSuccess()
+                                        return@launch
+                                    }
+                                }
+                            } else {
+                                // Try login
+                                val result = authStore.login(email, password)
 
-                                    // On success, trigger navigation
+                                if (!result) {
+                                    Toast.makeText(
+                                        context, "Invalid email or password", Toast
+                                            .LENGTH_SHORT
+                                    ).show()
+                                } else {
                                     onLoginSuccess()
-                                    return@launch
                                 }
                             }
-
-                            appStore.loadSessions()
-                            onLoginSuccess()
-
                         } catch (e: Exception) {
                             Toast.makeText(context, "Login failed", Toast.LENGTH_SHORT).show()
                             error = "Unknown error"
+
                             Log.e("LoginError", e.message.toString())
                             e.printStackTrace()
-
                         }
                     }
                 },
