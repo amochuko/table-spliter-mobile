@@ -91,7 +91,6 @@ fun AppNavHost(navController: NavHostController, appStore: AppStore, authStore: 
                     },
                     onCreateSession = {
 //                    TODO:  log event or refresh
-                        Log.i("AppNavHost::onCreateSession", "${it}")
                     }, appStore
                 )
             }
