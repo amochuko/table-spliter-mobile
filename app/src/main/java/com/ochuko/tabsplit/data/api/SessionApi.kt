@@ -20,7 +20,7 @@ data class JoinRequest(val inviteCode: String)
 
 interface SessionApi {
     @GET("/sessions")
-    suspend fun getSessions(): Response<List<Session>>
+    suspend fun getSessions(): Response<SessionsResponse>
 
     @GET("/sessions/{id}")
     suspend fun getSession(@Path("id") id: String): Response<Session>
