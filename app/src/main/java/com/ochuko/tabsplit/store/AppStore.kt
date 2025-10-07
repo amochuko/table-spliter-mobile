@@ -25,8 +25,6 @@ class AppStore(
 
     // APIs
     private val sessionApi = ApiClient.create<SessionApi>(token = authStore.getToken(), BASE_URL)
-
-    // Repo
     private val sessionRepo = SessionRepository(sessionApi)
 
     // -- State
