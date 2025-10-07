@@ -21,6 +21,8 @@ import kotlinx.coroutines.launch
 import  android.util.Log
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun WalletDialog(
@@ -35,6 +37,15 @@ fun WalletDialog(
 
     var zaddr by remember { mutableStateOf(user?.zaddr ?: "") }
     var saving by remember { mutableStateOf(false) }
+    var validationError by remember { mutableStateOf<String?>(null) }
+
+    fun isValidaZAddress(addr: String): Boolean {
+        val normalized = addr.trim()
+        val isSapling = normalized.startsWith("zs1") && normalized.length in 76..78
+        val isOrchard = normalized.startsWith("u1") && normalized.length in 78..88
+
+        return isSapling || isOrchard
+    }
 
     AlertDialog(
         title = { Text("Wallet Address") },
@@ -49,10 +60,27 @@ fun WalletDialog(
 
                 OutlinedTextField(
                     value = zaddr,
-                    onValueChange = { zaddr = it },
+                    onValueChange = {
+                        zaddr = it.trim()
+                        validationError = when {
+                            zaddr.isBlank() -> null
+                            isValidaZAddress(zaddr) -> null
+                            else -> "Invalid Zcash address. Must be Sapling (za...) " +
+                                    "or Orchard (u1...)"
+                        }
+                    },
                     label = { Text("ZADDR") },
                     modifier = Modifier.fillMaxWidth()
                 )
+
+                if (validationError != null) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = validationError ?: "",
+                        color = Color.Red,
+                        fontSize = 12.sp
+                    )
+                }
             }
         },
         onDismissRequest = { onDismiss() },
@@ -76,32 +104,37 @@ fun WalletDialog(
                         }
 
                         saving = false
+
                         if (ok) {
                             // update local store
                             // save zaddr
                             val currentToken = authStore.getToken()
                             val updatedUser = user?.copy(zaddr = zaddr)
+
                             if (updatedUser != null) {
-
                                 authStore.setUser(updatedUser, currentToken)
-                            } else {
-
                             }
 
                             Toast.makeText(ctx, "Wallet updated", Toast.LENGTH_SHORT).show()
                             onDismiss()
                         } else {
 
-                            Toast.makeText(ctx, "Wallet save failed. Try again", Toast.LENGTH_SHORT)
-                                .show()
+                            Toast.makeText(
+                                ctx,
+                                "Wallet save failed. Try again",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
 
                 },
-                enabled = !saving
+                enabled = !saving && validationError == null && zaddr.isNotBlank()
             ) {
                 if (saving) {
-                    CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        strokeWidth = 2.dp
+                    )
                 } else {
                     Text("Save")
                 }
