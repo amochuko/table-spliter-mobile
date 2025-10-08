@@ -127,8 +127,16 @@ class AppStore(
         }
     }
 
-    fun fetchSession(sessionId: String) = viewModelScope.launch {
-        // TODO: fetch single session details
+    suspend fun fetchSession(sessionId: String): Session? {
+        return try {
+            val session = sessionRepo.getSession(sessionId)
+
+            session?.also { it }
+
+        } catch (e: Exception) {
+            Log.e("AppStore", "joinSession failed", e)
+            null
+        }
     }
 
 
