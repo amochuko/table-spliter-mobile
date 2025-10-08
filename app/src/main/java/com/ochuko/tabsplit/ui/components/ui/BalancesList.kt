@@ -52,7 +52,7 @@ fun BalancesList(
             ) {
                 Text(
                     text = when {
-                        !p.username.isNotEmpty() -> p.username
+                        !p.username.isNullOrEmpty() -> p.username
                         !p.userId.isNullOrEmpty() -> shortString(p.userId)
                         else -> "Unnamed"
                     },
