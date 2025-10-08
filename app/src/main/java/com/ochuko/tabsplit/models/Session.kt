@@ -21,6 +21,6 @@ data class Session(
     @SerializedName("created_by")
     val createdBy: String,
 
-    @SerializedName("created_at:")
+    @SerializedName("created_at")
     val createdAt: Date
 )
