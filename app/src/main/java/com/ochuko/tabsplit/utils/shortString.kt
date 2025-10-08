@@ -1,9 +1,7 @@
 package com.ochuko.tabsplit.utils
 
-fun shortString(id: String?): String {
-    return if (id.isNullOrBlank()) {
-        ""
-    } else {
-        "${id.take(6)}...${id.takeLast(6)}"
-    }
+fun shortString(addr: String, prefix: Int = 8, suffix: Int = 6): String {
+    return if (addr.length > prefix + suffix) {
+        "${addr.take(prefix)}...${addr.takeLast(suffix)}"
+    } else addr
 }

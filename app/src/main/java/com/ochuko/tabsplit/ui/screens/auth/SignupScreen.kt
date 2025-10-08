@@ -13,11 +13,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.ochuko.tabsplit.store.AppStore
+import com.ochuko.tabsplit.store.AuthStore
 import kotlinx.coroutines.launch
-import com.ochuko.tabsplit.store.AuthViewModel
 import com.ochuko.tabsplit.ui.navigation.Screen
 
 
@@ -26,8 +25,8 @@ fun SignupScreen(
     navController: NavHostController,
     onSignupSuccess: () -> Unit,
     onLoginClick: () -> Unit,
-    authViewModel: AuthViewModel = viewModel(),
-    appStore: AppStore = viewModel()
+    authStore: AuthStore,
+    appStore: AppStore
 ) {
 
     val context = LocalContext.current
@@ -37,12 +36,12 @@ fun SignupScreen(
     var password by remember { mutableStateOf("") }
     var error by remember { mutableStateOf("") }
 
-    val token by authViewModel.token.collectAsState()
+    val authState by authStore.authState.collectAsState()
     val pendingInviteCode by appStore.pendingInviteCode.collectAsState()
 
     // Redirect if already signed up/logged in
-    LaunchedEffect(token) {
-        if (!token.isNullOrEmpty()) {
+    LaunchedEffect(authState.token) {
+        if (!authState.token.isNullOrEmpty()) {
             onSignupSuccess()
         }
     }
@@ -50,12 +49,10 @@ fun SignupScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp),
-        contentAlignment = Alignment.Center
+            .padding(20.dp), contentAlignment = Alignment.Center
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
+            horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()
         ) {
             Text(
                 "Sign up",
@@ -96,16 +93,7 @@ fun SignupScreen(
                     scope.launch {
                         try {
                             // Try signup
-                            val res = authViewModel.register(email, password)?.let { (user,
-                                                                                         token) ->
-
-                                appStore.setUser(user, token)
-                            } ?: run {
-                                error = "Signup failed!"
-
-                                return@launch
-                            }
-
+                            authStore.signup(email, password)
 
                             // Handle invite if exist
                             pendingInviteCode?.let { code ->
@@ -117,7 +105,6 @@ fun SignupScreen(
                                 }
                             }
 
-//                            onSignupSuccess()
                             // Navigate **directly** after successful signup
                             navController.navigate(Screen.Sessions.route) {
                                 popUpTo(Screen.Signup.route) { inclusive = true }
@@ -131,8 +118,7 @@ fun SignupScreen(
                             Toast.makeText(context, "Signup failed", Toast.LENGTH_SHORT).show()
                         }
                     }
-                },
-                modifier = Modifier.fillMaxWidth()
+                }, modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Sign up")
             }
@@ -141,17 +127,13 @@ fun SignupScreen(
 
             Text(
 
-                "Already got an account? Login",
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    color = MaterialTheme
-                        .colorScheme.primary
-                ),
-                modifier = Modifier
+                "Already got an account? Login", style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.primary
+                ), modifier = Modifier
                     .padding(top = 8.dp)
                     .clickable {
                         onLoginClick()
-                    }
-            )
+                    })
         }
     }
 }

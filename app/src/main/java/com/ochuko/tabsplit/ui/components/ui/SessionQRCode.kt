@@ -115,12 +115,6 @@ fun generateQrCode(text: String): Bitmap? = try {
     null
 }
 
-// Copy to clipboard
-fun copyToClipboard(context: Context, clipboardManager: ClipboardManager, text: String) {
-    clipboardManager.setPrimaryClip(ClipData.newPlainText("Invite Link", text))
-    Toast.makeText(context, "Invite link copied!", Toast.LENGTH_SHORT).show()
-}
-
 // Overload to use Compose LocalClipboardManager
 fun copyToClipboard(context: Context, clipboardManager: androidx.compose.ui.platform.ClipboardManager, text: String) {
     clipboardManager.setText(AnnotatedString(text))

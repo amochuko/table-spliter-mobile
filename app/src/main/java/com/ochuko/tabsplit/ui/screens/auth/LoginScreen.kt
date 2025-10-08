@@ -28,16 +28,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ochuko.tabsplit.store.AppStore
-import com.ochuko.tabsplit.store.AuthViewModel
+import com.ochuko.tabsplit.store.AuthStore
 import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onSignupClick: () -> Unit,
-    authViewModel: AuthViewModel = viewModel(),
+    authStore: AuthStore,
     appStore: AppStore
 ) {
     val scope = rememberCoroutineScope()
@@ -95,42 +94,51 @@ fun LoginScreen(
 
             Button(
                 onClick = {
+                    if (email.isBlank() || password.isBlank()) {
+                        Toast.makeText(
+                            context, "Email and password required", Toast
+                                .LENGTH_SHORT
+                        ).show()
+
+                        return@Button
+                    }
+
                     scope.launch {
                         try {
 
-                            // Try login
-                            val res = authViewModel.login(email, password)?.let { (user, token) ->
-                                appStore.setUser(user, token)
+                            if (pendingInviteCode != null) {
+                                // Handle pending invite
+                                pendingInviteCode?.let { code ->
+                                    val joinedSession = appStore.joinSessionByInvite(code)
 
-                            } ?: run {
-                                error = "Invalid credentials"
+                                    if (joinedSession != null) {
+                                        appStore.addSession(joinedSession)
+                                        appStore.setPendingInviteCode(null)
 
-                                return@launch
-                            }
+                                        // On success, trigger navigation
+                                        onLoginSuccess()
+                                        return@launch
+                                    }
+                                }
+                            } else {
+                                // Try login
+                                val result = authStore.login(email, password)
 
-                            // Handle pending invite
-                            pendingInviteCode?.let { code ->
-                                val joinedSession = appStore.joinSessionByInvite(code)
-
-                                if (joinedSession != null) {
-                                    appStore.addSession(joinedSession)
-                                    appStore.setPendingInviteCode(null)
-
-                                    // On success, trigger navigation
+                                if (!result) {
+                                    Toast.makeText(
+                                        context, "Invalid email or password", Toast
+                                            .LENGTH_SHORT
+                                    ).show()
+                                } else {
                                     onLoginSuccess()
-                                    return@launch
                                 }
                             }
-
-                            appStore.loadSessions()
-                            onLoginSuccess()
-
                         } catch (e: Exception) {
                             Toast.makeText(context, "Login failed", Toast.LENGTH_SHORT).show()
                             error = "Unknown error"
+
                             Log.e("LoginError", e.message.toString())
                             e.printStackTrace()
-
                         }
                     }
                 },

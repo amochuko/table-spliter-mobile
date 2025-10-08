@@ -8,20 +8,23 @@ import com.ochuko.tabsplit.models.Session
 class SessionRepository(private val api: SessionApi) {
 
     suspend fun getSessions(): List<Session> {
-        val response = api.getSessions()
+        val res = api.getSessions()
 
-        if (response.isSuccessful) return response.body() ?: emptyList()
-        throw Exception("Failed to fetch sessions: ${response.code()}")
+        if (res.isSuccessful) return res.body()?.sessions ?: emptyList()
+
+        throw Exception("Failed to fetch sessions: ${res.code()} -> ${res.errorBody()}")
     }
 
     suspend fun getSession(id: String): Session? {
         val res = api.getSession(id)
-        return if (res.isSuccessful) res.body() else null
+        return if (res.isSuccessful) res.body()?.session else null
     }
 
     suspend fun createSession(req: SessionRequest): Session? {
+
         val res = api.createSession(req)
-        return if (res.isSuccessful) res.body() else null
+
+        return if (res.isSuccessful) res.body()?.session else null
     }
 
     suspend fun joinByInvite(code: String): Session? {

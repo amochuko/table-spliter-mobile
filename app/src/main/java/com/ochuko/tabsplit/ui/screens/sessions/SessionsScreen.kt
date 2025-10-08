@@ -26,7 +26,6 @@ fun SessionsScreen(
     val sessions by appStore.sessions.collectAsState()
     var showCreateModal by remember { mutableStateOf(false) }
 
-    // Redirect to Login if not authenticated
     LaunchedEffect(Unit) {
         appStore.loadSessions()
     }
@@ -36,15 +35,17 @@ fun SessionsScreen(
             .fillMaxSize()
             .padding(32.dp)
     ) {
+
         Text("Welcome to TableSplit!", fontSize = 20.sp)
 
-        if (sessions.isNotEmpty() && sessions.size > 0) {
+        if (sessions.isNotEmpty()) {
             sessions.forEach { s ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            // navigate to session detail
+                            // navigate to session details
+                            onSessionClick(s.id)
                         }) {
                     Text(s.title, modifier = Modifier.padding(12.dp))
                 }
@@ -66,7 +67,9 @@ fun SessionsScreen(
                 onSessionCreated = { newSession ->
                     showCreateModal = false
                     onCreateSession(newSession)
+
                     onSessionClick(newSession.id)
+                    appStore.loadSessions()
                 }
             )
         }

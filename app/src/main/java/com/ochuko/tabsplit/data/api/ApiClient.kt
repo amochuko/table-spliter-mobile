@@ -3,43 +3,62 @@ package com.ochuko.tabsplit.data.api
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
-import android.content.Context
-import com.ochuko.tabsplit.BuildConfig
-import com.ochuko.tabsplit.store.AuthStore
-import okhttp3.Interceptor
-import kotlinx.coroutines.runBlocking
+import android.util.Log
 
 
 object ApiClient {
+    @Volatile
     private var retrofit: Retrofit? = null
 
-    fun getRetrofit(context: Context, baseUrl: String = BuildConfig.API_BASE_URL): Retrofit {
-        if (retrofit == null) {
-            val authStore = AuthStore(context) // replace with your actual AuthStore
+    @Volatile
+    private var lastToken: String? = null
 
-            val client = OkHttpClient.Builder()
-                .addInterceptor(Interceptor { chain ->
-                    val reqBuilder = chain.request().newBuilder()
-                    val token = runBlocking { authStore.getToken() }
+    private fun buildClient(token: String?): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val reqBuilder = chain.request().newBuilder()
 
-                    if (!token.isNullOrEmpty()) {
-                        reqBuilder.addHeader("Authorization", "Bearer $token")
-                    }
-                    chain.proceed(reqBuilder.build())
-                }).build()
+                if (!token.isNullOrEmpty()) {
+                    reqBuilder.addHeader("Authorization", "Bearer $token")
+                }
 
-            retrofit = Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
+                chain.proceed(reqBuilder.build())
+            }.build()
+    }
+
+    private fun buildRetrofit(token: String?, baseUrl: String): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(buildClient(token))
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    fun getRetrofit(token: String?, baseUrl: String): Retrofit {
+
+        // If token changed or retrofit never built, rebuild Retrofit
+        if (retrofit == null || token != lastToken) {
+            synchronized(this) {
+                if (retrofit == null || token != lastToken) {
+                    lastToken = token
+                    retrofit = buildRetrofit(token, baseUrl)
+
+                    Log.d(
+                        "ApiClient",
+                        "Retrofit rebuilt (token updated = ${!token.isNullOrEmpty()}"
+                    )
+                }
+            }
         }
+
         return retrofit!!
     }
 
     // Generic helper to create any API service
-    inline fun <reified T> create(context: Context, baseUrl: String): T {
-        return getRetrofit(context, baseUrl).create(T::class.java)
+    inline fun <reified T> create(
+        token: String? = null,
+        baseUrl: String
+    ): T {
+        return getRetrofit(token, baseUrl).create(T::class.java)
     }
 }

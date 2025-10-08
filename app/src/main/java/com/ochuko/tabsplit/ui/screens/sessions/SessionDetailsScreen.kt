@@ -1,5 +1,6 @@
 package com.ochuko.tabsplit.ui.screens.sessions
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -20,6 +21,7 @@ import com.ochuko.tabsplit.ui.components.ui.SessionQRCode
 import com.ochuko.tabsplit.ui.components.ui.ZcashIntegration
 import androidx.compose.material3.*
 import com.ochuko.tabsplit.utils.calculateBalances
+import java.util.Locale
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,8 +51,10 @@ fun SessionDetailsScreen(
     // Update invite URL and recipient address whenever sessions or user changes
     LaunchedEffect(sessions, user) {
         sessions.find { it.id == sessionId }?.let { session ->
-            inviteUrl = session.inviteCode
+            inviteUrl = session.inviteUrl
             recipientAddress = user?.zaddr.orEmpty()
+
+            Log.d("SessionDetails", session.inviteUrl.toString())
         }
     }
 
@@ -67,7 +71,7 @@ fun SessionDetailsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(sessionTitle) },
+                title = { Text(sessionTitle.capitalize(Locale.ENGLISH)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")

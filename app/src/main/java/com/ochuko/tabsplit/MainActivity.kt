@@ -18,6 +18,7 @@ import com.ochuko.tabsplit.store.AppStore
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.ochuko.tabsplit.store.AuthStore
 import com.ochuko.tabsplit.ui.navigation.AppNavHost
 import com.ochuko.tabsplit.ui.navigation.Screen
 
@@ -34,6 +35,7 @@ class MainActivity : ComponentActivity() {
 
                 // Shared AppStore instance
                 val appStore: AppStore = viewModel()
+                val authStore: AuthStore = viewModel()
 
                 // Collect toke state
                 val token by appStore.token.collectAsState(initial = null)
@@ -49,7 +51,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 if (startDestination != null) {
-                    AppNavHost(navController, appStore)
+                    AppNavHost(navController, appStore, authStore = authStore)
                 } else {
                     // Loading screen
                     Box(
