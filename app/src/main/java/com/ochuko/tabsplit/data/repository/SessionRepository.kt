@@ -3,11 +3,8 @@ package com.ochuko.tabsplit.data.repository
 import com.ochuko.tabsplit.data.api.JoinRequest
 import com.ochuko.tabsplit.data.api.SessionRequest
 import com.ochuko.tabsplit.data.api.SessionApi
-import com.ochuko.tabsplit.data.api.SessionOwner
 import com.ochuko.tabsplit.data.api.SessionOwnerResponse
-import com.ochuko.tabsplit.models.Participant
 import com.ochuko.tabsplit.models.Session
-import android.util.Log
 
 class SessionRepository(private val api: SessionApi) {
 
@@ -34,10 +31,5 @@ class SessionRepository(private val api: SessionApi) {
     suspend fun joinByInvite(code: String): Session? {
         val res = api.joinByInvite(JoinRequest(code))
         return if (res.isSuccessful) res.body() else null
-    }
-
-    suspend fun getParticipants(sessionId: String): List<Participant> {
-        val res = api.getParticipants(sessionId)
-        return if (res.isSuccessful) res.body()?.participants ?: emptyList() else emptyList()
     }
 }
