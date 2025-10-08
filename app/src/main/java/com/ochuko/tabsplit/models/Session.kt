@@ -8,11 +8,15 @@ data class Session(
     val title: String,
     val description: String,
     val currency: String,
-    val qrDatatUrl: String? = null,
-    val inviteUrl: String? = null,
 
     @SerializedName("invite_code")
     val inviteCode: String? = null,
+
+    @SerializedName("qr_data_url")
+    val qrDataUrl: String? = null,
+
+    @SerializedName("invite_url")
+    val inviteUrl: String? = null,
 
     @SerializedName("created_by")
     val createdBy: String,
