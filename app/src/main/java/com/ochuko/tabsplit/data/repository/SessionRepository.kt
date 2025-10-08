@@ -1,6 +1,5 @@
 package com.ochuko.tabsplit.data.repository
 
-import android.util.Log
 import com.ochuko.tabsplit.data.api.JoinRequest
 import com.ochuko.tabsplit.data.api.SessionRequest
 import com.ochuko.tabsplit.data.api.SessionApi
@@ -13,12 +12,12 @@ class SessionRepository(private val api: SessionApi) {
 
         if (res.isSuccessful) return res.body()?.sessions ?: emptyList()
 
-        throw Exception("Failed to fetch sessions: ${res.code()}")
+        throw Exception("Failed to fetch sessions: ${res.code()} -> ${res.errorBody()}")
     }
 
     suspend fun getSession(id: String): Session? {
         val res = api.getSession(id)
-        return if (res.isSuccessful) res.body() else null
+        return if (res.isSuccessful) res.body()?.session else null
     }
 
     suspend fun createSession(req: SessionRequest): Session? {
