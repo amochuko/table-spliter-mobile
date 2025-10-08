@@ -20,6 +20,8 @@ import com.ochuko.tabsplit.ui.components.ui.BalancesList
 import com.ochuko.tabsplit.ui.components.ui.SessionQRCode
 import com.ochuko.tabsplit.ui.components.ui.ZcashIntegration
 import androidx.compose.material3.*
+import com.ochuko.tabsplit.data.api.SessionWithOwner
+import com.ochuko.tabsplit.models.Session
 import com.ochuko.tabsplit.utils.calculateBalances
 import java.util.Locale
 
@@ -37,6 +39,8 @@ fun SessionDetailsScreen(
     val participants by appStore.participants.collectAsState()
     val expenses by appStore.expenses.collectAsState()
 
+    var session by remember { mutableStateOf<SessionWithOwner?>(null) }
+
     // UI local state
     var showZcash by remember { mutableStateOf(false) }
     var showAddExpense by remember { mutableStateOf(false) }
@@ -45,23 +49,21 @@ fun SessionDetailsScreen(
 
     // Fetch session details when screen is opened
     LaunchedEffect(sessionId) {
-        appStore.fetchSession(sessionId)
+        val result = appStore.fetchSession(sessionId)
+        session = result?.session
     }
 
     // Update invite URL and recipient address whenever sessions or user changes
-    LaunchedEffect(sessions, user) {
-        sessions.find { it.id == sessionId }?.let { session ->
-            inviteUrl = session.inviteUrl
-            recipientAddress = user?.zaddr.orEmpty()
+    LaunchedEffect(sessions, session?.owner?.zaddr) {
+        recipientAddress = session?.owner?.zaddr.orEmpty()
 
-            Log.d("SessionDetails", session.inviteUrl.toString())
+        sessions.find { it.id == sessionId }?.let { s ->
+            inviteUrl = s.inviteUrl
         }
     }
 
     val sessionTitle = sessions.find { it.id == sessionId }?.title ?: "Session not found"
-
     val scrollState = rememberScrollState()
-
 
     // Compute balances
     val balances = remember(sessionId, participants, expenses) {
