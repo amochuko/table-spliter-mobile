@@ -13,6 +13,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ochuko.tabsplit.models.Expense
 import com.ochuko.tabsplit.store.AppStore
+import kotlinx.coroutines.launch
+import android.util.Log
 
 @Composable
 fun AddExpenseDialog(
@@ -24,6 +26,8 @@ fun AddExpenseDialog(
     var memo by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
     var submit by remember { mutableStateOf(false) }
+
+    val scope = rememberCoroutineScope()
 
     AlertDialog(
         onDismissRequest = { onClose() },
@@ -72,18 +76,25 @@ fun AddExpenseDialog(
                 if (memo.isBlank() || amount.isBlank()) {
                     Toast.makeText(context, "Memo and amount required!", Toast.LENGTH_SHORT).show()
                 } else {
-                    // Call your store
-                    appStore.addExpense(
-                        sessionId,
-                        Expense(
-                            "",
-                            sessionId,
-                            memo,
-                            amount.toDouble(),
-                            appStore.user.toString()
-                        )
-                    )
-                    onClose()
+                    scope.launch {
+                        try {
+                            // Call your store
+                            appStore.addExpense(
+                                sessionId,
+                                memo,
+                                amount.toDouble(),
+                            )
+
+                            onClose()
+
+                        } catch (e: Exception) {
+                            Log.e("AddExpense", "Failed to add expense", e)
+
+                            Toast.makeText(context, "Failed to add expense", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    }
+
                 }
             }) {
                 Text("Save")
