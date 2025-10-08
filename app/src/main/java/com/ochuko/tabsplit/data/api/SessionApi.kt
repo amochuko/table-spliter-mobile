@@ -23,7 +23,7 @@ interface SessionApi {
     suspend fun getSessions(): Response<SessionsResponse>
 
     @GET("/sessions/{id}")
-    suspend fun getSession(@Path("id") id: String): Response<Session>
+    suspend fun getSession(@Path("id") id: String): Response<SessionResponse>
 
     @POST("/sessions")
     suspend fun createSession(@Body body: SessionRequest): Response<SessionResponse>
