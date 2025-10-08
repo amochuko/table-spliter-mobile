@@ -72,13 +72,24 @@ class AppStore(
         _pendingInviteCode.value = code
     }
 
-    fun addExpense(sessionId: String, expense: Expense) {
-        Log.d("AppStore:addExpense", "$sessionId $expense")
+    suspend fun addExpense(sessionId: String, memo: String, amount: Double) {
 
-        val current = _expenses.value.toMutableMap()
-        val updatedList = current[sessionId].orEmpty() + expense
-        current[sessionId] = updatedList
-        _expenses.value = current
+        try {
+            val res = sessionRepo.addExpenses(sessionId, AddExpenseRequest(memo, amount))
+
+            res?.let { it ->
+                val key = it.sessionId
+                val current = _expenses.value.toMutableMap()
+
+                val updatedList = current[key].orEmpty() + it.expenses
+                current[key] = updatedList
+
+                _expenses.value = current
+                Log.d("AppStore:addExpense", "After update: ${_expenses.value}")
+            }
+        } catch (e: Exception) {
+            Log.e("AppStore:addExpense", "Failed adding expenses.", e)
+        }
     }
 
     fun deleteExpense(sessionId: String, expenseId: String) {
