@@ -6,7 +6,7 @@ import com.ochuko.tabsplit.models.Participant
 import com.ochuko.tabsplit.models.Session
 import retrofit2.Response
 import retrofit2.http.*
-
+import com.ochuko.tabsplit.models.AddExpenseRequest
 
 data class SessionsResponse(
     val sessions: List<Session>?
@@ -43,8 +43,10 @@ data class SessionResponse(
     val session: Session
 )
 
-data class SessionParticipantsResponse(
-    val participants: List<Participant>?
+data class AddExpenseResponse(
+    val sessionId: String,
+    val participants: List<Participant>,
+    val expenses: List<Expense>
 )
 
 data class SessionRequest(val title: String, val description: String?)
@@ -58,13 +60,13 @@ interface SessionApi {
     @GET("/sessions/{id}")
     suspend fun getSession(@Path("id") id: String): Response<SessionOwnerResponse>
 
-    @GET("/sessions/{sessionId}/participants")
-    suspend fun getParticipants(@Path("sessionId") sessionId: String): Response<SessionParticipantsResponse>
-
     @POST("/sessions")
     suspend fun createSession(@Body body: SessionRequest): Response<SessionResponse>
 
     @POST("/sessions/join")
     suspend fun joinByInvite(@Body body: JoinRequest): Response<Session>
 
+    @POST("/sessions/{id}/expenses")
+    suspend fun addExpenses(@Path("id") id: String, @Body body: AddExpenseRequest):
+            Response<AddExpenseResponse>
 }
