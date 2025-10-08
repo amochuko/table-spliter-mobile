@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import androidx.lifecycle.AndroidViewModel
 import com.ochuko.tabsplit.utils.Config
 import com.ochuko.tabsplit.data.api.SessionApi
+import com.ochuko.tabsplit.data.api.SessionOwnerResponse
 import com.ochuko.tabsplit.data.api.SessionRequest
 import com.ochuko.tabsplit.data.repository.SessionRepository
 
@@ -50,11 +51,8 @@ class AppStore(
     init {
         viewModelScope.launch {
             authStore.authState.collect { state ->
-
                 if (state.token != null && !state.loading) {
                     _token.value = state.token
-
-                    loadSessions()
                 }
             }
         }
@@ -75,6 +73,8 @@ class AppStore(
     }
 
     fun addExpense(sessionId: String, expense: Expense) {
+        Log.d("AppStore:addExpense", "$sessionId $expense")
+
         val current = _expenses.value.toMutableMap()
         val updatedList = current[sessionId].orEmpty() + expense
         current[sessionId] = updatedList
@@ -127,17 +127,24 @@ class AppStore(
         }
     }
 
-    suspend fun fetchSession(sessionId: String): Session? {
+    suspend fun fetchSession(sessionId: String): SessionOwnerResponse? {
         return try {
             val session = sessionRepo.getSession(sessionId)
 
-            session?.also { it }
+            session?.also { it ->
+                _participants.value = _participants.value.toMutableMap().apply {
+                    put(sessionId, it.participants)
+                }
+
+                _expenses.value = _expenses.value.toMutableMap().apply {
+                    put(sessionId, it.expenses)
+                }
+
+            }
 
         } catch (e: Exception) {
-            Log.e("AppStore", "joinSession failed", e)
+            Log.e("AppStore", "fetchSession failed", e)
             null
         }
     }
-
-
 }
