@@ -21,13 +21,17 @@ import androidx.compose.ui.Modifier
 import com.ochuko.tabsplit.store.AuthStore
 import com.ochuko.tabsplit.ui.navigation.AppNavHost
 import com.ochuko.tabsplit.ui.navigation.Screen
-
+import android.util.Log
 
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // handle deep link
+        val deepLink = intent?.data
+        val joinCode = deepLink?.lastPathSegment
 
         setContent {
             TabSplitTheme {
@@ -41,6 +45,9 @@ class MainActivity : ComponentActivity() {
                 val token by appStore.token.collectAsState(initial = null)
                 var startDestination by remember { mutableStateOf<String?>(null) }
 
+
+                Log.d("MainActivity", "Deep link: $deepLink | joinCode: $joinCode")
+
                 // Wait until appStore finishes loading
                 LaunchedEffect(token) {
                     startDestination = if (token.isNullOrEmpty()) {
@@ -52,6 +59,13 @@ class MainActivity : ComponentActivity() {
 
                 if (startDestination != null) {
                     AppNavHost(navController, appStore, authStore = authStore)
+
+                    LaunchedEffect(joinCode) {
+                        if (!joinCode.isNullOrEmpty()) {
+                            // go to join screen
+                            navController.navigate("${Screen.Join.route}/$joinCode")
+                        }
+                    }
                 } else {
                     // Loading screen
                     Box(
