@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -60,7 +62,7 @@ fun LoginScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                "Login",
+                stringResource(R.string.login_label_txt),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
@@ -137,8 +139,10 @@ fun LoginScreen(
                                 }
                             }
                         } catch (e: Exception) {
-                            Toast.makeText(context,
-                                context.getString(R.string.login_failed_txt), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.login_failed_txt), Toast.LENGTH_SHORT
+                            ).show()
                             error = "Unknown error"
 
                             Log.e("LoginError", e.message.toString())
@@ -153,15 +157,26 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                "Don’t have an account? Sign up",
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    color = MaterialTheme.colorScheme.primary
-                ),
-                modifier = Modifier
-                    .padding(top = 8.dp)
-                    .clickable { onSignupClick() }
-            )
+            Row(modifier = Modifier.padding(top = 8.dp)) {
+                Text(
+                    stringResource(R.string.don_t_have_an_account_txt),
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.primary
+                    ),
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                )
+
+                Text(
+                    stringResource(R.string.sign_up_txt),
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.primary
+                    ),
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .clickable { onSignupClick() }
+                )
+            }
         }
     }
 }
