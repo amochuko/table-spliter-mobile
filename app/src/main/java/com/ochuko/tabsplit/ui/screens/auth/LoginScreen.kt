@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.ochuko.tabsplit.R
 import com.ochuko.tabsplit.store.AppStore
 import com.ochuko.tabsplit.store.AuthStore
 import kotlinx.coroutines.launch
@@ -96,7 +97,7 @@ fun LoginScreen(
                 onClick = {
                     if (email.isBlank() || password.isBlank()) {
                         Toast.makeText(
-                            context, "Email and password required", Toast
+                            context, context.getString(R.string.email_and_password_required), Toast
                                 .LENGTH_SHORT
                         ).show()
 
@@ -126,7 +127,9 @@ fun LoginScreen(
 
                                 if (!result) {
                                     Toast.makeText(
-                                        context, "Invalid email or password", Toast
+                                        context,
+                                        context.getString(R.string.invalid_email_or_password_txt),
+                                        Toast
                                             .LENGTH_SHORT
                                     ).show()
                                 } else {
@@ -134,7 +137,8 @@ fun LoginScreen(
                                 }
                             }
                         } catch (e: Exception) {
-                            Toast.makeText(context, "Login failed", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context,
+                                context.getString(R.string.login_failed_txt), Toast.LENGTH_SHORT).show()
                             error = "Unknown error"
 
                             Log.e("LoginError", e.message.toString())
