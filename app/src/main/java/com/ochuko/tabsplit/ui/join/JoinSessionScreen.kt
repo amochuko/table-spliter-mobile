@@ -8,11 +8,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Text
-import com.ochuko.tabsplit.store.AppStore
+import com.ochuko.tabsplit.viewModels.AppStore
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ochuko.tabsplit.models.Session
-import com.ochuko.tabsplit.store.AuthStore
+import com.ochuko.tabsplit.data.model.Session
+import com.ochuko.tabsplit.ui.auth.AuthViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -22,12 +22,12 @@ fun JoinSessionScreen(
     onJoinSuccess: (Session) -> Unit,
     onJoinFailed: () -> Unit,
     inviteCode: String,
-    authStore: AuthStore = viewModel(),
+    authViewModel: AuthViewModel = viewModel(),
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val authState by authStore.authState.collectAsState()
+    val authState by authViewModel.authState.collectAsState()
 
     LaunchedEffect(inviteCode, authState.token) {
         if (inviteCode.isBlank()) return@LaunchedEffect

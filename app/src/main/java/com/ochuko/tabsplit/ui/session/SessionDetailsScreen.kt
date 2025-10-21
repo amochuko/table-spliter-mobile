@@ -1,6 +1,5 @@
 package com.ochuko.tabsplit.ui.screens.sessions
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -14,14 +13,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.ochuko.tabsplit.store.AppStore
+import com.ochuko.tabsplit.viewModels.AppStore
 import com.ochuko.tabsplit.ui.components.ui.AddExpenseDialog
 import com.ochuko.tabsplit.ui.components.ui.BalancesList
 import com.ochuko.tabsplit.ui.components.ui.SessionQRCode
 import com.ochuko.tabsplit.ui.components.ui.ZcashIntegration
 import androidx.compose.material3.*
 import com.ochuko.tabsplit.data.api.SessionWithOwner
-import com.ochuko.tabsplit.models.Session
 import com.ochuko.tabsplit.utils.calculateBalances
 import java.util.Locale
 

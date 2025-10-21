@@ -22,10 +22,10 @@ class AppStore(
     app: Application
 ) : AndroidViewModel(app) {
 
-    private val authStore = AuthStore(app)
+    private val authViewModel = AuthViewModel(app)
 
     // APIs
-    private val sessionApi = ApiClient.create<SessionApi>(token = authStore.getToken(), BASE_URL)
+    private val sessionApi = ApiClient.create<SessionApi>(token = authViewModel.getToken(), BASE_URL)
     private val sessionRepo = SessionRepository(sessionApi)
 
     // -- State
@@ -50,7 +50,7 @@ class AppStore(
 
     init {
         viewModelScope.launch {
-            authStore.authState.collect { state ->
+            authViewModel.authState.collect { state ->
                 if (state.token != null && !state.loading) {
                     _token.value = state.token
                 }

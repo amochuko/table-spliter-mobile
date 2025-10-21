@@ -11,8 +11,8 @@ import androidx.compose.ui.unit.sp
 import com.ochuko.tabsplit.ui.components.ui.SessionModal
 import androidx.compose.material3.Text
 import androidx.compose.material3.Button
-import com.ochuko.tabsplit.models.Session
-import com.ochuko.tabsplit.store.AppStore
+import com.ochuko.tabsplit.data.model.Session
+import com.ochuko.tabsplit.viewModels.AppStore
 
 
 @Composable

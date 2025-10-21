@@ -14,8 +14,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.ochuko.tabsplit.store.AppStore
-import com.ochuko.tabsplit.store.AuthStore
+import com.ochuko.tabsplit.viewModels.AppStore
+import com.ochuko.tabsplit.ui.auth.AuthViewModel
 import kotlinx.coroutines.launch
 import com.ochuko.tabsplit.ui.navigation.Screen
 
@@ -25,7 +25,7 @@ fun SignupScreen(
     navController: NavHostController,
     onSignupSuccess: () -> Unit,
     onLoginClick: () -> Unit,
-    authStore: AuthStore,
+    authViewModel: AuthViewModel,
     appStore: AppStore
 ) {
 
@@ -36,7 +36,7 @@ fun SignupScreen(
     var password by remember { mutableStateOf("") }
     var error by remember { mutableStateOf("") }
 
-    val authState by authStore.authState.collectAsState()
+    val authState by authViewModel.authState.collectAsState()
     val pendingInviteCode by appStore.pendingInviteCode.collectAsState()
 
     // Redirect if already signed up/logged in
@@ -93,7 +93,7 @@ fun SignupScreen(
                     scope.launch {
                         try {
                             // Try signup
-                            authStore.signup(email, password)
+                            authViewModel.signup(email, password)
 
                             // Handle invite if exist
                             pendingInviteCode?.let { code ->
