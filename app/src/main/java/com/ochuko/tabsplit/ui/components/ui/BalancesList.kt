@@ -6,19 +6,19 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.ochuko.tabsplit.models.Participant
+import com.ochuko.tabsplit.data.model.Participant
 import com.ochuko.tabsplit.utils.shortString
 
 @Composable
 fun BalancesList(
-    participants: List<Participant>,
-    balances: Map<String, Double>
+    participants: List<Participant>, balances: Map<String, Double>
 ) {
     if (participants.isEmpty()) {
         Text(
@@ -55,18 +55,18 @@ fun BalancesList(
                         !p.username.isNullOrEmpty() -> p.username
                         !p.userId.isNullOrEmpty() -> shortString(p.userId)
                         else -> "Unnamed"
-                    },
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        fontWeight = FontWeight.Medium,
-                        color = Color(0xFF333333)
+                    }, style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.Medium, color = Color(0xFF333333)
                     )
                 )
 
                 Text(
-                    text = if (balance >= 0) "+%.2f".format(balance) else "%.2f".format(balance),
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        color = when {
+                    text = if (balance >= 0) {
+                        "+%.2f".format(balance)
+                    } else {
+                        "%.2f".format(balance)
+                    }, style = MaterialTheme.typography.bodyLarge.copy(
+                        fontWeight = FontWeight.SemiBold, color = when {
                             isPositive -> Color(0xFF2E7D32) // green
                             !isPositive && !isZero -> Color(0xFFC62828) // red
                             else -> Color.Unspecified
@@ -75,7 +75,7 @@ fun BalancesList(
                 )
             }
 
-            Divider(color = Color(0xFFDDDDDD), thickness = 1.dp)
+            HorizontalDivider(thickness = 1.dp, color = Color(0xFFDDDDDD))
         }
     }
 }
