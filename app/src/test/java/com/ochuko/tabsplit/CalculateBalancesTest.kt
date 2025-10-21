@@ -1,7 +1,7 @@
 package com.ochuko.tabsplit
 
-import com.ochuko.tabsplit.models.Expense
-import com.ochuko.tabsplit.models.Participant
+import com.ochuko.tabsplit.data.model.Expense
+import com.ochuko.tabsplit.data.model.Participant
 import com.ochuko.tabsplit.utils.calculateBalances
 import org.junit.Assert.*
 import org.junit.Test
@@ -26,7 +26,10 @@ class CalculateBalancesTest {
                     sessionId = sessionId,
                     payerId = "u1",
                     memo = "Dinner",
-                    amount = 90.00
+                    amount = 90.00,
+                    createdAt = "String",
+                    payerUsername = "u1",
+                    payerParticipantId = "u1"
                 )
             )
         )
@@ -58,18 +61,25 @@ class CalculateBalancesTest {
                 Expense(
                     id = "e1",
                     sessionId = sessionId,
-                    payerId = "u1",
                     memo = "Breakfast",
-                    amount = 40.00
+                    amount = 40.00,
+                    payerId = "u1",
+                    createdAt = "String",
+                    payerUsername = "u1",
+                    payerParticipantId = "u1"
                 ), // Alice paid 40
                 Expense(
                     id = "e2",
                     sessionId = sessionId,
                     payerId = "u2",
                     memo = "Lodging/Hotel",
-                    amount = 220.00
+                    amount = 220.00,
+                    createdAt = "String",
+                    payerUsername = "u2",
+                    payerParticipantId = "u2"
                 ) // Bob paid 220
             )
+
         )
 
         val balances = calculateBalances(sessionId, participants, expenses)
@@ -125,6 +135,9 @@ class CalculateBalancesTest {
                     payerId = "u1",
                     memo = "Free snack",
                     amount = 0.00,
+                    createdAt = "String",
+                    payerUsername = "u1",
+                    payerParticipantId = "u1"
                 )
             )
         )
@@ -149,6 +162,9 @@ class CalculateBalancesTest {
                     payerId = "u1",
                     memo = "Random",
                     amount = 50.00,
+                    createdAt = "String",
+                    payerUsername = "u1",
+                    payerParticipantId = "u1"
                 )
             )
         )
@@ -172,6 +188,9 @@ class CalculateBalancesTest {
                     payerId = "u1",
                     memo = "Solo lunch",
                     amount = 120.00,
+                    createdAt = "String",
+                    payerUsername = "u1",
+                    payerParticipantId = "u1"
                 )
             )
         )
