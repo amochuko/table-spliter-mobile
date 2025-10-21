@@ -1,12 +1,12 @@
 package com.ochuko.tabsplit.data.api
 
 import com.google.gson.annotations.SerializedName
-import com.ochuko.tabsplit.models.Expense
-import com.ochuko.tabsplit.models.Participant
-import com.ochuko.tabsplit.models.Session
+import com.ochuko.tabsplit.data.model.Expense
+import com.ochuko.tabsplit.data.model.Participant
+import com.ochuko.tabsplit.data.model.Session
 import retrofit2.Response
 import retrofit2.http.*
-import com.ochuko.tabsplit.models.AddExpenseRequest
+import com.ochuko.tabsplit.data.model.AddExpenseRequest
 
 data class SessionsResponse(
     val sessions: List<Session>?
@@ -18,7 +18,7 @@ data class SessionOwner(
     val zaddr: String,
 
     @SerializedName("user_id")
-    val userIdr: String,
+    val userId: String,
 )
 
 data class SessionWithOwner(
