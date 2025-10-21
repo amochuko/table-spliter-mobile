@@ -10,17 +10,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ochuko.tabsplit.models.Expense
-import com.ochuko.tabsplit.store.AppStore
 import kotlinx.coroutines.launch
 import android.util.Log
+import com.ochuko.tabsplit.ui.expense.ExpenseViewModel
 
 @Composable
 fun AddExpenseDialog(
     sessionId: String,
     onClose: () -> Unit,
-    appStore: AppStore = viewModel()
+    expensesViewModel: ExpenseViewModel
 ) {
     val context = LocalContext.current
     var memo by remember { mutableStateOf("") }
@@ -79,7 +77,7 @@ fun AddExpenseDialog(
                     scope.launch {
                         try {
                             // Call your store
-                            appStore.addExpense(
+                            expensesViewModel.addExpense(
                                 sessionId,
                                 memo,
                                 amount.toDouble(),
