@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Table top (perspective rectangle) -->
+
+    <group android:scaleX="0.75"
+        android:scaleY="0.75"
+        android:translateX="13.5"
+        android:translateY="13.5">
+        <!-- Table top -->
+        <path
+            android:fillColor="#263238"
+            android:pathData="M24,50 L84,50 L78,44 L30,44 Z" />
+
+        <!-- Left leg -->
+        <path
+            android:fillColor="#263238"
+            android:pathData="M30,50 L36,50 L36,72 L30,72 Z" />
+
+        <!-- Right leg -->
+        <path
+            android:fillColor="#263238"
+            android:pathData="M72,50 L78,50 L78,72 L72,72 Z" />
+
+        <!-- Coin -->
+        <path
+            android:fillColor="#FFD54F"
+            android:strokeColor="#263238"
+            android:strokeWidth="1.5"
+            android:pathData="M54,32 a10,10 0 1,1 0,20 a10,10 0 1,1 0,-20z" />
+
+        <!-- Adjusted Z symbol -->
+        <path
+            android:fillColor="@android:color/transparent"
+            android:strokeColor="#263238"
+            android:strokeWidth="2.5"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="miter"
+            android:pathData="M48,39 L60,39 L48,49 L60,49" />
+
+          </group>
+    </vector>
