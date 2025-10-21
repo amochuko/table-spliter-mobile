@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.ui.screens.join
+package com.ochuko.tabsplit.ui.join
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
@@ -8,49 +8,58 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Text
-import com.ochuko.tabsplit.viewModels.AppStore
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ochuko.tabsplit.data.model.Session
 import com.ochuko.tabsplit.ui.auth.AuthViewModel
+import com.ochuko.tabsplit.ui.session.SessionViewModel
+import com.ochuko.tabsplit.utils.parseIsoDate
 import kotlinx.coroutines.launch
+import java.util.Date
 
 @Composable
 fun JoinSessionScreen(
-    appStore: AppStore,
     onAuthRequired: (String) -> Unit,
     onJoinSuccess: (Session) -> Unit,
     onJoinFailed: () -> Unit,
     inviteCode: String,
     authViewModel: AuthViewModel = viewModel(),
+    sessionViewModel: SessionViewModel
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val authState by authViewModel.authState.collectAsState()
+    val authUiState by authViewModel.uiState.collectAsState()
 
-    LaunchedEffect(inviteCode, authState.token) {
+    LaunchedEffect(inviteCode, authUiState.token) {
         if (inviteCode.isBlank()) return@LaunchedEffect
 
         scope.launch {
             try {
-                if (authState.token.isNullOrEmpty()) {
+                if (authUiState.token.isNullOrEmpty()) {
                     // No token -> redirect to auth
-                    appStore.setPendingInviteCode(inviteCode)
+                    sessionViewModel.setPendingInviteCode(inviteCode)
                     onAuthRequired(inviteCode)
-
                     return@launch
                 }
 
-                val res = appStore.joinSessionByInvite(inviteCode)
-                if (res != null) {
-                    appStore.addSession(res)
-                    onJoinSuccess(res)
-                } else {
-                    Toast.makeText(context, "Unable to join session", Toast.LENGTH_SHORT).show()
-                    onJoinFailed()
-                }
+                sessionViewModel.joinSessionByInvite(inviteCode)?.let { res ->
 
+                    onJoinSuccess(
+                        Session(
+                            res.id,
+                            res.title,
+                            res.description,
+                            res.currency,
+                            res.inviteCode,
+                            res.qrDataUrl,
+                            res.inviteUrl,
+                            res.createdBy,
+                            parseIsoDate(res.createdAt) ?: Date()
+
+                        )
+                    )
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
                 Toast.makeText(context, "Unable to join session", Toast.LENGTH_SHORT).show()
