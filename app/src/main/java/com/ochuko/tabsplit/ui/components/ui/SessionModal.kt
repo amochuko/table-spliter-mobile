@@ -7,17 +7,18 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ochuko.tabsplit.models.Session
-import com.ochuko.tabsplit.store.AppStore
+import com.ochuko.tabsplit.data.model.Session
+import com.ochuko.tabsplit.ui.session.SessionViewModel
+import com.ochuko.tabsplit.utils.parseIsoDate
 import kotlinx.coroutines.launch
+import java.util.Date
 
 @Composable
 fun SessionModal(
     showCreateModal: Boolean,
     setShowCreateModal: (Boolean) -> Unit,
     onSessionCreated: (Session) -> Unit,
-    appStore: AppStore = viewModel(),
+    sessionViewModel: SessionViewModel
 ) {
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
@@ -62,7 +63,7 @@ fun SessionModal(
                             scope.launch {
 
                                 // call your AppStore createSession
-                                val result = appStore.createSession(title, description)
+                                val result = sessionViewModel.createSession(title, description)
 
                                 // close + reset state
                                 setShowCreateModal(false)
@@ -71,7 +72,17 @@ fun SessionModal(
 
                                 // navigate to SessionDetails
                                 result?.let {
-                                    onSessionCreated(it)
+                                    onSessionCreated(
+                                        Session(
+                                            it.id, it.title, it.description,
+                                            it.currency,
+                                            it.inviteCode,
+                                            it.qrDataUrl,
+                                            it.inviteUrl,
+                                            it.createdBy,
+                                            parseIsoDate(it.createdAt) ?: Date()
+                                        )
+                                    )
                                 }
                             }
                         }
