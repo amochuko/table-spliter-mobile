@@ -5,7 +5,7 @@ import com.ochuko.tabsplit.data.api.ApiClient
 import com.ochuko.tabsplit.data.api.SessionApi
 import com.ochuko.tabsplit.data.repository.SessionRepository
 import com.ochuko.tabsplit.ui.auth.AuthViewModel
-import com.ochuko.tabsplit.viewModels.BASE_URL
+import com.ochuko.tabsplit.utils.Config
 
 class AppContainer(app: Application) {
 
@@ -14,7 +14,7 @@ class AppContainer(app: Application) {
 
     // APIs
     private val sessionApi: SessionApi by lazy {
-        ApiClient.create<SessionApi>(authViewModel.getToken(), BASE_URL)
+        ApiClient.create<SessionApi>(authViewModel.getToken(), Config.API_BASE_URL)
     }
 
     // Repository
