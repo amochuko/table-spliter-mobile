@@ -1,7 +1,7 @@
 package com.ochuko.tabsplit.data.repository
 
 import com.ochuko.tabsplit.data.api.UserApi
-import com.ochuko.tabsplit.models.User
+import com.ochuko.tabsplit.data.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

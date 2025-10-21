@@ -5,8 +5,8 @@ import com.ochuko.tabsplit.data.api.JoinRequest
 import com.ochuko.tabsplit.data.api.SessionRequest
 import com.ochuko.tabsplit.data.api.SessionApi
 import com.ochuko.tabsplit.data.api.SessionOwnerResponse
-import com.ochuko.tabsplit.models.AddExpenseRequest
-import com.ochuko.tabsplit.models.Session
+import com.ochuko.tabsplit.data.model.AddExpenseRequest
+import com.ochuko.tabsplit.data.model.Session
 import android.util.Log
 
 class SessionRepository(private val api: SessionApi) {

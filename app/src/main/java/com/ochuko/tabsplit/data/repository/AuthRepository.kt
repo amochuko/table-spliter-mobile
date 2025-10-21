@@ -5,7 +5,7 @@ import android.content.Context
 import com.ochuko.tabsplit.data.api.AuthApi
 import com.ochuko.tabsplit.data.api.LoginRequest
 import com.ochuko.tabsplit.data.api.RegisterRequest
-import com.ochuko.tabsplit.models.User
+import com.ochuko.tabsplit.data.model.User
 
 
 class AuthRepository(private val api: AuthApi, private val ctx: Context) {
