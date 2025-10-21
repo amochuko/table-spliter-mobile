@@ -15,8 +15,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.ochuko.tabsplit.models.User
-import com.ochuko.tabsplit.store.AuthStore
+import com.ochuko.tabsplit.data.model.User
+import com.ochuko.tabsplit.ui.auth.AuthViewModel
 import kotlinx.coroutines.launch
 import  android.util.Log
 import androidx.compose.foundation.layout.size
@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun WalletDialog(
-    authStore: AuthStore,
+    authViewModel: AuthViewModel,
     user: User?,
     onDismiss: () -> Unit,
     onSave: suspend (zaddr: String) -> Boolean = { _ -> true }
@@ -108,11 +108,12 @@ fun WalletDialog(
                         if (ok) {
                             // update local store
                             // save zaddr
-                            val currentToken = authStore.getToken()
+                            val currentToken = authViewModel.getToken()
                             val updatedUser = user?.copy(zaddr = zaddr)
 
                             if (updatedUser != null) {
-                                authStore.setUser(updatedUser, currentToken)
+//                                authViewModel.setUser(updatedUser, currentToken)
+                                authViewModel.saveToken(currentToken)
                             }
 
                             Toast.makeText(ctx, "Wallet updated", Toast.LENGTH_SHORT).show()
