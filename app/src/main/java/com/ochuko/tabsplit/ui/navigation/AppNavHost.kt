@@ -14,31 +14,39 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
-import com.ochuko.tabsplit.store.AppStore
-import com.ochuko.tabsplit.store.AuthStore
-import com.ochuko.tabsplit.ui.screens.auth.SignupScreen
-import com.ochuko.tabsplit.ui.screens.join.JoinSessionScreen
-import com.ochuko.tabsplit.ui.screens.auth.LoginScreen
-import com.ochuko.tabsplit.ui.screens.sessions.SessionDetailsScreen
-import com.ochuko.tabsplit.ui.screens.sessions.SessionsScreen
-import com.ochuko.tabsplit.ui.screens.splash.SplashScreen
-
+import com.ochuko.tabsplit.ui.auth.AuthViewModel
+import com.ochuko.tabsplit.ui.auth.SignupScreen
+import com.ochuko.tabsplit.ui.join.JoinSessionScreen
+import com.ochuko.tabsplit.ui.auth.LoginScreen
+import com.ochuko.tabsplit.ui.session.SessionDetailsScreen
+import com.ochuko.tabsplit.ui.session.SessionsScreen
+import com.ochuko.tabsplit.ui.SplashScreen
+import com.ochuko.tabsplit.ui.expense.ExpenseViewModel
+import com.ochuko.tabsplit.ui.participant.ParticipantViewModel
+import com.ochuko.tabsplit.ui.session.SessionViewModel
 
 @Composable
-fun AppNavHost(navController: NavHostController, appStore: AppStore, authStore: AuthStore) {
+fun AppNavHost(
+    navController: NavHostController,
+    authViewModel: AuthViewModel,
+    sessionViewModel: SessionViewModel,
+    expenseViewModel: ExpenseViewModel,
+    participantViewModel: ParticipantViewModel
+) {
 
-    val authState by authStore.authState.collectAsState()
+    val authUiState by authViewModel.uiState.collectAsState()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
 
+    Log.d("AppNavHost:user", authUiState.user?.email ?: "not user object")
 
     Scaffold(topBar = {
-        if (authState.user != null && currentRoute != Screen.Login.route && currentRoute != Screen
+        if (authUiState.user != null && currentRoute != Screen.Login.route && currentRoute != Screen
                 .Signup.route
         ) {
 
-            MainTopBar(authStore, navController, onPersistZaddr = { z ->
-                authStore
+            MainTopBar(authViewModel, navController, onPersistZaddr = { z ->
+                authViewModel
                     .updateZAddr(z)
             })
         }
@@ -49,7 +57,7 @@ fun AppNavHost(navController: NavHostController, appStore: AppStore, authStore: 
         ) {
 
             composable(Screen.Splash.route) {
-                SplashScreen(navController, appStore)
+                SplashScreen(navController, authViewModel)
             }
 
             composable(Screen.Login.route) {
@@ -61,8 +69,8 @@ fun AppNavHost(navController: NavHostController, appStore: AppStore, authStore: 
                         }
                     },
                     onSignupClick = { navController.navigate(Screen.Signup.route) },
-                    appStore = appStore,
-                    authStore = authStore
+                    authViewModel,
+                    sessionViewModel
                 )
             }
 
@@ -76,8 +84,8 @@ fun AppNavHost(navController: NavHostController, appStore: AppStore, authStore: 
                         }
                     },
                     onLoginClick = { navController.navigate(Screen.Login.route) },
-                    appStore = appStore,
-                    authStore = authStore
+                    authViewModel,
+                    sessionViewModel
                 )
             }
 
@@ -91,14 +99,20 @@ fun AppNavHost(navController: NavHostController, appStore: AppStore, authStore: 
                     },
                     onCreateSession = {
 //                    TODO:  log event or refresh
-                    }, appStore
+                    }, sessionViewModel
                 )
             }
 
             composable(Screen.SessionDetails.route) { backStackEntry ->
                 val sessionId = backStackEntry.arguments?.getString("sessionId")
                 sessionId?.let {
-                    SessionDetailsScreen(navController, sessionId, appStore)
+                    SessionDetailsScreen(
+                        navController,
+                        sessionId,
+                        sessionViewModel,
+                        expenseViewModel,
+                        participantViewModel
+                    )
                 }
             }
 
@@ -109,7 +123,6 @@ fun AppNavHost(navController: NavHostController, appStore: AppStore, authStore: 
                 val inviteCode = backStackEntry.arguments?.getString("inviteCode") ?: ""
 
                 JoinSessionScreen(
-                    appStore,
                     inviteCode = inviteCode,
                     onAuthRequired = { code ->
                         navController.navigate(Screen.Login.route) {
@@ -128,8 +141,9 @@ fun AppNavHost(navController: NavHostController, appStore: AppStore, authStore: 
                         navController.navigate(Screen.Sessions.route) {
                             popUpTo(Screen.Join.route) { inclusive = true }
                         }
-                    }
-
+                    },
+                    authViewModel = authViewModel,
+                    sessionViewModel = sessionViewModel
                 )
             }
         }
