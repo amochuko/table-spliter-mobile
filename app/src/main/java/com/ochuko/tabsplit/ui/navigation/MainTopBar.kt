@@ -22,7 +22,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavController
-import com.ochuko.tabsplit.store.AuthStore
+import com.ochuko.tabsplit.ui.auth.AuthViewModel
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -33,13 +33,13 @@ import com.ochuko.tabsplit.ui.components.WalletDialog
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainTopBar(
-    authStore: AuthStore,
+    authViewModel: AuthViewModel,
     navController: NavController,
     onPersistZaddr: suspend (String) -> Boolean = { true }
 ) {
 
-    val authState by authStore.authState.collectAsState()
-    val user = authState.user
+    val authUiState by authViewModel.uiState.collectAsState()
+    val user = authUiState.user
 
     var expanded by remember { mutableStateOf(false) }
     var showWalletDialog by remember { mutableStateOf(false) }
@@ -98,7 +98,7 @@ fun MainTopBar(
                         leadingIcon = { Icon(Icons.Default.ExitToApp, contentDescription = null) },
                         onClick = {
                             expanded = false
-                            authStore.logout()
+                            authViewModel.logout()
 
                             navController.navigate(Screen.Login.route) {
                                 popUpTo(0) {inclusive = true}
@@ -112,7 +112,7 @@ fun MainTopBar(
 
     if (showWalletDialog) {
         WalletDialog(
-            authStore,
+            authViewModel,
             user,
             onDismiss = { showWalletDialog = false },
             onSave = { zaddr -> onPersistZaddr(zaddr) }
