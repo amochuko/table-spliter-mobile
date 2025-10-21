@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.models
+package com.ochuko.tabsplit.data.model
 
 import com.google.gson.annotations.SerializedName
 

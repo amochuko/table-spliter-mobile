@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.models
+package com.ochuko.tabsplit.data.model
 
 data class User(
     val id: String,
