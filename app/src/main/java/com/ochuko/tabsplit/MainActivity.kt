@@ -10,16 +10,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ochuko.tabsplit.ui.theme.TabSplitTheme
 import androidx.navigation.compose.rememberNavController
-import com.ochuko.tabsplit.store.AppStore
+import com.ochuko.tabsplit.viewModels.AppStore
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.ochuko.tabsplit.store.AuthStore
+import com.ochuko.tabsplit.ui.auth.AuthViewModel
 import com.ochuko.tabsplit.ui.navigation.AppNavHost
 import com.ochuko.tabsplit.ui.navigation.Screen
 import android.util.Log
@@ -44,9 +42,10 @@ class MainActivity : ComponentActivity() {
 
                 // Shared AppStore instance
                 val appStore: AppStore = viewModel()
-                val authStore: AuthStore = viewModel()
+                val authViewModel: AuthViewModel = viewModel()
+                val loginViewModel: LoginViewModel = viewModel()
 
-                val authState by authStore.authState.collectAsState()
+                val authState by authViewModel.authState.collectAsState()
 
                 // observe deep link
                 val joinCode by deepLinkFlow.asStateFlow().collectAsState()
@@ -63,7 +62,8 @@ class MainActivity : ComponentActivity() {
                     AppNavHost(
                         navController,
                         appStore,
-                        authStore
+                        authViewModel,
+                        loginViewModel
                     )
 
                     // Wait until appStore finishes loading
