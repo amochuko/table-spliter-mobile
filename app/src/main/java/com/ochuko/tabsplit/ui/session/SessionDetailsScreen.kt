@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.ui.screens.sessions
+package com.ochuko.tabsplit.ui.session
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -13,13 +13,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.ochuko.tabsplit.viewModels.AppStore
 import com.ochuko.tabsplit.ui.components.ui.AddExpenseDialog
 import com.ochuko.tabsplit.ui.components.ui.BalancesList
 import com.ochuko.tabsplit.ui.components.ui.SessionQRCode
 import com.ochuko.tabsplit.ui.components.ui.ZcashIntegration
 import androidx.compose.material3.*
-import com.ochuko.tabsplit.data.api.SessionWithOwner
+import com.ochuko.tabsplit.data.model.FullSession
+import com.ochuko.tabsplit.ui.expense.ExpenseViewModel
+import com.ochuko.tabsplit.ui.participant.ParticipantViewModel
 import com.ochuko.tabsplit.utils.calculateBalances
 import java.util.Locale
 
@@ -29,15 +30,16 @@ import java.util.Locale
 fun SessionDetailsScreen(
     navController: NavController,
     sessionId: String,
-    appStore: AppStore
+    sessionViewModel: SessionViewModel,
+    expenseViewModel: ExpenseViewModel,
+    participantViewModel: ParticipantViewModel
 ) {
     // Collect reactive state from AppStore
-    val sessions by appStore.sessions.collectAsState()
-    val user by appStore.user.collectAsState()
-    val participants by appStore.participants.collectAsState()
-    val expenses by appStore.expenses.collectAsState()
+    val sessionUiState by sessionViewModel.uiState.collectAsState()
+    val participantUiState by participantViewModel.uiState.collectAsState()
+    val expenseUiState by expenseViewModel.uiState.collectAsState()
 
-    var session by remember { mutableStateOf<SessionWithOwner?>(null) }
+    val scrollState = rememberScrollState()
 
     // UI local state
     var showZcash by remember { mutableStateOf(false) }
@@ -46,26 +48,30 @@ fun SessionDetailsScreen(
     var recipientAddress by remember { mutableStateOf("") }
 
     // Fetch session details when screen is opened
+    var session by remember { mutableStateOf<FullSession?>(null) }
+
     LaunchedEffect(sessionId) {
-        val result = appStore.fetchSession(sessionId)
-        session = result?.session
+        sessionViewModel.fetchSession(sessionId)
     }
 
     // Update invite URL and recipient address whenever sessions or user changes
-    LaunchedEffect(sessions, session?.owner?.zaddr) {
+    LaunchedEffect(sessionUiState.sessions, session?.owner?.zaddr) {
+        session = sessionUiState.sessions.find { it.id == sessionId }
+        inviteUrl = session?.inviteUrl
         recipientAddress = session?.owner?.zaddr.orEmpty()
-
-        sessions.find { it.id == sessionId }?.let { s ->
-            inviteUrl = s.inviteUrl
-        }
     }
 
-    val sessionTitle = sessions.find { it.id == sessionId }?.title ?: "Session not found"
-    val scrollState = rememberScrollState()
+    val sessionTitle = session?.title ?: "Session not found"
+    val participants = participantUiState.participants[sessionId].orEmpty()
+    val expenses = expenseUiState.expenses[sessionId].orEmpty()
 
     // Compute balances
     val balances = remember(sessionId, participants, expenses) {
-        calculateBalances(sessionId, participants, expenses)
+        calculateBalances(
+            sessionId,
+            participantUiState.participants,
+            expenseUiState.expenses
+        )
     }
 
     Scaffold(
@@ -91,17 +97,17 @@ fun SessionDetailsScreen(
             inviteUrl?.let { SessionQRCode(inviteUrl = it) }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Participants: ${participants[sessionId]?.size ?: 0}", fontSize = 16.sp)
+                Text("Participants: ${participants.size}", fontSize = 16.sp)
             }
 
             // Expenses list
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("Expenses", fontSize = 16.sp)
-                val sessionExpenses = expenses[sessionId].orEmpty()
-                if (sessionExpenses.isNotEmpty()) {
-                    sessionExpenses.forEach { e ->
+
+                if (expenses.isNotEmpty()) {
+                    expenses.forEach { e ->
                         val payerName =
-                            participants[sessionId]?.find { it.id == e.payerId }?.username
+                            participants.find { it.id == e.payerId }?.username
                                 ?: e.payerId.take(6)
 
                         Card(
@@ -123,11 +129,11 @@ fun SessionDetailsScreen(
                 }
             }
 
-            if (expenses[sessionId].orEmpty().isNotEmpty()) {
+            if (expenses.orEmpty().isNotEmpty()) {
                 Column {
                     Text("Balances", fontSize = 16.sp)
                     BalancesList(
-                        participants = participants[sessionId].orEmpty(),
+                        participants = participants,
                         balances = balances
                     )
                 }
@@ -138,7 +144,7 @@ fun SessionDetailsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
             ) {
-                if (expenses[sessionId].orEmpty().isNotEmpty()) {
+                if (expenses.orEmpty().isNotEmpty()) {
                     Button(
                         onClick = { showZcash = true },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF16A34A))
@@ -168,7 +174,8 @@ fun SessionDetailsScreen(
     if (showAddExpense) {
         AddExpenseDialog(
             sessionId = sessionId,
-            onClose = { showAddExpense = false }
+            onClose = { showAddExpense = false },
+            expensesViewModel = expenseViewModel
         )
     }
 }
