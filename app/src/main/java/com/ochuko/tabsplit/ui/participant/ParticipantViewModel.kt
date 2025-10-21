@@ -1,6 +1,7 @@
 package com.ochuko.tabsplit.ui.participant
 
 import androidx.lifecycle.ViewModel
+import com.ochuko.tabsplit.data.api.SessionOwnerResponse
 import com.ochuko.tabsplit.data.model.Participant
 import com.ochuko.tabsplit.data.repository.SessionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,10 +16,9 @@ class ParticipantViewModel(
     private val _uiState = MutableStateFlow(ParticipantUiState())
     val uiState: StateFlow<ParticipantUiState> = _uiState.asStateFlow()
 
-    suspend fun fetchSessionParticipants(sessionId: String) {
+    fun fetchSessionParticipants(sessionId: String, session: SessionOwnerResponse) {
         try {
-            val session = sessionRepo.getSession(sessionId)
-            session?.let {
+            session.let {
                 val updated = _uiState.value.participants.toMutableMap()
                 updated[sessionId] = it.participants
 
