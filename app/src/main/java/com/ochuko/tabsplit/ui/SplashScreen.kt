@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.ui.screens.splash
+package com.ochuko.tabsplit.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
