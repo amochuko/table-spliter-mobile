@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.ui.screens.auth
+package com.ochuko.tabsplit.ui.auth
 
 import android.util.Log
 import android.widget.Toast
@@ -14,10 +14,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.ochuko.tabsplit.viewModels.AppStore
-import com.ochuko.tabsplit.ui.auth.AuthViewModel
 import kotlinx.coroutines.launch
 import com.ochuko.tabsplit.ui.navigation.Screen
+import com.ochuko.tabsplit.ui.session.SessionViewModel
 
 
 @Composable
@@ -26,7 +25,7 @@ fun SignupScreen(
     onSignupSuccess: () -> Unit,
     onLoginClick: () -> Unit,
     authViewModel: AuthViewModel,
-    appStore: AppStore
+    sessionViewModel: SessionViewModel
 ) {
 
     val context = LocalContext.current
@@ -36,12 +35,13 @@ fun SignupScreen(
     var password by remember { mutableStateOf("") }
     var error by remember { mutableStateOf("") }
 
-    val authState by authViewModel.authState.collectAsState()
-    val pendingInviteCode by appStore.pendingInviteCode.collectAsState()
+    val authUiState by authViewModel.uiState.collectAsState()
+    val sessionUiState by sessionViewModel.uiState.collectAsState()
+    val pendingInviteCode = sessionUiState.pendingInviteCode
 
     // Redirect if already signed up/logged in
-    LaunchedEffect(authState.token) {
-        if (!authState.token.isNullOrEmpty()) {
+    LaunchedEffect(authUiState.token) {
+        if (!authUiState.token.isNullOrEmpty()) {
             onSignupSuccess()
         }
     }
@@ -97,12 +97,8 @@ fun SignupScreen(
 
                             // Handle invite if exist
                             pendingInviteCode?.let { code ->
-                                val joinedSession = appStore.joinSessionByInvite(code)
-
-                                if (joinedSession != null) {
-                                    appStore.addSession(joinedSession)
-                                    appStore.setPendingInviteCode(null)
-                                }
+                                val joinedSession = sessionViewModel.joinSessionByInvite(code)
+                                sessionViewModel.setPendingInviteCode(null)
                             }
 
                             // Navigate **directly** after successful signup
