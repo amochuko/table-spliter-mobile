@@ -107,6 +107,7 @@ fun SessionsScreen(
         SessionModal(
             showCreateModal = showCreateModal,
             setShowCreateModal = { showCreateModal = it },
+            sessionViewModel = sessionViewModel,
             onSessionCreated = { newSession ->
                 showCreateModal = false
                 onCreateSession(newSession)
