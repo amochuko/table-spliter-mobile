@@ -13,7 +13,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ochuko.tabsplit.ui.theme.TabSplitTheme
 import androidx.navigation.compose.rememberNavController
-import com.ochuko.tabsplit.viewModels.AppStore
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +20,9 @@ import com.ochuko.tabsplit.ui.auth.AuthViewModel
 import com.ochuko.tabsplit.ui.navigation.AppNavHost
 import com.ochuko.tabsplit.ui.navigation.Screen
 import android.util.Log
+import com.ochuko.tabsplit.ui.expense.ExpenseViewModel
+import com.ochuko.tabsplit.ui.participant.ParticipantViewModel
+import com.ochuko.tabsplit.ui.session.SessionViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -40,18 +42,19 @@ class MainActivity : ComponentActivity() {
             TabSplitTheme {
                 val navController = rememberNavController()
 
-                // Shared AppStore instance
-                val appStore: AppStore = viewModel()
                 val authViewModel: AuthViewModel = viewModel()
-                val loginViewModel: LoginViewModel = viewModel()
+                val sessionViewMode: SessionViewModel = viewModel()
+                val expenseViewModel: ExpenseViewModel = viewModel()
+                val participantViewModel: ParticipantViewModel = viewModel()
 
-                val authState by authViewModel.authState.collectAsState()
+
+                val authUiState by authViewModel.uiState.collectAsState()
 
                 // observe deep link
                 val joinCode by deepLinkFlow.asStateFlow().collectAsState()
 
                 // Wait for authStore to finish loading
-                if (authState.loading) {
+                if (authUiState.loading) {
                     Box(
                         modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                     ) {
@@ -61,14 +64,15 @@ class MainActivity : ComponentActivity() {
                     // Mount the NavHost (keeps your three-arg API)
                     AppNavHost(
                         navController,
-                        appStore,
                         authViewModel,
-                        loginViewModel
+                        sessionViewMode,
+                        expenseViewModel,
+                        participantViewModel
                     )
 
                     // Wait until appStore finishes loading
-                    LaunchedEffect(authState.token) {
-                        if (authState.token.isNullOrEmpty()) {
+                    LaunchedEffect(authUiState.token) {
+                        if (authUiState.token.isNullOrEmpty()) {
                             try {
                                 navController.navigate(Screen.Login.route) {
                                     popUpTo(0)
@@ -90,7 +94,7 @@ class MainActivity : ComponentActivity() {
                     }
 
 
-                    LaunchedEffect(joinCode, authState.token) {
+                    LaunchedEffect(joinCode, authUiState.token) {
                         if (!joinCode.isNullOrEmpty()) {
                             try {
                                 // go to join screen
