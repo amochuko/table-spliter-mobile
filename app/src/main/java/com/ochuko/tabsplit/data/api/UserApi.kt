@@ -1,6 +1,6 @@
 package com.ochuko.tabsplit.data.api
 
-import com.ochuko.tabsplit.models.User
+import com.ochuko.tabsplit.data.model.User
 import retrofit2.Response
 import retrofit2.http.*
 
