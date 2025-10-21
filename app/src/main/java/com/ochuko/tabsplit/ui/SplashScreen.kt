@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import com.ochuko.tabsplit.viewModels.AppStore
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,11 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import com.ochuko.tabsplit.R
+import com.ochuko.tabsplit.ui.auth.AuthViewModel
 import com.ochuko.tabsplit.ui.navigation.Screen
 
 @Composable
-fun SplashScreen(navController: NavController, appStore: AppStore) {
-    val token by appStore.token.collectAsState()
+fun SplashScreen(navController: NavController, authViewModel: AuthViewModel) {
+    val authUiState by authViewModel.uiState.collectAsState()
     var hasNavigated by remember { mutableStateOf(false) }
     var visible by remember { mutableStateOf(false) }
 
@@ -51,7 +51,7 @@ fun SplashScreen(navController: NavController, appStore: AppStore) {
         if (!hasNavigated) {
             hasNavigated = true
 
-            if (token.isNullOrEmpty()) {
+            if (authUiState.token.isNullOrEmpty()) {
                 navController.navigate(Screen.Login.route) {
                     popUpTo(Screen.Splash.route) { inclusive = true }
                 }
