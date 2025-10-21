@@ -3,12 +3,9 @@ package com.ochuko.tabsplit.ui.session
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ochuko.tabsplit.data.api.SessionOwner
-import com.ochuko.tabsplit.data.api.SessionOwnerResponse
 import com.ochuko.tabsplit.data.api.SessionRequest
-import com.ochuko.tabsplit.data.api.SessionWithOwner
-import com.ochuko.tabsplit.data.model.Participant
-import com.ochuko.tabsplit.data.model.toSessionWithOwner
+import com.ochuko.tabsplit.data.model.FullSession
+import com.ochuko.tabsplit.data.model.toFullSession
 import com.ochuko.tabsplit.data.repository.SessionRepository
 import com.ochuko.tabsplit.ui.auth.AuthViewModel
 import com.ochuko.tabsplit.ui.expense.ExpenseViewModel
@@ -33,40 +30,22 @@ class SessionViewModel(
         viewModelScope.launch {
             authViewModel.uiState.collect { state ->
                 if (state.token != null && !state.loading) {
-                    loadSession()
+                    loadSessions()
                 }
             }
         }
     }
 
-    fun loadSession() = viewModelScope.launch {
+    fun loadSessions() = viewModelScope.launch {
         _uiState.update { it.copy(loading = true) }
 
         try {
             val sessions = sessionRepo.getSessions()
-
-            // Convert to SessionWithOwner placeholders (owner minimal)
-            val user = authViewModel.uiState.value.user
-
-            val sessionWithOwner = sessions.map { s ->
-                SessionWithOwner(
-                    id = s.id,
-                    title = s.title,
-                    description = s.description,
-                    currency = s.currency,
-                    createdAt = s.createdAt.toString(),
-                    owner = SessionOwner(
-                        id = s.id,
-                        username = s.createdBy,
-                        zaddr = user?.zaddr!!,
-                        userId = s.createdBy
-                    )
-                )
-            }
+            val mapped = sessions.map { it.toFullSession() }
 
             _uiState.update {
                 it.copy(
-                    sessions = sessionWithOwner,
+                    sessions = mapped,
                     loading = false
                 )
             }
@@ -75,46 +54,35 @@ class SessionViewModel(
         }
     }
 
-    fun createSession(title: String, description: String?) = viewModelScope.launch {
-        try {
-            sessionRepo.createSession(SessionRequest(title, description))?.let {
-                val user = authViewModel.uiState.value.user
+    suspend fun createSession(title: String, description: String?): FullSession? {
+        return try {
+            val response = sessionRepo.createSession(SessionRequest(title, description))
 
-                val owner = SessionOwner(
-                    id = user?.id!!,
-                    username = user.username,
-                    zaddr = user.zaddr!!,
-                    userId = user.id
-                )
-
-                val sessionWithOwner = it.toSessionWithOwner(owner)
+            response?.let {
                 _uiState.update { s ->
-                    s.copy(sessions = s.sessions + sessionWithOwner)
+                    s.copy(sessions = s.sessions + it.toFullSession())
                 }
             }
+
+            response?.toFullSession()
         } catch (e: Exception) {
             _uiState.update { it.copy(error = e.message) }
+            null
         }
     }
 
-    fun joinSessionByInvite(code: String) = viewModelScope.launch {
-        try {
-            val session = sessionRepo.joinByInvite(code)
-            session?.let { it ->
-                val user = authViewModel.uiState.value.user
+    suspend fun joinSessionByInvite(code: String): FullSession? {
+        return try {
+            val joinedSession = sessionRepo.joinByInvite(code)
 
-                val owner = SessionOwner(
-                    id = user?.id!!,
-                    username = user.username,
-                    zaddr = user.zaddr!!,
-                    userId = user.id
-                )
-
-                val sessionWithOwner = it.toSessionWithOwner(owner)
-                _uiState.update { s -> s.copy(sessions = s.sessions + sessionWithOwner) }
+            joinedSession?.let { it ->
+                _uiState.update { s -> s.copy(sessions = s.sessions + it.toFullSession()) }
             }
+
+            joinedSession?.toFullSession()
         } catch (e: Exception) {
             _uiState.update { it -> it.copy(error = e.message) }
+            null
         }
     }
 
@@ -128,30 +96,36 @@ class SessionViewModel(
         _uiState.update { it.copy(pendingInviteCode = code) }
     }
 
-    fun fetchSession(sessionId: String) = viewModelScope.launch {
+    fun fetchSession(sessionId: String): Any? = viewModelScope.launch {
         _uiState.update { it.copy(loading = true) }
         try {
             val response = sessionRepo.getSession(sessionId)
-            response?.let { it ->
+            response?.let { res ->
 
                 _uiState.update {
                     it.copy(
                         loading = false,
-                        sessions = it.sessions + response.session
+                        sessions = (it.sessions + response.session.toFullSession()).distinctBy { s ->
+                            s.id
+                        }
                     )
                 }
 
-                participantViewModel.updateParticipants(sessionId, response.participants)
-                expenseViewModel.updateExpenses(sessionId, response.expenses)
+                participantViewModel.updateParticipants(sessionId, res.participants)
+                expenseViewModel.updateExpenses(sessionId, res.expenses)
             }
+
+            return@launch
+
         } catch (e: Exception) {
+            Log.e("SessionViewModel", "fetchSession failed", e)
+
             _uiState.update {
                 it.copy(
                     loading = false,
                     error = e.message
                 )
             }
-            Log.e("AppStore", "fetchSession failed", e)
             null
         }
     }
