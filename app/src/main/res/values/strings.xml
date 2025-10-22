@@ -8,4 +8,6 @@
     <string name="don_t_have_an_account_txt">Don’t have an account?</string>
     <string name="sign_up_txt">Sign up</string>
     <string name="login_label_txt">Login</string>
+    <string name="add_session">Add Session</string>
+    <string name="list_of_available_session">List of available session%1$s</string>
 </resources>
