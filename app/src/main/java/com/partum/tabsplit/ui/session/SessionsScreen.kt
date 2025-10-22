@@ -1,7 +1,11 @@
 package com.partum.tabsplit.ui.session
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
@@ -12,9 +16,11 @@ import androidx.compose.ui.unit.dp
 import com.partum.tabsplit.ui.components.ui.SessionModal
 import androidx.compose.material3.Text
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.res.stringResource
+import com.partum.tabsplit.R
 import com.partum.tabsplit.data.model.Session
 
 @Composable
@@ -28,6 +34,12 @@ fun SessionsScreen(
     val uiState by sessionViewModel.uiState.collectAsState()
     var showCreateModal by remember { mutableStateOf(false) }
 
+    // FAB control
+    val listState = rememberLazyListState()
+    val isFabExpanded by remember {
+        derivedStateOf { listState.firstVisibleItemIndex == 0 }
+    }
+
     LaunchedEffect(Unit) {
         sessionViewModel.loadSessions()
     }
@@ -36,8 +48,8 @@ fun SessionsScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(
-                horizontal = 24.dp,
-                vertical = 16.dp
+                horizontal = 8.dp,
+                vertical = 4.dp
             )
     ) {
 
@@ -72,6 +84,21 @@ fun SessionsScreen(
                 }
 
                 uiState.sessions.isNotEmpty() -> {
+                    Text(
+                        text = stringResource(
+                            R.string.list_of_available_session, if (uiState.sessions.size > 0) 's'
+                            else ""
+                        ),
+                        modifier = Modifier
+                            .padding(
+                                bottom = 12.dp,
+                                top = 12.dp
+                            ),
+                        color = MaterialTheme.colorScheme.onSurface.copy(
+                            alpha = 0.7f
+                        )
+                    )
+
                     uiState.sessions.forEach { s ->
                         Card(
                             modifier = Modifier
@@ -81,7 +108,7 @@ fun SessionsScreen(
                                     onSessionClick(s.id)
                                 }) {
                             Column(
-                                modifier = Modifier.padding(12.dp)
+                                modifier = Modifier.padding(8.dp)
                             ) {
                                 Text(
                                     text = s.title, style = MaterialTheme.typography.titleMedium
@@ -108,17 +135,30 @@ fun SessionsScreen(
             }
         }
 
-        FloatingActionButton(
-            onClick = { showCreateModal = true },
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
+        AnimatedVisibility(
+            visible = true,
+            enter = fadeIn(),
+            exit = fadeOut(),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(16.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Add Session"
+            ExtendedFloatingActionButton(
+                onClick = { showCreateModal = true },
+                expanded = isFabExpanded,
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(R.string.add_session)
+                    )
+                },
+                text = {
+                    Text(text = stringResource(R.string.add_session))
+                },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(8.dp)
             )
         }
 
