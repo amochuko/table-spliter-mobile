@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.partum.tabsplit.ui.theme.TabSplitTheme
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.runtime.*
@@ -20,6 +19,8 @@ import com.partum.tabsplit.ui.auth.AuthViewModel
 import com.partum.tabsplit.ui.navigation.AppNavHost
 import com.partum.tabsplit.ui.navigation.Screen
 import android.util.Log
+import com.partum.tabsplit.di.LocalViewModelFactory
+import com.partum.tabsplit.di.injectedViewModel
 import com.partum.tabsplit.ui.expense.ExpenseViewModel
 import com.partum.tabsplit.ui.participant.ParticipantViewModel
 import com.partum.tabsplit.ui.session.SessionViewModel
@@ -39,70 +40,75 @@ class MainActivity : ComponentActivity() {
         deepLinkFlow.value = intent?.data?.lastPathSegment
 
         setContent {
-            TabSplitTheme {
-                val navController = rememberNavController()
+            val appContainer = (application as TabSplit).appContainer
 
-                val authViewModel: AuthViewModel = viewModel()
-                val sessionViewMode: SessionViewModel = viewModel()
-                val expenseViewModel: ExpenseViewModel = viewModel()
-                val participantViewModel: ParticipantViewModel = viewModel()
+            CompositionLocalProvider(
+                LocalViewModelFactory provides appContainer.viewModelFactory
+            ) {
+                TabSplitTheme {
+                    val navController = rememberNavController()
 
+                    val authViewModel: AuthViewModel = injectedViewModel()
+                    val sessionViewModel: SessionViewModel = injectedViewModel()
+                    val expenseViewModel: ExpenseViewModel = injectedViewModel()
+                    val participantViewModel: ParticipantViewModel = injectedViewModel()
 
-                val authUiState by authViewModel.uiState.collectAsState()
+                    val authUiState by authViewModel.uiState.collectAsState()
 
-                // observe deep link
-                val joinCode by deepLinkFlow.asStateFlow().collectAsState()
+                    // observe deep link
+                    val joinCode by deepLinkFlow.asStateFlow().collectAsState()
 
-                // Wait for authStore to finish loading
-                if (authUiState.loading) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                } else {
-                    // Mount the NavHost (keeps your three-arg API)
-                    AppNavHost(
-                        navController,
-                        authViewModel,
-                        sessionViewMode,
-                        expenseViewModel,
-                        participantViewModel
-                    )
+                    // Wait for authStore to finish loading
+                    if (authUiState.loading) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    } else {
+                        // Mount the NavHost (keeps your three-arg API)
+                        AppNavHost(
+                            navController,
+                            authViewModel,
+                            sessionViewModel,
+                            expenseViewModel,
+                            participantViewModel
+                        )
 
-                    // Wait until appStore finishes loading
-                    LaunchedEffect(authUiState.token) {
-                        if (authUiState.token.isNullOrEmpty()) {
-                            try {
-                                navController.navigate(Screen.Login.route) {
-                                    popUpTo(0)
+                        // Wait until appStore finishes loading
+                        LaunchedEffect(authUiState.token) {
+                            if (authUiState.token.isNullOrEmpty()) {
+                                try {
+                                    navController.navigate(Screen.Login.route) {
+                                        popUpTo(0)
+                                    }
+                                } catch (e: Exception) {
+                                    Log.w("MainActivity", "navigate to login failed")
                                 }
-                            } catch (e: Exception) {
-                                Log.w("MainActivity", "navigate to login failed")
-                            }
-                        } else {
-                            // authenticated: navigate to Sessions and remove Login from backstack
-                            try {
-                                navController.navigate(Screen.Sessions.route) {
-                                    popUpTo(Screen.Login.route) { inclusive = true }
-                                    launchSingleTop = true
+                            } else {
+                                // authenticated: navigate to Sessions and remove Login from backstack
+                                try {
+                                    navController.navigate(Screen.Sessions.route) {
+                                        popUpTo(Screen.Login.route) { inclusive = true }
+                                        launchSingleTop = true
+                                    }
+                                } catch (e: Exception) {
+                                    Log.w("MainActivity", "navigate to login failed")
                                 }
-                            } catch (e: Exception) {
-                                Log.w("MainActivity", "navigate to login failed")
                             }
                         }
-                    }
 
 
-                    LaunchedEffect(joinCode, authUiState.token) {
-                        if (!joinCode.isNullOrEmpty()) {
-                            try {
-                                // go to join screen
-                                navController.navigate("${Screen.Join.route}/$joinCode")
-                            } catch (e: Exception) {
-                                Log.w("MainActivity", "Deep link nav failed")
-                            } finally {
-                                deepLinkFlow.value = null
+                        LaunchedEffect(joinCode, authUiState.token) {
+                            if (!joinCode.isNullOrEmpty()) {
+                                try {
+                                    // go to join screen
+                                    navController.navigate("${Screen.Join.route}/$joinCode")
+                                } catch (e: Exception) {
+                                    Log.w("MainActivity", "Deep link nav failed")
+                                } finally {
+                                    deepLinkFlow.value = null
+                                }
                             }
                         }
                     }
