@@ -79,7 +79,7 @@ fun SessionModal(
                                             it.inviteCode,
                                             it.qrDataUrl,
                                             it.inviteUrl,
-                                            it.createdBy,
+                                            it.createdBy ?: "",
                                             parseIsoDate(it.createdAt) ?: Date()
                                         )
                                     )

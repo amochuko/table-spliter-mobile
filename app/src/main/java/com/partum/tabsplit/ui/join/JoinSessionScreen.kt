@@ -54,7 +54,7 @@ fun JoinSessionScreen(
                             res.inviteCode,
                             res.qrDataUrl,
                             res.inviteUrl,
-                            res.createdBy,
+                            res.createdBy ?: "",
                             parseIsoDate(res.createdAt) ?: Date()
 
                         )

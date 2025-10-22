@@ -9,7 +9,7 @@ data class FullSession(
     val description: String,
     val currency: String,
     val createdAt: String,
-    val createdBy: String,
+    val createdBy: String?,
     val owner: SessionOwner?,
     val inviteCode: String? = null,
     val inviteUrl: String? = null,
