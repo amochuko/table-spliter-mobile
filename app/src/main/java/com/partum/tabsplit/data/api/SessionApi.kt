@@ -1,12 +1,12 @@
-package com.ochuko.tabsplit.data.api
+package com.partum.tabsplit.data.api
 
 import com.google.gson.annotations.SerializedName
-import com.ochuko.tabsplit.data.model.Expense
-import com.ochuko.tabsplit.data.model.Participant
-import com.ochuko.tabsplit.data.model.Session
+import com.partum.tabsplit.data.model.Expense
+import com.partum.tabsplit.data.model.Participant
+import com.partum.tabsplit.data.model.Session
 import retrofit2.Response
 import retrofit2.http.*
-import com.ochuko.tabsplit.data.model.AddExpenseRequest
+import com.partum.tabsplit.data.model.AddExpenseRequest
 
 data class SessionsResponse(
     val sessions: List<Session>?

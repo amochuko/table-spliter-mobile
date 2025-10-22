@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.ui.auth
+package com.partum.tabsplit.ui.auth
 
 import android.annotation.SuppressLint
 import android.app.Application
@@ -8,13 +8,13 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import com.ochuko.tabsplit.data.api.ApiClient
-import com.ochuko.tabsplit.data.api.AuthApi
-import com.ochuko.tabsplit.data.api.UserApi
-import com.ochuko.tabsplit.data.model.User
-import com.ochuko.tabsplit.data.repository.AuthRepository
-import com.ochuko.tabsplit.data.repository.UserRepository
-import com.ochuko.tabsplit.utils.Config
+import com.partum.tabsplit.data.api.ApiClient
+import com.partum.tabsplit.data.api.AuthApi
+import com.partum.tabsplit.data.api.UserApi
+import com.partum.tabsplit.data.model.User
+import com.partum.tabsplit.data.repository.AuthRepository
+import com.partum.tabsplit.data.repository.UserRepository
+import com.partum.tabsplit.utils.Config
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

@@ -1,6 +1,6 @@
-package com.ochuko.tabsplit.ui.auth
+package com.partum.tabsplit.ui.auth
 
-import com.ochuko.tabsplit.data.model.User
+import com.partum.tabsplit.data.model.User
 
 data class AuthUiState(
     val token: String? = null,

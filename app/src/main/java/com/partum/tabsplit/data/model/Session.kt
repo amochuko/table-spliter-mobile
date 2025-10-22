@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.data.model
+package com.partum.tabsplit.data.model
 
 import com.google.gson.annotations.SerializedName
 import java.util.Date

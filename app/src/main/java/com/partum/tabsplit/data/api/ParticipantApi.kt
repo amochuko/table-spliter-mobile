@@ -1,6 +1,6 @@
-package com.ochuko.tabsplit.data.api
+package com.partum.tabsplit.data.api
 
-import com.ochuko.tabsplit.data.model.Participant
+import com.partum.tabsplit.data.model.Participant
 import retrofit2.http.GET
 import retrofit2.Response
 

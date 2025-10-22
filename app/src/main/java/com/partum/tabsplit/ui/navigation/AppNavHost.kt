@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.ui.navigation
+package com.partum.tabsplit.ui.navigation
 
 
 import android.util.Log
@@ -14,16 +14,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
-import com.ochuko.tabsplit.ui.auth.AuthViewModel
-import com.ochuko.tabsplit.ui.auth.SignupScreen
-import com.ochuko.tabsplit.ui.join.JoinSessionScreen
-import com.ochuko.tabsplit.ui.auth.LoginScreen
-import com.ochuko.tabsplit.ui.session.SessionDetailsScreen
-import com.ochuko.tabsplit.ui.session.SessionsScreen
-import com.ochuko.tabsplit.ui.SplashScreen
-import com.ochuko.tabsplit.ui.expense.ExpenseViewModel
-import com.ochuko.tabsplit.ui.participant.ParticipantViewModel
-import com.ochuko.tabsplit.ui.session.SessionViewModel
+import com.partum.tabsplit.ui.auth.AuthViewModel
+import com.partum.tabsplit.ui.auth.SignupScreen
+import com.partum.tabsplit.ui.join.JoinSessionScreen
+import com.partum.tabsplit.ui.auth.LoginScreen
+import com.partum.tabsplit.ui.session.SessionDetailsScreen
+import com.partum.tabsplit.ui.session.SessionsScreen
+import com.partum.tabsplit.ui.SplashScreen
+import com.partum.tabsplit.ui.expense.ExpenseViewModel
+import com.partum.tabsplit.ui.participant.ParticipantViewModel
+import com.partum.tabsplit.ui.session.SessionViewModel
 
 @Composable
 fun AppNavHost(

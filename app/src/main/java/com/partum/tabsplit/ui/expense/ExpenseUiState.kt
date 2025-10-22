@@ -1,6 +1,6 @@
-package com.ochuko.tabsplit.ui.expense
+package com.partum.tabsplit.ui.expense
 
-import com.ochuko.tabsplit.data.model.Expense
+import com.partum.tabsplit.data.model.Expense
 
 data class ExpenseUiState(
     val expenses: Map<String, List<Expense>> = emptyMap(),

@@ -1,7 +1,5 @@
-package com.ochuko.tabsplit.ui.components.ui
+package com.partum.tabsplit.ui.components.ui
 
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -25,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material3.*
 
 
 @Composable

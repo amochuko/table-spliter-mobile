@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.ui.components.ui
+package com.partum.tabsplit.ui.components.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -7,9 +7,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.ochuko.tabsplit.data.model.Session
-import com.ochuko.tabsplit.ui.session.SessionViewModel
-import com.ochuko.tabsplit.utils.parseIsoDate
+import com.partum.tabsplit.data.model.Session
+import com.partum.tabsplit.ui.session.SessionViewModel
+import com.partum.tabsplit.utils.parseIsoDate
 import kotlinx.coroutines.launch
 import java.util.Date
 

@@ -1,9 +1,9 @@
-package com.ochuko.tabsplit.ui.expense
+package com.partum.tabsplit.ui.expense
 
 import androidx.lifecycle.ViewModel
-import com.ochuko.tabsplit.data.model.AddExpenseRequest
-import com.ochuko.tabsplit.data.model.Expense
-import com.ochuko.tabsplit.data.repository.SessionRepository
+import com.partum.tabsplit.data.model.AddExpenseRequest
+import com.partum.tabsplit.data.model.Expense
+import com.partum.tabsplit.data.repository.SessionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

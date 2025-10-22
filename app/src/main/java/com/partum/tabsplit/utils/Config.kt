@@ -1,6 +1,6 @@
-package com.ochuko.tabsplit.utils
+package com.partum.tabsplit.utils
 
-import com.ochuko.tabsplit.BuildConfig
+import com.partum.tabsplit.BuildConfig
 
 object Config
 {

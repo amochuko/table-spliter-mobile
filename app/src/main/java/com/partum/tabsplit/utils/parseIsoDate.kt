@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.utils
+package com.partum.tabsplit.utils
 
 import android.util.Log
 import java.text.SimpleDateFormat

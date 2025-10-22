@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.ui
+package com.partum.tabsplit.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -26,9 +26,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
-import com.ochuko.tabsplit.R
-import com.ochuko.tabsplit.ui.auth.AuthViewModel
-import com.ochuko.tabsplit.ui.navigation.Screen
+import com.partum.tabsplit.R
+import com.partum.tabsplit.ui.auth.AuthViewModel
+import com.partum.tabsplit.ui.navigation.Screen
 
 @Composable
 fun SplashScreen(navController: NavController, authViewModel: AuthViewModel) {

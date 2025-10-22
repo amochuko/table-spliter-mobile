@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit
+package com.partum.tabsplit
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

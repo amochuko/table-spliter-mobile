@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.data.api
+package com.partum.tabsplit.data.api
 
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

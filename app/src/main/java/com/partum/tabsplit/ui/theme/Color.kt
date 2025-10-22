@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.ui.theme
+package com.partum.tabsplit.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

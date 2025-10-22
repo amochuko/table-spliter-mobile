@@ -1,6 +1,6 @@
 @file:kotlin.OptIn(ExperimentalMaterial3Api::class)
 
-package com.ochuko.tabsplit.ui.navigation
+package com.partum.tabsplit.ui.navigation
 
 import androidx.annotation.OptIn
 import androidx.compose.foundation.layout.Box
@@ -22,12 +22,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavController
-import com.ochuko.tabsplit.ui.auth.AuthViewModel
+import com.partum.tabsplit.ui.auth.AuthViewModel
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
-import com.ochuko.tabsplit.ui.components.WalletDialog
+import com.partum.tabsplit.ui.components.WalletDialog
 
 
 @OptIn(ExperimentalMaterial3Api::class)

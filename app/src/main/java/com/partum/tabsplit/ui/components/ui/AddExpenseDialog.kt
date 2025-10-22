@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.ui.components.ui
+package com.partum.tabsplit.ui.components.ui
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.launch
 import android.util.Log
-import com.ochuko.tabsplit.ui.expense.ExpenseViewModel
+import com.partum.tabsplit.ui.expense.ExpenseViewModel
 
 @Composable
 fun AddExpenseDialog(

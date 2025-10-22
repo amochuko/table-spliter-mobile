@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.ui.auth
+package com.partum.tabsplit.ui.auth
 
 import android.util.Log
 import android.widget.Toast
@@ -15,8 +15,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
-import com.ochuko.tabsplit.ui.navigation.Screen
-import com.ochuko.tabsplit.ui.session.SessionViewModel
+import com.partum.tabsplit.ui.navigation.Screen
+import com.partum.tabsplit.ui.session.SessionViewModel
 
 
 @Composable

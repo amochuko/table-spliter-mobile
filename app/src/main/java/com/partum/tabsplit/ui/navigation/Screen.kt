@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.ui.navigation
+package com.partum.tabsplit.ui.navigation
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")

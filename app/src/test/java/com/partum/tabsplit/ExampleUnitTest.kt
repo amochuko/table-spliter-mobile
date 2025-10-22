@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit
+package com.partum.tabsplit
 
 import org.junit.Test
 

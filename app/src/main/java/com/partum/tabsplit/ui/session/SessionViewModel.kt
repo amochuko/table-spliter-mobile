@@ -1,15 +1,15 @@
-package com.ochuko.tabsplit.ui.session
+package com.partum.tabsplit.ui.session
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ochuko.tabsplit.data.api.SessionRequest
-import com.ochuko.tabsplit.data.model.FullSession
-import com.ochuko.tabsplit.data.model.toFullSession
-import com.ochuko.tabsplit.data.repository.SessionRepository
-import com.ochuko.tabsplit.ui.auth.AuthViewModel
-import com.ochuko.tabsplit.ui.expense.ExpenseViewModel
-import com.ochuko.tabsplit.ui.participant.ParticipantViewModel
+import com.partum.tabsplit.data.api.SessionRequest
+import com.partum.tabsplit.data.model.FullSession
+import com.partum.tabsplit.data.model.toFullSession
+import com.partum.tabsplit.data.repository.SessionRepository
+import com.partum.tabsplit.ui.auth.AuthViewModel
+import com.partum.tabsplit.ui.expense.ExpenseViewModel
+import com.partum.tabsplit.ui.participant.ParticipantViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

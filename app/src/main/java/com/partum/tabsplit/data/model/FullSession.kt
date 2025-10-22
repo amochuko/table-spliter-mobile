@@ -1,6 +1,6 @@
-package com.ochuko.tabsplit.data.model
+package com.partum.tabsplit.data.model
 
-import com.ochuko.tabsplit.data.api.SessionOwner
+import com.partum.tabsplit.data.api.SessionOwner
 
 // Combined model for UI layer
 data class FullSession(

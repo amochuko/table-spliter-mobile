@@ -1,11 +1,10 @@
-package com.ochuko.tabsplit.ui.components.ui
+package com.partum.tabsplit.ui.components.ui
 
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -17,14 +16,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.core.content.ContextCompat.startActivity
-import androidx.core.content.FileProvider
-import androidx.core.content.ContextCompat
-import androidx.core.content.pm.ShortcutManagerCompat
-import androidx.core.app.ShareCompat
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
-import com.ochuko.tabsplit.utils.createZcashUri
+import com.partum.tabsplit.utils.createZcashUri
 import android.content.ClipData
 import android.content.ClipboardManager
 

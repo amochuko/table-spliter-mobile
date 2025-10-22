@@ -1,8 +1,8 @@
-package com.ochuko.tabsplit
+package com.partum.tabsplit
 
-import com.ochuko.tabsplit.data.model.Expense
-import com.ochuko.tabsplit.data.model.Participant
-import com.ochuko.tabsplit.utils.calculateBalances
+import com.partum.tabsplit.data.model.Expense
+import com.partum.tabsplit.data.model.Participant
+import com.partum.tabsplit.utils.calculateBalances
 import org.junit.Assert.*
 import org.junit.Test
 

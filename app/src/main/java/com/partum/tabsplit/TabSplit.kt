@@ -1,7 +1,7 @@
-package com.ochuko.tabsplit
+package com.partum.tabsplit
 
 import android.app.Application
-import com.ochuko.tabsplit.di.AppContainer
+import com.partum.tabsplit.di.AppContainer
 
 class TabSplit : Application() {
 

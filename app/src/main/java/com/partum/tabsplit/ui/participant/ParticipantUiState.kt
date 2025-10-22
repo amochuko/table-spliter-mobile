@@ -1,6 +1,6 @@
-package com.ochuko.tabsplit.ui.participant
+package com.partum.tabsplit.ui.participant
 
-import com.ochuko.tabsplit.data.model.Participant
+import com.partum.tabsplit.data.model.Participant
 
 data class ParticipantUiState(
     val participants:Map<String, List<Participant>> = emptyMap(),

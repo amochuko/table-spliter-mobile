@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.ui.components.ui
+package com.partum.tabsplit.ui.components.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -13,8 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.ochuko.tabsplit.data.model.Participant
-import com.ochuko.tabsplit.utils.shortString
+import com.partum.tabsplit.data.model.Participant
+import com.partum.tabsplit.utils.shortString
 
 @Composable
 fun BalancesList(

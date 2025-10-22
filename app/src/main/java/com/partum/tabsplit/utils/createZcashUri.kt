@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.utils
+package com.partum.tabsplit.utils
 
 fun createZcashUri(address: String,  amount: Double,  memo:String?=null):String {
     val isSapling = address.startsWith("zs") || address.startsWith("ztestsapling")

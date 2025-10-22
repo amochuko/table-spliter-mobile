@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.ui.about
+package com.partum.tabsplit.ui.about
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable

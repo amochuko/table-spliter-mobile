@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.ui.components.ui.theme
+package com.partum.tabsplit.ui.components.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

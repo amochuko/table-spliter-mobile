@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.ui.session
+package com.partum.tabsplit.ui.session
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -13,15 +13,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.ochuko.tabsplit.ui.components.ui.AddExpenseDialog
-import com.ochuko.tabsplit.ui.components.ui.BalancesList
-import com.ochuko.tabsplit.ui.components.ui.SessionQRCode
-import com.ochuko.tabsplit.ui.components.ui.ZcashIntegration
+import com.partum.tabsplit.ui.components.ui.AddExpenseDialog
+import com.partum.tabsplit.ui.components.ui.BalancesList
+import com.partum.tabsplit.ui.components.ui.SessionQRCode
+import com.partum.tabsplit.ui.components.ui.ZcashIntegration
 import androidx.compose.material3.*
-import com.ochuko.tabsplit.data.model.FullSession
-import com.ochuko.tabsplit.ui.expense.ExpenseViewModel
-import com.ochuko.tabsplit.ui.participant.ParticipantViewModel
-import com.ochuko.tabsplit.utils.calculateBalances
+import com.partum.tabsplit.data.model.FullSession
+import com.partum.tabsplit.ui.expense.ExpenseViewModel
+import com.partum.tabsplit.ui.participant.ParticipantViewModel
+import com.partum.tabsplit.utils.calculateBalances
 import java.util.Locale
 
 

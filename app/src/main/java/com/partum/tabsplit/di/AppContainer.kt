@@ -1,11 +1,11 @@
-package com.ochuko.tabsplit.di
+package com.partum.tabsplit.di
 
 import android.app.Application
-import com.ochuko.tabsplit.data.api.ApiClient
-import com.ochuko.tabsplit.data.api.SessionApi
-import com.ochuko.tabsplit.data.repository.SessionRepository
-import com.ochuko.tabsplit.ui.auth.AuthViewModel
-import com.ochuko.tabsplit.utils.Config
+import com.partum.tabsplit.data.api.ApiClient
+import com.partum.tabsplit.data.api.SessionApi
+import com.partum.tabsplit.data.repository.SessionRepository
+import com.partum.tabsplit.ui.auth.AuthViewModel
+import com.partum.tabsplit.utils.Config
 
 class AppContainer(app: Application) {
 

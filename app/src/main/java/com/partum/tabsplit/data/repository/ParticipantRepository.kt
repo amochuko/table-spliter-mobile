@@ -1,6 +1,6 @@
-package com.ochuko.tabsplit.data.repository
+package com.partum.tabsplit.data.repository
 
-import com.ochuko.tabsplit.data.api.ParticipantApi
+import com.partum.tabsplit.data.api.ParticipantApi
 
 class ParticipantRepository(val api: ParticipantApi) {
 

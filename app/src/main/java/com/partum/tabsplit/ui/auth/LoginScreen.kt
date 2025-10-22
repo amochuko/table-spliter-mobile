@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.ui.auth
+package com.partum.tabsplit.ui.auth
 
 import android.util.Log
 import android.widget.Toast
@@ -33,8 +33,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import com.ochuko.tabsplit.R
-import com.ochuko.tabsplit.ui.session.SessionViewModel
+import com.partum.tabsplit.R
+import com.partum.tabsplit.ui.session.SessionViewModel
 import kotlinx.coroutines.launch
 
 @Composable

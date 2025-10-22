@@ -1,12 +1,12 @@
-package com.ochuko.tabsplit.data.repository
+package com.partum.tabsplit.data.repository
 
-import com.ochuko.tabsplit.data.api.AddExpenseResponse
-import com.ochuko.tabsplit.data.api.JoinRequest
-import com.ochuko.tabsplit.data.api.SessionRequest
-import com.ochuko.tabsplit.data.api.SessionApi
-import com.ochuko.tabsplit.data.api.SessionOwnerResponse
-import com.ochuko.tabsplit.data.model.AddExpenseRequest
-import com.ochuko.tabsplit.data.model.Session
+import com.partum.tabsplit.data.api.AddExpenseResponse
+import com.partum.tabsplit.data.api.JoinRequest
+import com.partum.tabsplit.data.api.SessionRequest
+import com.partum.tabsplit.data.api.SessionApi
+import com.partum.tabsplit.data.api.SessionOwnerResponse
+import com.partum.tabsplit.data.model.AddExpenseRequest
+import com.partum.tabsplit.data.model.Session
 import android.util.Log
 
 class SessionRepository(private val api: SessionApi) {

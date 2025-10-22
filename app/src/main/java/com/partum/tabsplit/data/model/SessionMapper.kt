@@ -1,7 +1,7 @@
-package com.ochuko.tabsplit.data.model
+package com.partum.tabsplit.data.model
 
-import com.ochuko.tabsplit.data.api.SessionOwner
-import com.ochuko.tabsplit.data.api.SessionWithOwner
+import com.partum.tabsplit.data.api.SessionOwner
+import com.partum.tabsplit.data.api.SessionWithOwner
 
 fun Session.toSessionWithOwner(owner: SessionOwner?=null):SessionWithOwner{
     return SessionWithOwner(

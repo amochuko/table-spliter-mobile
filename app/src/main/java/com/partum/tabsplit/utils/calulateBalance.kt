@@ -1,7 +1,7 @@
-package com.ochuko.tabsplit.utils
+package com.partum.tabsplit.utils
 
-import com.ochuko.tabsplit.data.model.Expense
-import com.ochuko.tabsplit.data.model.Participant
+import com.partum.tabsplit.data.model.Expense
+import com.partum.tabsplit.data.model.Participant
 
 fun calculateBalances(
     sessionId: String,

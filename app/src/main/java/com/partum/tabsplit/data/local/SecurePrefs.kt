@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.data.local
+package com.partum.tabsplit.data.local
 
 
 import android.content.Context

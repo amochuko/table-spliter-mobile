@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.ochuko.tabsplit"
+    namespace = "com.partum.tabsplit"
     compileSdk = 36
 
     defaultConfig {

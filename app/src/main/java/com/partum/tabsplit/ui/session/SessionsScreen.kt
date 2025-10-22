@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.ui.session
+package com.partum.tabsplit.ui.session
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -8,12 +8,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ochuko.tabsplit.ui.components.ui.SessionModal
+import com.partum.tabsplit.ui.components.ui.SessionModal
 import androidx.compose.material3.Text
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import com.ochuko.tabsplit.data.model.Session
+import com.partum.tabsplit.data.model.Session
 
 @Composable
 fun SessionsScreen(

@@ -1,9 +1,9 @@
-package com.ochuko.tabsplit.ui.participant
+package com.partum.tabsplit.ui.participant
 
 import androidx.lifecycle.ViewModel
-import com.ochuko.tabsplit.data.api.SessionOwnerResponse
-import com.ochuko.tabsplit.data.model.Participant
-import com.ochuko.tabsplit.data.repository.SessionRepository
+import com.partum.tabsplit.data.api.SessionOwnerResponse
+import com.partum.tabsplit.data.model.Participant
+import com.partum.tabsplit.data.repository.SessionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

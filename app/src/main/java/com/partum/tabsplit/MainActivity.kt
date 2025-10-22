@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit
+package com.partum.tabsplit
 
 import android.content.Intent
 import android.os.Bundle
@@ -11,18 +11,18 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ochuko.tabsplit.ui.theme.TabSplitTheme
+import com.partum.tabsplit.ui.theme.TabSplitTheme
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.ochuko.tabsplit.ui.auth.AuthViewModel
-import com.ochuko.tabsplit.ui.navigation.AppNavHost
-import com.ochuko.tabsplit.ui.navigation.Screen
+import com.partum.tabsplit.ui.auth.AuthViewModel
+import com.partum.tabsplit.ui.navigation.AppNavHost
+import com.partum.tabsplit.ui.navigation.Screen
 import android.util.Log
-import com.ochuko.tabsplit.ui.expense.ExpenseViewModel
-import com.ochuko.tabsplit.ui.participant.ParticipantViewModel
-import com.ochuko.tabsplit.ui.session.SessionViewModel
+import com.partum.tabsplit.ui.expense.ExpenseViewModel
+import com.partum.tabsplit.ui.participant.ParticipantViewModel
+import com.partum.tabsplit.ui.session.SessionViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 

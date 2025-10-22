@@ -1,4 +1,4 @@
-package com.ochuko.tabsplit.ui.components
+package com.partum.tabsplit.ui.components
 
 import androidx.compose.material3.AlertDialog
 import android.widget.Toast
@@ -15,8 +15,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.ochuko.tabsplit.data.model.User
-import com.ochuko.tabsplit.ui.auth.AuthViewModel
+import com.partum.tabsplit.data.model.User
+import com.partum.tabsplit.ui.auth.AuthViewModel
 import kotlinx.coroutines.launch
 import  android.util.Log
 import androidx.compose.foundation.layout.size
