@@ -9,9 +9,17 @@ import com.partum.tabsplit.data.model.AddExpenseRequest
 import com.partum.tabsplit.data.model.Session
 import android.util.Log
 
-class SessionRepository(private val api: SessionApi) {
+interface ISessionRepo {
+    suspend fun getSessions(): List<Session>
+    suspend fun getSession(id: String): SessionOwnerResponse?
+    suspend fun createSession(req: SessionRequest): Session?
+    suspend fun addExpenses(sessionId: String, req: AddExpenseRequest): AddExpenseResponse?
+    suspend fun joinByInvite(code: String): Session?
+}
 
-    suspend fun getSessions(): List<Session> {
+class SessionRepository(private val api: SessionApi) : ISessionRepo {
+
+    override suspend fun getSessions(): List<Session> {
         val res = api.getSessions()
 
         if (res.isSuccessful) return res.body()?.sessions ?: emptyList()
@@ -19,19 +27,20 @@ class SessionRepository(private val api: SessionApi) {
         throw Exception("Failed to fetch sessions: ${res.code()} -> ${res.errorBody()}")
     }
 
-    suspend fun getSession(id: String): SessionOwnerResponse? {
+    override suspend fun getSession(id: String): SessionOwnerResponse? {
         val res = api.getSession(id)
         return if (res.isSuccessful) res.body() else null
     }
 
-    suspend fun createSession(req: SessionRequest): Session? {
+    override suspend fun createSession(req: SessionRequest): Session? {
 
         val res = api.createSession(req)
 
         return if (res.isSuccessful) res.body()?.session else null
     }
 
-    suspend fun addExpenses(sessionId: String, req: AddExpenseRequest): AddExpenseResponse? {
+    override suspend fun addExpenses(sessionId: String, req: AddExpenseRequest):
+            AddExpenseResponse? {
 
         val res = api.addExpenses(sessionId, req)
         Log.d("SessionRepo:addExpenses", "Code: ${res.code()}, Body: ${res.body()}")
@@ -39,7 +48,7 @@ class SessionRepository(private val api: SessionApi) {
         return if (res.isSuccessful) res.body() else null
     }
 
-    suspend fun joinByInvite(code: String): Session? {
+    override suspend fun joinByInvite(code: String): Session? {
         val res = api.joinByInvite(JoinRequest(code))
         return if (res.isSuccessful) res.body() else null
     }
