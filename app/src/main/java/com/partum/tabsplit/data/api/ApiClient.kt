@@ -3,62 +3,39 @@ package com.partum.tabsplit.data.api
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import android.util.Log
-
+import com.partum.tabsplit.utils.AuthInterceptor
 
 object ApiClient {
     @Volatile
     private var retrofit: Retrofit? = null
 
-    @Volatile
-    private var lastToken: String? = null
-
-    private fun buildClient(token: String?): OkHttpClient {
+    private fun buildClient(): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor { chain ->
-                val reqBuilder = chain.request().newBuilder()
-
-                if (!token.isNullOrEmpty()) {
-                    reqBuilder.addHeader("Authorization", "Bearer $token")
-                }
-
-                chain.proceed(reqBuilder.build())
-            }.build()
+            .addInterceptor(AuthInterceptor()).build()
     }
 
-    private fun buildRetrofit(token: String?, baseUrl: String): Retrofit {
+    fun buildRetrofit(baseUrl: String): Retrofit {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
-            .client(buildClient(token))
+            .client(buildClient())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 
-    fun getRetrofit(token: String?, baseUrl: String): Retrofit {
-
-        // If token changed or retrofit never built, rebuild Retrofit
-        if (retrofit == null || token != lastToken) {
+    fun <T> create(clazz: Class<T>, baseUrl: String): T {
+        if (retrofit == null) {
             synchronized(this) {
-                if (retrofit == null || token != lastToken) {
-                    lastToken = token
-                    retrofit = buildRetrofit(token, baseUrl)
-
-                    Log.d(
-                        "ApiClient",
-                        "Retrofit rebuilt (token updated = ${!token.isNullOrEmpty()}"
-                    )
-                }
+                if (retrofit == null) retrofit = buildRetrofit(baseUrl)
             }
         }
 
-        return retrofit!!
+        return retrofit!!.create(clazz)
     }
 
     // Generic helper to create any API service
     inline fun <reified T> create(
         token: String? = null,
         baseUrl: String
-    ): T {
-        return getRetrofit(token, baseUrl).create(T::class.java)
-    }
+    ): T = create(T::class.java, baseUrl)
 }
+
