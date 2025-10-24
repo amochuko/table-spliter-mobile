@@ -1,4 +1,4 @@
-@file:kotlin.OptIn(ExperimentalMaterial3Api::class)
+
 
 package com.partum.tabsplit.ui.navigation
 
@@ -29,8 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import com.partum.tabsplit.ui.components.WalletDialog
 
-
-@OptIn(ExperimentalMaterial3Api::class)
+@kotlin.OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainTopBar(
     authViewModel: AuthViewModel,
