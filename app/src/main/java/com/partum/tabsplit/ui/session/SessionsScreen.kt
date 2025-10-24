@@ -59,7 +59,7 @@ fun SessionsScreen(
                 .padding(32.dp)
         ) {
             Text(
-                text = "Welcome to TableSplit!",
+                text = stringResource(R.string.welcome_to_tablesplit),
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier
                     .padding(bottom = 12.dp)
@@ -86,7 +86,7 @@ fun SessionsScreen(
                 uiState.sessions.isNotEmpty() -> {
                     Text(
                         text = stringResource(
-                            R.string.list_of_available_session, if (uiState.sessions.size > 0) 's'
+                            R.string.list_of_available_session, if (uiState.sessions.size > 1) 's'
                             else ""
                         ),
                         modifier = Modifier
@@ -127,7 +127,7 @@ fun SessionsScreen(
 
                 else -> {
                     Text(
-                        text = "No session yet!", modifier = Modifier.align(
+                        text = stringResource(R.string.no_session_yet), modifier = Modifier.align(
                             Alignment.CenterHorizontally
                         ), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
