@@ -20,9 +20,13 @@ navigationUiKtx = "2.9.5"
 compose = "1.5.0"             # latest stable Compose
 compose-material3 = "1.2.0"   # your current Material3 version
 compose-navigation = "2.7.2"  # navigation-compose
-zxing = "3.5.2"               # ZXing for QR codes
+zxing = "3.5.2" # ZXing for QR codes
+material3 = "1.4.0"
+desugar-jdk-libs = "2.1.2"
 
 [libraries]
+desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugar-jdk-libs" }
+material-icon-ext = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "compose" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -61,6 +65,7 @@ logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", ver
 
 # AndroidX Security Crypto
 security-crypto = { module = "androidx.security:security-crypto", version = "1.1.0-alpha06" }
+#material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 
 
 [plugins]
