@@ -35,6 +35,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.partum.tabsplit.R
 import com.partum.tabsplit.ui.session.SessionViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
 @Composable
@@ -48,7 +49,6 @@ fun LoginScreen(
     val sessionUiState by sessionViewModel.uiState.collectAsState()
     val pendingInviteCode = sessionUiState.pendingInviteCode
 
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
     var email by remember { mutableStateOf("") }
@@ -116,38 +116,34 @@ fun LoginScreen(
                         return@Button
                     }
 
-                    scope.launch {
-                        try {
-                            // Try login
-                            val result = authViewModel.login(email, password)
+                    try {
+                        // Try login
+                        authViewModel.login(email, password)
 
-                            if (!result) {
-                                Toast.makeText(
-                                    context,
-                                    context.getString(R.string.invalid_email_or_password_txt),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            } else {
-                                // Started with a pending invite code
-                                pendingInviteCode?.let { code ->
-                                    sessionViewModel.joinSessionByInvite(code)
+                        if (authUiState.loading) return@Button
 
-                                    sessionViewModel.setPendingInviteCode(null)
-                                }
+                        // Started with a pending invite code
+                        pendingInviteCode?.let { code ->
+                            sessionViewModel.joinSessionByInvite(code)
 
-                                onLoginSuccess()
-                            }
-
-                        } catch (e: Exception) {
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.login_failed_txt),
-                                Toast.LENGTH_SHORT
-                            ).show()
-
-                            Log.e("LoginError", e.message.toString())
-                            e.printStackTrace()
+                            sessionViewModel.setPendingInviteCode(null)
                         }
+
+                        onLoginSuccess()
+
+                    } catch (e: CancellationException) {
+                        Log.w(
+                            "LoginScreen",
+                            "Coroutine cancelled due to recomposition or navigation"
+                        )
+                    } catch (e: Exception) {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.login_failed_txt),
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        Log.e("LoginError", e.message.toString())
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
