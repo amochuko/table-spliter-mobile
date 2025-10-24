@@ -1,29 +1,40 @@
 package com.partum.tabsplit.ui.components.ui
 
-import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FileCopy
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.qrcode.QRCodeWriter
-import androidx.compose.foundation.text.selection.SelectionContainer
-
+import com.partum.tabsplit.R
+import com.partum.tabsplit.utils.copyToClipboard
+import com.partum.tabsplit.utils.generateQrCode
+import com.partum.tabsplit.utils.shareInvite
 
 @Composable
 fun SessionQRCode(inviteUrl: String) {
@@ -47,7 +58,7 @@ fun SessionQRCode(inviteUrl: String) {
         qrBitmap?.let {
             Image(
                 bitmap = it.asImageBitmap(),
-                contentDescription = "Session QR Code",
+                contentDescription = stringResource(R.string.session_qr_code),
                 modifier = Modifier
                     .size(qrSize)
                     .padding(vertical = 16.dp)
@@ -72,57 +83,23 @@ fun SessionQRCode(inviteUrl: String) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Text(
-                text = "Copy",
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier
-                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
-                    .padding(8.dp)
-                    .clickable {
-                        copyToClipboard(context, clipboardManager, inviteUrl)
-                    }
-            )
+            IconButton(onClick = {
+                copyToClipboard(context, clipboardManager, inviteUrl)
+            }) {
+                Icon(
+                    imageVector = Icons.Default.FileCopy,
+                    contentDescription = stringResource(R.string.copy_link)
+                )
+            }
 
-            Text(
-                text = "Share",
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier
-                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
-                    .padding(8.dp)
-                    .clickable {
-                        shareInvite(context, inviteUrl)
-                    }
-            )
+            IconButton(onClick = {
+                shareInvite(context, inviteUrl)
+            }) {
+                Icon(
+                    imageVector = Icons.Default.Share,
+                    contentDescription = stringResource(R.string.share_link)
+                )
+            }
         }
     }
-}
-
-// Generate QR Bitmap
-fun generateQrCode(text: String): Bitmap? = try {
-    val writer = QRCodeWriter()
-    val bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, 512, 512)
-    val bmp = Bitmap.createBitmap(bitMatrix.width, bitMatrix.height, Bitmap.Config.RGB_565)
-    for (x in 0 until bitMatrix.width) {
-        for (y in 0 until bitMatrix.height) {
-            bmp.setPixel(x, y, if (bitMatrix[x, y]) Color.BLACK else Color.WHITE)
-        }
-    }
-    bmp
-} catch (e: Exception) {
-    null
-}
-
-// Overload to use Compose LocalClipboardManager
-fun copyToClipboard(context: Context, clipboardManager: androidx.compose.ui.platform.ClipboardManager, text: String) {
-    clipboardManager.setText(AnnotatedString(text))
-    Toast.makeText(context, "Invite link copied!", Toast.LENGTH_SHORT).show()
-}
-
-// Share Invite via Intent
-fun shareInvite(context: Context, text: String) {
-    val intent = Intent(Intent.ACTION_SEND).apply {
-        type = "text/plain"
-        putExtra(Intent.EXTRA_TEXT, "Join my TabSplit: $text")
-    }
-    context.startActivity(Intent.createChooser(intent, "Share via"))
 }
