@@ -99,15 +99,21 @@ class SessionViewModel(
         }
     }
 
-    suspend fun joinSessionByInvite(code: String): FullSession? {
-        return try {
+    fun joinSessionByInvite(code: String) = viewModelScope.launch {
+        try {
             val joinedSession = sessionRepo.joinByInvite(code)
 
             joinedSession?.let { it ->
-                _uiState.update { s -> s.copy(sessions = s.sessions + it.toFullSession()) }
+                _uiState.update { s ->
+                    s.copy(
+                        sessions = s.sessions + it.toFullSession(),
+                        joinedSession = true,
+                        session = it.toFullSession()
+                    )
+                }
             }
 
-            joinedSession?.toFullSession()
+//            joinedSession?.toFullSession()
         } catch (e: Exception) {
             _uiState.update { it -> it.copy(error = e.message) }
             null
@@ -126,8 +132,11 @@ class SessionViewModel(
 
     fun fetchSession(sessionId: String): Any? = viewModelScope.launch {
         _uiState.update { it.copy(loading = true) }
+
         try {
             val response = sessionRepo.getSession(sessionId)
+            Log.d("FetchSession:sessionId", "$response")
+
             response?.let { res ->
 
                 _uiState.update {
