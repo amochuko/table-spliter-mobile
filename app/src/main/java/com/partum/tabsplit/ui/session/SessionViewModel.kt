@@ -10,11 +10,14 @@ import com.partum.tabsplit.data.repository.SessionRepository
 import com.partum.tabsplit.ui.auth.AuthViewModel
 import com.partum.tabsplit.ui.expense.ExpenseViewModel
 import com.partum.tabsplit.ui.participant.ParticipantViewModel
+import com.partum.tabsplit.utils.combineDateAndTime
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalTime
+import java.util.Date
 
 class SessionViewModel(
     private val sessionRepo: SessionRepository,
@@ -54,9 +57,32 @@ class SessionViewModel(
         }
     }
 
-    suspend fun createSession(title: String, description: String?): FullSession? {
+    suspend fun createSession(
+        title: String,
+        description: String,
+        startDate: Date,
+        endDate: Date,
+        startTime: LocalTime,
+        endTime: LocalTime,
+    ): FullSession? {
+
+        val startDateTime = combineDateAndTime(startDate, startTime)
+        val endDateTime = combineDateAndTime(endDate, endTime)
+
+        Log.d(
+            "SessionViewModel::createSessionArgs",
+            "$title, $description, " +
+                    "$startDateTime, $endDateTime"
+        )
         return try {
-            val response = sessionRepo.createSession(SessionRequest(title, description))
+            val response = sessionRepo.createSession(
+                SessionRequest(
+                    title,
+                    description,
+                    startDateTime,
+                    endDateTime
+                )
+            )
 
             response?.let {
                 _uiState.update { s ->
@@ -66,6 +92,8 @@ class SessionViewModel(
 
             response?.toFullSession()
         } catch (e: Exception) {
+            Log.e("SessionViewModel::createSession", e.message.toString())
+
             _uiState.update { it.copy(error = e.message) }
             null
         }
