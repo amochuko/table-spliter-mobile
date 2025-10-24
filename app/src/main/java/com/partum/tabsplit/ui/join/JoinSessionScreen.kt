@@ -55,8 +55,9 @@ fun JoinSessionScreen(
                             res.qrDataUrl,
                             res.inviteUrl,
                             res.createdBy ?: "",
-                            parseIsoDate(res.createdAt) ?: Date()
-
+                            parseIsoDate(res.createdAt.toString()) ?: Date(),
+                            startDateTime = parseIsoDate(res.startDateTime.toString()) ?: Date(),
+                            endDateTime = parseIsoDate(res.endDateTime.toString()) ?: Date(),
                         )
                     )
                 }
