@@ -1,8 +1,7 @@
 package com.partum.tabsplit.ui.components.ui
 
-import android.app.DatePickerDialog
+import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -12,16 +11,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.google.gson.annotations.SerializedName
 import com.partum.tabsplit.R
 import com.partum.tabsplit.data.model.Session
+import com.partum.tabsplit.ui.components.DateRangePickerField
+import com.partum.tabsplit.ui.components.TimeRangePickerField
 import com.partum.tabsplit.ui.session.SessionViewModel
 import com.partum.tabsplit.utils.parseIsoDate
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
-import java.util.Locale
+import java.time.LocalTime
 
 @Composable
 fun SessionModal(
@@ -30,6 +28,8 @@ fun SessionModal(
     onSessionCreated: (Session) -> Unit,
     sessionViewModel: SessionViewModel
 ) {
+    if (!showCreateModal) return
+
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
@@ -37,44 +37,28 @@ fun SessionModal(
     var description by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf<Date?>(null) }
     var endDate by remember { mutableStateOf<Date?>(null) }
+    var startTime by remember { mutableStateOf<LocalTime?>(null) }
+    var endTime by remember { mutableStateOf<LocalTime?>(null) }
 
-    // Date picker
-    val startCalendar = remember { Calendar.getInstance() }
-    val endCalendar = remember { Calendar.getInstance() }
-
-
-    val startDatePickerDialog = DatePickerDialog(
-        context,
-        { _, year, month, day ->
-
-            startCalendar.set(year, month, day)
-            startDate = startCalendar.time
-        },
-        startCalendar.get(Calendar.YEAR),
-        startCalendar.get(Calendar.MONTH),
-        startCalendar.get(Calendar.DAY_OF_MONTH)
-    )
-    val endDatePickerDialog = DatePickerDialog(
-        context,
-        { _, year, month, day ->
-
-            endCalendar.set(year, month, day)
-            endDate = endCalendar.time
-        },
-        endCalendar.get(Calendar.YEAR),
-        endCalendar.get(Calendar.MONTH),
-        endCalendar.get(Calendar.DAY_OF_MONTH)
-    )
+    // Validation state
+    var titleError by remember { mutableStateOf<String?>(null) }
+    var descError by remember { mutableStateOf<String?>(null) }
+    var startDateError by remember { mutableStateOf<String?>(null) }
+    var endDateError by remember { mutableStateOf<String?>(null) }
+    var startTimeError by remember { mutableStateOf<String?>(null) }
+    var endTimeError by remember { mutableStateOf<String?>(null) }
 
 
-
-    if (showCreateModal) {
-        AlertDialog(onDismissRequest = { setShowCreateModal(false) }, title = {
+    AlertDialog(
+        onDismissRequest = { setShowCreateModal(false) },
+        title = {
             Text(
-                text = "New Session", style = MaterialTheme.typography.titleLarge
+                text = stringResource(R.string.new_session),
+                style = MaterialTheme.typography.titleLarge
             )
         }, text = {
             Column(modifier = Modifier.fillMaxWidth()) {
+
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
@@ -82,8 +66,16 @@ fun SessionModal(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 12.dp),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    isError = titleError != null
                 )
+                if (titleError != null) {
+                    Text(
+                        text = titleError!!,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
 
                 OutlinedTextField(
                     value = description,
@@ -91,113 +83,141 @@ fun SessionModal(
                     label = { Text(stringResource(R.string.description)) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(100.dp),
-                    maxLines = 3
+                        .height(100.dp)
+                        .padding(bottom = 12.dp),
+                    maxLines = 3,
+                    isError = descError != null
+                )
+                if (descError != null) {
+                    Text(
+                        text = descError!!,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                DateRangePickerField(
+                    label = stringResource(R.string.start_and_end_date),
+                    startDate = startDate,
+                    endDate = endDate
+                ) { s, e ->
+                    startDate = s
+                    endDate = e
+                }
+
+                TimeRangePickerField(
+                    label = stringResource(R.string.session_time),
+                    startTime = startTime,
+                    endTime = endTime,
+                    onRangeSelected = { s, e ->
+                        startTime = s
+                        endTime = e
+                    }
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                OutlinedTextField(
-                    value = SimpleDateFormat(
-                        "yyyy-MM-dd",
-                        Locale.getDefault()
-                    ).format(startDate),
-                    onValueChange = {},
-                    label = { Text(text = stringResource(R.string.start_date)) },
-                    enabled = false,
-                    readOnly = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { startDatePickerDialog.show() })
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                OutlinedTextField(
-                    value = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(endDate),
-                    onValueChange = {},
-                    label = { Text(text = stringResource(R.string.end_date)) },
-                    enabled = false,
-                    readOnly = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { endDatePickerDialog.show() })
             }
         }, confirmButton = {
             TextButton(
                 onClick = {
 
-                    when {
-                        title.isBlank() -> {
-                            Toast.makeText(context,
-                                context.getString(R.string.title_is_required), Toast.LENGTH_SHORT).show()
+                    // Reset errors
+                    titleError = null
+                    descError = null
+                    startDateError = null
+                    endDateError = null
+                    startTimeError = null
+                    endTimeError = null
 
-                            return@TextButton
-                        }
+                    var hasError = false
 
-                        description.isBlank() -> {
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.description_is_required),
-                                Toast.LENGTH_SHORT
-                            ).show()
+                    if (title.isBlank()) {
+                        titleError = context.getString(R.string.title_is_required)
+                        hasError = true
+                    }
 
-                            return@TextButton
-                        }
+                    if (description.isBlank()) {
+                        descError = context.getString(R.string.description_is_required)
+                        hasError = true
+                    }
 
-                        startDate == null -> {
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.start_date_is_required),
-                                Toast.LENGTH_SHORT
-                            ).show()
+                    if (startDate == null) {
+                        startDateError = context.getString(R.string.start_date_is_required)
+                        hasError = true
+                    }
 
-                            return@TextButton
-                        }
+                    if (endDate == null) {
+                        endDateError = context.getString(R.string.end_date_is_required)
+                        hasError = true
+                    }
 
-                        endDate == null -> {
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.end_date_is_required),
-                                Toast.LENGTH_SHORT
-                            ).show()
+                    if (startTime == null) {
+                        startTimeError = context.getString(R.string.start_time_required)
+                        hasError = true
+                    }
 
-                            return@TextButton
-                        }
+                    if (endTime == null) {
+                        endTimeError = context.getString(R.string.end_time_required)
+                        hasError = true
+                    }
 
-                        else -> {
-                            scope.launch {
+                    if (hasError) {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.please_fix_the_highlighted_errors),
+                            Toast.LENGTH_SHORT
+                        ).show()
 
-                                // call your AppStore createSession
-                                val result = sessionViewModel.createSession(title, description)
+                        return@TextButton
+                    }
 
-                                // close + reset state
-                                setShowCreateModal(false)
-                                title = ""
-                                description = ""
+                    scope.launch {
+                        try {
 
-                                // navigate to SessionDetails
-                                result?.let {
-                                    onSessionCreated(
-                                        Session(
-                                            it.id,
-                                            it.title,
-                                            it.description,
-                                            it.currency,
-                                            it.inviteCode,
-                                            it.qrDataUrl,
-                                            it.inviteUrl,
-                                            it.createdBy ?: "",
-                                            parseIsoDate(it.createdAt) ?: Date(),
-                                            it.startDate,
-                                            it.endDate
-                                        )
+                            // call your AppStore createSession
+                            val result = sessionViewModel.createSession(
+                                title,
+                                description,
+                                startDate!!,
+                                endDate!!,
+                                startTime!!,
+                                endTime!!
+                            )
+
+                            // close + reset state
+                            setShowCreateModal(false)
+                            title = ""
+                            description = ""
+
+                            // navigate to SessionDetails
+                            result?.let {
+                                onSessionCreated(
+                                    Session(
+                                        it.id,
+                                        it.title,
+                                        it.description,
+                                        it.currency,
+                                        it.inviteCode,
+                                        it.qrDataUrl,
+                                        it.inviteUrl,
+                                        it.createdBy ?: "",
+                                        parseIsoDate(it.createdAt.toString()) ?: Date(),
+                                        it.startDateTime,
+                                        it.endDateTime
                                     )
-                                }
+                                )
                             }
+                        } catch (e: Exception) {
+                            Log.d("SessionModal", e.message.toString())
 
+                            Toast.makeText(
+                                context,
+                                "Failed to create session.",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
-               
                 }) {
                 Text(stringResource(R.string.create))
             }
@@ -206,5 +226,4 @@ fun SessionModal(
                 Text(stringResource(R.string.cancel))
             }
         })
-    }
 }
