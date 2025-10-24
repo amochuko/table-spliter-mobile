@@ -24,11 +24,9 @@ data class Session(
     @SerializedName("created_at")
     val createdAt: Date,
 
-    @SerializedName("start_date")
-    val startDate: Date,
+    @SerializedName("start_datetime")
+    val startDateTime: Date,
 
-    @SerializedName("end_date")
-    val endDate: Date
-
-
+    @SerializedName("end_datetime")
+    val endDateTime: Date
 )
