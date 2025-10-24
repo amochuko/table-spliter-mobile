@@ -7,6 +7,7 @@ import com.partum.tabsplit.data.model.Session
 import retrofit2.Response
 import retrofit2.http.*
 import com.partum.tabsplit.data.model.AddExpenseRequest
+import java.util.Date
 
 data class SessionsResponse(
     val sessions: List<Session>?
@@ -31,6 +32,12 @@ data class SessionWithOwner(
     val createdAt: String,
 
     val owner: SessionOwner,
+
+    @SerializedName("start_datetime")
+    val startDateTime: Date,
+
+    @SerializedName("end_datetime")
+    val endDateTime: Date
 )
 
 data class SessionOwnerResponse(
@@ -49,7 +56,12 @@ data class AddExpenseResponse(
     val expenses: List<Expense>
 )
 
-data class SessionRequest(val title: String, val description: String?)
+data class SessionRequest(
+    val title: String,
+    val description: String,
+    val startDateTime: String,
+    val endDateTime: String
+)
 
 data class JoinRequest(val inviteCode: String)
 
