@@ -45,4 +45,6 @@
     <string name="copy_link">Copy link</string>
     <string name="share_link">Share link</string>
     <string name="session_qr_code">Session QR Code</string>
+    <string name="welcome_to_tablesplit">Welcome to TableSplit!</string>
+    <string name="no_session_yet">No session yet!</string>
 </resources>
