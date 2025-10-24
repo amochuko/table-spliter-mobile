@@ -39,4 +39,10 @@
     <string name="session_time">Session Time</string>
     <string name="start_time_required">Start time required</string>
     <string name="end_time_required">End time required</string>
+    <string name="share_via">Share via</string>
+    <string name="join_my_tabsplit">Join my TabSplit: %1$s</string>
+    <string name="invite_link_copied">Invite link copied!</string>
+    <string name="copy_link">Copy link</string>
+    <string name="share_link">Share link</string>
+    <string name="session_qr_code">Session QR Code</string>
 </resources>
