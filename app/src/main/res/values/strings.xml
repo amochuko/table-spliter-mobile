@@ -57,4 +57,13 @@
     <string name="zaddr">ZADDR</string>
     <string name="wallet_address_required">Wallet address required</string>
     <string name="save">Save</string>
+    <string name="add_expense">Add Expense</string>
+    <string name="settle_with_zec">Settle with ZEC</string>
+    <string name="back">Back</string>
+    <string name="session_not_found">Session not found</string>
+    <string name="expenses">Expenses</string>
+    <string name="participants">Participants: %1$d</string>
+    <string name="paid_by">%1$s • paid by %2$s</string>
+    <string name="no_expense_yet">No expense yet!</string>
+    <string name="balances">Balances</string>
 </resources>
