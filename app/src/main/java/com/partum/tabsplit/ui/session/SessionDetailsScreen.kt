@@ -18,6 +18,8 @@ import com.partum.tabsplit.ui.components.ui.BalancesList
 import com.partum.tabsplit.ui.components.ui.SessionQRCode
 import com.partum.tabsplit.ui.components.ui.ZcashIntegration
 import androidx.compose.material3.*
+import androidx.compose.ui.res.stringResource
+import com.partum.tabsplit.R
 import com.partum.tabsplit.data.model.FullSession
 import com.partum.tabsplit.ui.expense.ExpenseViewModel
 import com.partum.tabsplit.ui.participant.ParticipantViewModel
@@ -52,6 +54,9 @@ fun SessionDetailsScreen(
 
     LaunchedEffect(sessionId) {
         sessionViewModel.fetchSession(sessionId)
+
+        expenseViewModel.fetchExpenses(sessionId)
+//        participantViewModel.fetchSessionParticipants(sessionId, session)
     }
 
     // Update invite URL and recipient address whenever sessions or user changes
@@ -61,7 +66,7 @@ fun SessionDetailsScreen(
         recipientAddress = session?.owner?.zaddr.orEmpty()
     }
 
-    val sessionTitle = session?.title ?: "Session not found"
+    val sessionTitle = session?.title ?: stringResource(R.string.session_not_found)
     val participants = participantUiState.participants[sessionId].orEmpty()
     val expenses = expenseUiState.expenses[sessionId].orEmpty()
 
@@ -80,7 +85,10 @@ fun SessionDetailsScreen(
                 title = { Text(sessionTitle.capitalize(Locale.ENGLISH)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = stringResource(R.string.back)
+                        )
                     }
                 }
             )
@@ -97,12 +105,12 @@ fun SessionDetailsScreen(
             inviteUrl?.let { SessionQRCode(inviteUrl = it) }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Participants: ${participants.size}", fontSize = 16.sp)
+                Text(stringResource(R.string.participants, participants.size), fontSize = 16.sp)
             }
 
             // Expenses list
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Expenses", fontSize = 16.sp)
+                Text(stringResource(R.string.expenses), fontSize = 16.sp)
 
                 if (expenses.isNotEmpty()) {
                     expenses.forEach { e ->
@@ -116,13 +124,16 @@ fun SessionDetailsScreen(
                         ) {
                             Column(modifier = Modifier.padding(8.dp)) {
                                 Text(e.memo, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                                Text("${e.amount} • paid by $payerName", fontSize = 12.sp)
+                                Text(
+                                    stringResource(R.string.paid_by, e.amount, payerName),
+                                    fontSize = 12.sp
+                                )
                             }
                         }
                     }
                 } else {
                     Text(
-                        "No expense yet!",
+                        stringResource(R.string.no_expense_yet),
                         fontSize = 13.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
@@ -131,7 +142,7 @@ fun SessionDetailsScreen(
 
             if (expenses.orEmpty().isNotEmpty()) {
                 Column {
-                    Text("Balances", fontSize = 16.sp)
+                    Text(stringResource(R.string.balances), fontSize = 16.sp)
                     BalancesList(
                         participants = participants,
                         balances = balances
@@ -149,12 +160,12 @@ fun SessionDetailsScreen(
                         onClick = { showZcash = true },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF16A34A))
                     ) {
-                        Text("Settle with ZEC")
+                        Text(stringResource(R.string.settle_with_zec))
                     }
                 }
 
                 Button(onClick = { showAddExpense = true }) {
-                    Text("Add Expense")
+                    Text(stringResource(R.string.add_expense))
                 }
             }
         }
