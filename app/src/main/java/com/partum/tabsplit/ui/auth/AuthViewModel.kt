@@ -13,7 +13,7 @@ import com.partum.tabsplit.data.model.User
 import com.partum.tabsplit.data.repository.AuthRepository
 import com.partum.tabsplit.data.repository.UserRepository
 import com.partum.tabsplit.utils.Config
-import com.partum.tabsplit.utils.TokenProvider
+import com.partum.tabsplit.utils.AuthSessionManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -32,24 +32,29 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
 
 
     init {
-        loadToken()
+        loadAuthSession()
     }
 
     fun getToken(): String? {
-        return TokenProvider.token
+        return AuthSessionManager.token
     }
 
-    fun saveToken(token: String?) {
-        TokenProvider.saveToken(token)
+    fun saveSession(token: String?, user: User) {
+        AuthSessionManager.save(token, user)
     }
 
-    fun loadToken() {
+    fun clearSession() {
+        AuthSessionManager.clear()
+    }
+
+    fun loadAuthSession() {
         viewModelScope.launch {
             val token = getToken()
+            val user = AuthSessionManager.user
 
-            _uiState.value = _uiState.value.copy(
-                token, isLoggedIn = token != null, loading = false
-            )
+            if (token != null && user != null) {
+                updateState(user, token, isLoggedIn = true, loading = false)
+            }
         }
     }
 
@@ -73,10 +78,10 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
             if (result != null) {
                 val (user, token) = result
 
-                saveToken(token)
+                saveSession(token, user)
                 updateState(user, token, isLoggedIn = true)
 
-                Log.d("[AuthViewModel] Signup successful -> user:", token)
+                Log.d("[AuthViewModel] Signup successful -> user:", "$token, ${user.toString()} ")
             } else {
                 updateState(error = "Signup failed: null result")
             }
@@ -87,7 +92,7 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun logout() = viewModelScope.launch {
-        saveToken(token = null)
+        clearSession()
         updateState(user = null, token = null, isLoggedIn = false)
     }
 
@@ -100,10 +105,10 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
 
                 val (user, token) = result
 
-                saveToken(token)
+                saveSession(token, user)
                 updateState(user, token, true)
 
-                println("[AuthViewModel] Login successful -> user: ${user.email}")
+                Log.d("[AuthViewModel] Login successful -> user:", "$token, ${user.toString()}")
             } else {
                 // Handle the failed
                 updateState(error = "Invalid credentials", loading = false)
