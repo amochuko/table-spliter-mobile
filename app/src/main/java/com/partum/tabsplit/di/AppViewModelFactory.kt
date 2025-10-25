@@ -3,6 +3,7 @@ package com.partum.tabsplit.di
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.partum.tabsplit.data.repository.ExpenseRepository
 import com.partum.tabsplit.data.repository.SessionRepository
 import com.partum.tabsplit.ui.auth.AuthViewModel
 import com.partum.tabsplit.ui.expense.ExpenseViewModel
@@ -11,12 +12,13 @@ import com.partum.tabsplit.ui.session.SessionViewModel
 
 class AppViewModelFactory(
     private val sessionRepo: SessionRepository,
+    private val expenseRepo: ExpenseRepository,
     private val authViewModel: AuthViewModel
 ) : ViewModelProvider.Factory {
 
     // Lazily initialized child view models that need to share state
     private val participantViewModel by lazy { ParticipantViewModel(sessionRepo) }
-    private val expenseViewModel by lazy { ExpenseViewModel(sessionRepo) }
+    private val expenseViewModel by lazy { ExpenseViewModel(sessionRepo, expenseRepo) }
 
 
     @Suppress("UNCHECKED_CAST")
@@ -39,8 +41,9 @@ class AppViewModelFactory(
             }
 
             modelClass.isAssignableFrom(ExpenseViewModel::class.java) -> {
-                expenseViewModel as T
+                ExpenseViewModel(sessionRepo, expenseRepo) as T
             }
+
 
             modelClass.isAssignableFrom(AuthViewModel::class.java) -> {
                 authViewModel as T
