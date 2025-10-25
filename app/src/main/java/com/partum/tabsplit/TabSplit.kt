@@ -2,7 +2,7 @@ package com.partum.tabsplit
 
 import android.app.Application
 import com.partum.tabsplit.di.AppContainer
-import com.partum.tabsplit.utils.TokenProvider
+import com.partum.tabsplit.utils.AuthSessionManager
 
 class TabSplit : Application() {
 
@@ -12,7 +12,7 @@ class TabSplit : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        TokenProvider.init(this)
+        AuthSessionManager.init(this)
         appContainer = AppContainer(this)
 
     }
