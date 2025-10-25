@@ -1,24 +1,58 @@
 package com.partum.tabsplit.ui.expense
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.partum.tabsplit.data.model.AddExpenseRequest
 import com.partum.tabsplit.data.model.Expense
+import com.partum.tabsplit.data.repository.ExpenseRepository
 import com.partum.tabsplit.data.repository.SessionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class ExpenseViewModel(
-    private val sessionRep: SessionRepository
+    private val sessionRepo: SessionRepository,
+    private val expenseRepo: ExpenseRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ExpenseUiState())
     val uiState: StateFlow<ExpenseUiState> = _uiState.asStateFlow()
 
+    fun fetchExpenses(sessionId: String) = viewModelScope.launch {
+        _uiState.update { it.copy(loading = true) }
+
+        try {
+            val expenses = expenseRepo.getExpenses(sessionId)
+            Log.d("ExpenseViewModel", "Fetched expenses $expenses")
+
+            expenses.let { res ->
+                _uiState.update { state ->
+                    state.copy(
+                        loading = false,
+                        expenses = (state.expenses.toMutableMap().apply {
+                            put(sessionId, expenses)
+                        })
+                    )
+                }
+            }
+
+        } catch (e: Exception) {
+            Log.e("ExpenseViewModel", "fetchExpenses failed", e)
+
+            _uiState.update {
+                it.copy(
+                    loading = false,
+                    error = e.message
+                )
+            }
+        }
+    }
 
     suspend fun addExpense(sessionId: String, memo: String, amount: Double) {
         try {
-            val res = sessionRep.addExpenses(sessionId, AddExpenseRequest(memo, amount))
+            val res = sessionRepo.addExpenses(sessionId, AddExpenseRequest(memo, amount))
             res?.let {
                 val updated = _uiState.value.expenses.toMutableMap()
                 val newList = updated[it.sessionId].orEmpty() + it.expenses
