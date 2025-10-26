@@ -56,7 +56,7 @@ fun SessionsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(32.dp)
+                .padding(16.dp)
         ) {
 
             when {
