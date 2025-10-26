@@ -66,4 +66,17 @@
     <string name="paid_by">%1$s • paid by %2$s</string>
     <string name="no_expense_yet">No expense yet!</string>
     <string name="balances">Balances</string>
+    <string name="waiting_for_recipient_address">Waiting for recipient address...</string>
+    <string name="close">Close</string>
+    <string name="nothing_to_settle">Nothing to settle</string>
+    <string name="session_settlement">Session %1$s settlement</string>
+    <string name="zcash_payment_qr">Zcash Payment QR</string>
+    <string name="zcash_payment_uri">Zcash Payment URI</string>
+    <string name="copied_to_clipboard">Copied to clipboard</string>
+    <string name="copy">Copy</string>
+    <string name="join_my_tabsplit_txt">Join my TabSplit: %1$s</string>
+    <string name="share">Share</string>
+    <string name="no_wallet_app_found">No wallet app found</string>
+    <string name="open_in_wallet">Open in Wallet</string>
+    <string name="if_your_wallet_asks_you_to_rescan_just_point_your_camera_at_this_qr_code">If your Wallet asks you to rescan, just point your camera at this QR code.</string>
 </resources>
