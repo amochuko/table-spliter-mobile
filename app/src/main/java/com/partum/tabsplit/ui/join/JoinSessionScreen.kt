@@ -47,7 +47,7 @@ fun JoinSessionScreen(
 
                 sessionViewModel.joinSessionByInvite(inviteCode)
 
-                if (sessionUiState.joinedSession) {
+                if (sessionUiState.hasJoinedSession) {
                     val ses = sessionUiState.session!!
 
                     onJoinSuccess(
