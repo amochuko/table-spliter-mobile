@@ -20,8 +20,7 @@ class ParticipantViewModel(
         try {
             session.let {
                 val updated = _uiState.value.participants.toMutableMap()
-                val (_, participants) = it.sessionWithExpensesAndParticipants
-                updated[sessionId] = participants
+                updated[sessionId] = it.sessionWithExpensesAndParticipants!!.participants
 
                 _uiState.update { state -> state.copy(participants = updated) }
             }
