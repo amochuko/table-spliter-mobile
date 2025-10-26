@@ -8,9 +8,10 @@ import com.partum.tabsplit.data.api.SessionWithExpensesAndParticipantsResponse
 import com.partum.tabsplit.data.model.AddExpenseRequest
 import com.partum.tabsplit.data.model.Session
 import android.util.Log
+import com.partum.tabsplit.data.api.SessionsResponse
 
 interface ISessionRepo {
-    suspend fun getSessions(): List<Session>
+    suspend fun getSessions(): SessionsResponse
     suspend fun getSession(id: String): SessionWithExpensesAndParticipantsResponse?
     suspend fun createSession(req: SessionRequest): Session?
     suspend fun addExpenses(sessionId: String, req: AddExpenseRequest): AddExpenseResponse?
@@ -19,10 +20,10 @@ interface ISessionRepo {
 
 class SessionRepository(private val api: SessionApi) : ISessionRepo {
 
-    override suspend fun getSessions(): List<Session> {
+    override suspend fun getSessions(): SessionsResponse {
         val res = api.getSessions()
 
-        if (res.isSuccessful) return res.body()?.sessions ?: emptyList()
+        if (res.isSuccessful) return res.body()!!
 
         throw Exception("Failed to fetch sessions: ${res.code()} -> ${res.errorBody()}")
     }
