@@ -80,7 +80,7 @@
     <string name="open_in_wallet">Open in Wallet</string>
     <string name="if_your_wallet_asks_you_to_rescan_just_point_your_camera_at_this_qr_code">If your Wallet asks you to rescan, just point your camera at this QR code.</string>
     <string name="my_sessions">My Sessions</string>
-    <string name="joined_session">Joined Session</string>
+    <string name="joined_session">Joined Sessions</string>
     <string name="no_joined_sessions_yet">No joined Sessions yet</string>
     <string name="you_haven_t_created_any_session_yet">You haven\'t created any session yet.</string>
     <string name="you_haven_t_joined_any_session_yet">You haven\'t joined any session yet</string>
