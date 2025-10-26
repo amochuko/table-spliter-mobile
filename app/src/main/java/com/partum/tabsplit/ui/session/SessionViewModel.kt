@@ -167,15 +167,4 @@ class SessionViewModel(
             }
         }
     }
-
-    fun getUserSessions(userId: String?): Pair<List<Session>, List<Session>> {
-        val sessions = _uiState.value.sessions
-
-        if (userId == null) return Pair(emptyList(), emptyList())
-
-        val mySessions = sessions.filter { it.owner.id == userId }
-        val joinedSessions = sessions.filter { it.owner.id != userId }
-
-        return Pair(mySessions, joinedSessions)
-    }
 }
