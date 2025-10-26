@@ -5,6 +5,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -19,6 +21,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.ui.res.stringResource
 import com.partum.tabsplit.R
 import com.partum.tabsplit.data.model.Session
@@ -32,6 +36,7 @@ fun SessionsScreen(
 
     // Reactive state
     val uiState by sessionViewModel.uiState.collectAsState()
+
     var showCreateModal by remember { mutableStateOf(false) }
 
     // FAB control
@@ -39,6 +44,8 @@ fun SessionsScreen(
     val isFabExpanded by remember {
         derivedStateOf { listState.firstVisibleItemIndex == 0 }
     }
+
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(Unit) {
         sessionViewModel.loadSessions()
@@ -48,8 +55,7 @@ fun SessionsScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(
-                horizontal = 8.dp,
-                vertical = 4.dp
+                horizontal = 8.dp, vertical = 4.dp
             )
     ) {
 
@@ -58,6 +64,23 @@ fun SessionsScreen(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
+
+            val tabs = listOf(
+                stringResource(R.string.my_sessions),
+                stringResource(R.string.joined_session)
+            )
+
+            TabRow(selectedTabIndex = selectedTabIndex) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTabIndex == index,
+                        onClick = { selectedTabIndex = index },
+                        text = { Text(title) }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
 
             when {
                 uiState.loading -> {
@@ -76,73 +99,62 @@ fun SessionsScreen(
                     )
                 }
 
-                uiState.sessions.isNotEmpty() -> {
-                    Text(
-                        text = stringResource(
-                            R.string.list_of_available_session, if (uiState.sessions.size > 1) 's'
-                            else ""
-                        ),
-                        modifier = Modifier
-                            .padding(
-                                bottom = 12.dp,
-                                top = 12.dp
-                            ),
-                        color = MaterialTheme.colorScheme.onSurface.copy(
-                            alpha = 0.7f
-                        )
-                    )
+                else -> {
 
-                    uiState.sessions.forEach { s ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp)
-                                .clickable {
-                                    onSessionClick(s.id)
-                                }) {
-                            Column(
-                                modifier = Modifier.padding(8.dp)
-                            ) {
-                                Text(
-                                    text = s.title, style = MaterialTheme.typography.titleMedium
-                                )
-                                Text(
-                                    text = s.description,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurface.copy(
-                                        alpha = 0.7f
-                                    )
-                                )
+                    val sessions = if (selectedTabIndex == 0)
+                        uiState.ownedSessions
+                    else
+                        uiState.joinedSessions
+
+                    if (sessions.isEmpty()) {
+                        Text(
+                            text = if (selectedTabIndex == 0)
+                                stringResource(R.string.you_haven_t_created_any_session_yet)
+                            else
+                                stringResource(R.string.you_haven_t_joined_any_session_yet),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        )
+                    } else {
+                        LazyColumn(state = listState) {
+                            items(sessions) { s ->
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp)
+                                        .clickable {
+                                            onSessionClick(s.id)
+                                        }
+                                ) {
+                                    Column(
+                                        modifier = Modifier.padding(8.dp)
+                                    ) {
+                                        Text(
+                                            text = s.title,
+                                            style = MaterialTheme.typography.titleMedium
+                                        )
+                                        Text(
+                                            text = s.description,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurface.copy(
+                                                alpha = 0.7f
+                                            )
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
-                }
 
-                else -> {
-
-                    Text(
-                        text = stringResource(R.string.welcome_to_tablesplit),
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier
-                            .padding(bottom = 12.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-
-                    Text(
-                        text = stringResource(R.string.no_session_yet), modifier = Modifier.align(
-                            Alignment.CenterHorizontally
-                        ), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                    )
                 }
             }
         }
 
         AnimatedVisibility(
-            visible = true,
+            visible = selectedTabIndex == 0,
             enter = fadeIn(),
             exit = fadeOut(),
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
+            modifier = Modifier.align(Alignment.BottomEnd)
         ) {
             ExtendedFloatingActionButton(
                 onClick = { showCreateModal = true },
@@ -175,7 +187,8 @@ fun SessionsScreen(
 
                     onSessionClick(newSession.id)
                     sessionViewModel.loadSessions()
-                })
+                }
+            )
         }
     }
 }
