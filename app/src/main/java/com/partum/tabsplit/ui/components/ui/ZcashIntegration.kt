@@ -21,6 +21,8 @@ import com.google.zxing.qrcode.QRCodeWriter
 import com.partum.tabsplit.utils.createZcashUri
 import android.content.ClipData
 import android.content.ClipboardManager
+import androidx.compose.ui.res.stringResource
+import com.partum.tabsplit.R
 
 @Composable
 fun ZcashIntegration(
@@ -54,9 +56,9 @@ fun ZcashIntegration(
                             .fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("Waiting for recipient address...")
+                        Text(stringResource(R.string.waiting_for_recipient_address))
                         Spacer(Modifier.height(16.dp))
-                        Button(onClick = onClose) { Text("Close") }
+                        Button(onClick = onClose) { Text(stringResource(R.string.close)) }
                     }
                 }
 
@@ -68,11 +70,11 @@ fun ZcashIntegration(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            "Nothing to settle",
+                            stringResource(R.string.nothing_to_settle),
                             style = MaterialTheme.typography.titleMedium
                         )
                         Spacer(Modifier.height(16.dp))
-                        Button(onClick = onClose) { Text("Close") }
+                        Button(onClick = onClose) { Text(stringResource(R.string.close)) }
                     }
                 }
 
@@ -80,7 +82,7 @@ fun ZcashIntegration(
                     val paymentUri = createZcashUri(
                         recipientAddress,
                         totalAmount,
-                        "Session $sessionId settlement"
+                        stringResource(R.string.session_settlement, sessionId)
                     )
 
                     Column(
@@ -90,7 +92,7 @@ fun ZcashIntegration(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            "Settle with ZEC",
+                            stringResource(R.string.settle_with_zec),
                             style = MaterialTheme.typography.titleLarge
                         )
 
@@ -112,7 +114,7 @@ fun ZcashIntegration(
 
                         Image(
                             bitmap = qrBitmap,
-                            contentDescription = "Zcash Payment QR",
+                            contentDescription = stringResource(R.string.zcash_payment_qr),
                             modifier = Modifier.size(200.dp)
                         )
 
@@ -135,22 +137,25 @@ fun ZcashIntegration(
                             Button(onClick = {
                                 // Copy to clipboard
                                 clipboard.setPrimaryClip(
-                                    ClipData.newPlainText("Zcash Payment URI", paymentUri)
+                                    ClipData.newPlainText(context.getString(R.string.zcash_payment_uri), paymentUri)
                                 )
-                                Toast.makeText(context, "Copied to clipboard", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context,
+                                    context.getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show()
                             }) {
-                                Text("Copy")
+                                Text(stringResource(R.string.copy))
                             }
 
                             Button(onClick = {
                                 // Share intent
                                 val shareIntent = Intent(Intent.ACTION_SEND).apply {
                                     type = "text/plain"
-                                    putExtra(Intent.EXTRA_TEXT, "Join my TabSplit: $paymentUri")
+                                    putExtra(Intent.EXTRA_TEXT,
+                                        context.getString(R.string.join_my_tabsplit_txt, paymentUri))
                                 }
-                                context.startActivity(Intent.createChooser(shareIntent, "Share via"))
+                                context.startActivity(Intent.createChooser(shareIntent,
+                                    context.getString(R.string.share_via)))
                             }) {
-                                Text("Share")
+                                Text(stringResource(R.string.share))
                             }
                         }
 
@@ -165,23 +170,24 @@ fun ZcashIntegration(
                                 try {
                                     context.startActivity(intent)
                                 } catch (_: Exception) {
-                                    Toast.makeText(context, "No wallet app found", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context,
+                                        context.getString(R.string.no_wallet_app_found), Toast.LENGTH_SHORT).show()
                                 }
                             }) {
-                                Text("Open in Wallet")
+                                Text(stringResource(R.string.open_in_wallet))
                             }
                             Button(
                                 onClick = onClose,
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                             ) {
-                                Text("Close")
+                                Text(stringResource(R.string.close))
                             }
                         }
 
                         Spacer(Modifier.height(24.dp))
 
                         Text(
-                            "If your Wallet asks you to rescan, just point your camera at this QR code.",
+                            stringResource(R.string.if_your_wallet_asks_you_to_rescan_just_point_your_camera_at_this_qr_code),
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.Gray,
                             textAlign = TextAlign.Center
