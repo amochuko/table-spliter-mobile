@@ -40,20 +40,39 @@ fun AppNavHost(
 
     Log.d("AppNavHost:user", authUiState.user?.email ?: "not user object")
 
-    Scaffold(topBar = {
-        if (authUiState.user != null && currentRoute != Screen.Login.route && currentRoute != Screen
-                .Signup.route
-        ) {
+    val canNavigateBack = navController.previousBackStackEntry != null
 
-            MainTopBar(authViewModel, navController, onPersistZaddr = { z ->
-                authViewModel
-                    .updateZAddr(z)
-            })
+    val title = when {
+        currentRoute?.startsWith(Screen.SessionDetails.route) == true -> "Session Details"
+        currentRoute == Screen.Sessions.route -> "Sessions"
+        currentRoute == Screen.Join.route -> "Join Session"
+        else -> "TableSplit"
+    }
+
+    Scaffold(
+        topBar = {
+            if (authUiState.user != null &&
+                currentRoute != Screen.Login.route &&
+                currentRoute != Screen.Signup.route
+            ) {
+
+                MainTopBar(
+                    authViewModel,
+                    navController,
+                    onPersistZaddr = { z ->
+                        authViewModel
+                            .updateZAddr(z)
+                    },
+                    canNavigateBack = canNavigateBack,
+                    title = title
+                )
+            }
         }
-    }) { innerPadding ->
+    ) { innerPadding ->
         NavHost(
-            navController, startDestination = Screen.Login.route, modifier = Modifier.padding
-                (innerPadding)
+            navController,
+            startDestination = Screen.Login.route,
+            modifier = Modifier.padding(innerPadding)
         ) {
 
             composable(Screen.Splash.route) {
