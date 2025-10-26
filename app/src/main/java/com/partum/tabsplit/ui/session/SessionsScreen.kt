@@ -58,13 +58,6 @@ fun SessionsScreen(
                 .fillMaxSize()
                 .padding(32.dp)
         ) {
-            Text(
-                text = stringResource(R.string.welcome_to_tablesplit),
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier
-                    .padding(bottom = 12.dp)
-                    .align(Alignment.CenterHorizontally)
-            )
 
             when {
                 uiState.loading -> {
@@ -126,6 +119,15 @@ fun SessionsScreen(
                 }
 
                 else -> {
+
+                    Text(
+                        text = stringResource(R.string.welcome_to_tablesplit),
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier
+                            .padding(bottom = 12.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+
                     Text(
                         text = stringResource(R.string.no_session_yet), modifier = Modifier.align(
                             Alignment.CenterHorizontally
