@@ -1,49 +1,19 @@
 package com.partum.tabsplit.data.api
 
-import com.google.gson.annotations.SerializedName
 import com.partum.tabsplit.data.model.Expense
 import com.partum.tabsplit.data.model.Participant
 import com.partum.tabsplit.data.model.Session
 import retrofit2.Response
 import retrofit2.http.*
 import com.partum.tabsplit.data.model.AddExpenseRequest
-import java.util.Date
+import com.partum.tabsplit.data.model.SessionWithExpensesAndParticipants
 
 data class SessionsResponse(
     val sessions: List<Session>?
 )
 
-data class SessionOwner(
-    val id: String,
-    val username: String,
-    val zaddr: String,
-
-    @SerializedName("user_id")
-    val userId: String,
-)
-
-data class SessionWithOwner(
-    val id: String,
-    val title: String,
-    val description: String,
-    val currency: String,
-
-    @SerializedName("created_at")
-    val createdAt: String,
-
-    val owner: SessionOwner,
-
-    @SerializedName("start_datetime")
-    val startDateTime: Date,
-
-    @SerializedName("end_datetime")
-    val endDateTime: Date
-)
-
-data class SessionOwnerResponse(
-    val participants: List<Participant>,
-    val expenses: List<Expense>,
-    val session: SessionWithOwner
+data class SessionWithExpensesAndParticipantsResponse(
+    val sessionWithExpensesAndParticipants: SessionWithExpensesAndParticipants
 )
 
 data class SessionResponse(
@@ -70,7 +40,7 @@ interface SessionApi {
     suspend fun getSessions(): Response<SessionsResponse>
 
     @GET("/sessions/{id}")
-    suspend fun getSession(@Path("id") id: String): Response<SessionOwnerResponse>
+    suspend fun getSession(@Path("id") id: String): Response<SessionWithExpensesAndParticipantsResponse>
 
     @POST("/sessions")
     suspend fun createSession(@Body body: SessionRequest): Response<SessionResponse>
