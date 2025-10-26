@@ -67,7 +67,6 @@ fun SessionDetailsScreen(
         recipientAddress = session?.owner?.zaddr.orEmpty()
     }
 
-    val sessionTitle = session?.title ?: stringResource(R.string.session_not_found)
     val participants = participantUiState.participants[sessionId].orEmpty()
     val expenses = expenseUiState.expenses[sessionId].orEmpty()
 
