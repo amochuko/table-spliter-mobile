@@ -1,5 +1,6 @@
 package com.partum.tabsplit.data.api
 
+import com.google.gson.annotations.SerializedName
 import com.partum.tabsplit.data.model.Expense
 import com.partum.tabsplit.data.model.Participant
 import com.partum.tabsplit.data.model.Session
@@ -13,7 +14,8 @@ data class SessionsResponse(
 )
 
 data class SessionWithExpensesAndParticipantsResponse(
-    val sessionWithExpensesAndParticipants: SessionWithExpensesAndParticipants
+    @SerializedName("sessionById")
+    val sessionWithExpensesAndParticipants: SessionWithExpensesAndParticipants?
 )
 
 data class SessionResponse(
