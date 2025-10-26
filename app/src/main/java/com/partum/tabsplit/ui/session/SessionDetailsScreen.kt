@@ -74,104 +74,83 @@ fun SessionDetailsScreen(
     // Compute balances
     val balances = remember(sessionId, participants, expenses) {
         calculateBalances(
-            sessionId,
-            participantUiState.participants,
-            expenseUiState.expenses
+            sessionId, participantUiState.participants, expenseUiState.expenses
         )
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(sessionTitle.capitalize(Locale.ENGLISH)) },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            Icons.Default.ArrowBack,
-                            contentDescription = stringResource(R.string.back)
-                        )
-                    }
-                }
-            )
+    Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+            .padding(16.dp),
+    ) {
+
+        inviteUrl?.let { SessionQRCode(inviteUrl = it) }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.participants, participants.size), fontSize = 16.sp)
         }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(innerPadding)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            inviteUrl?.let { SessionQRCode(inviteUrl = it) }
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(R.string.participants, participants.size), fontSize = 16.sp)
-            }
+        // Expenses list
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(stringResource(R.string.expenses), fontSize = 16.sp)
 
-            // Expenses list
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(stringResource(R.string.expenses), fontSize = 16.sp)
+            if (expenses.isNotEmpty()) {
+                expenses.forEach { e ->
+                    val payerName =
+                        participants.find { it.id == e.payerId }?.username ?: e.payerId.take(6)
 
-                if (expenses.isNotEmpty()) {
-                    expenses.forEach { e ->
-                        val payerName =
-                            participants.find { it.id == e.payerId }?.username
-                                ?: e.payerId.take(6)
-
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            elevation = CardDefaults.cardElevation(4.dp)
-                        ) {
-                            Column(modifier = Modifier.padding(8.dp)) {
-                                Text(e.memo, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                                Text(
-                                    stringResource(R.string.paid_by, e.amount, payerName),
-                                    fontSize = 12.sp
-                                )
-                            }
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        elevation = CardDefaults.cardElevation(4.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(8.dp)) {
+                            Text(e.memo, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                            Text(
+                                stringResource(R.string.paid_by, e.amount, payerName),
+                                fontSize = 12.sp
+                            )
                         }
                     }
-                } else {
-                    Text(
-                        stringResource(R.string.no_expense_yet),
-                        fontSize = 13.sp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                    )
                 }
+            } else {
+                Text(
+                    stringResource(R.string.no_expense_yet),
+                    fontSize = 13.sp,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
             }
+        }
 
+        if (expenses.orEmpty().isNotEmpty()) {
+            Column {
+                Text(stringResource(R.string.balances), fontSize = 16.sp)
+                BalancesList(
+                    participants = participants, balances = balances
+                )
+            }
+        }
+
+        // Actions
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
+        ) {
             if (expenses.orEmpty().isNotEmpty()) {
-                Column {
-                    Text(stringResource(R.string.balances), fontSize = 16.sp)
-                    BalancesList(
-                        participants = participants,
-                        balances = balances
-                    )
+                Button(
+                    onClick = { showZcash = true },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF16A34A))
+                ) {
+                    Text(stringResource(R.string.settle_with_zec))
                 }
             }
 
-            // Actions
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
-            ) {
-                if (expenses.orEmpty().isNotEmpty()) {
-                    Button(
-                        onClick = { showZcash = true },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF16A34A))
-                    ) {
-                        Text(stringResource(R.string.settle_with_zec))
-                    }
-                }
-
-                Button(onClick = { showAddExpense = true }) {
-                    Text(stringResource(R.string.add_expense))
-                }
+            Button(onClick = { showAddExpense = true }) {
+                Text(stringResource(R.string.add_expense))
             }
         }
     }
-
     // Modals
     if (showZcash) {
         ZcashIntegration(
@@ -179,8 +158,7 @@ fun SessionDetailsScreen(
             balances = balances,
             recipientAddress = recipientAddress,
             sessionId = sessionId,
-            onClose = { showZcash = false }
-        )
+            onClose = { showZcash = false })
     }
 
     if (showAddExpense) {
