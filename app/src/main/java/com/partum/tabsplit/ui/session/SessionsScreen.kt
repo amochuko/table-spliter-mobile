@@ -75,7 +75,12 @@ fun SessionsScreen(
                     Tab(
                         selected = selectedTabIndex == index,
                         onClick = { selectedTabIndex = index },
-                        text = { Text(title) }
+                        text = {
+                            Text(
+                                title, color = MaterialTheme
+                                    .colorScheme.onSurface.copy(alpha = 0.6f)
+                            )
+                        }
                     )
                 }
             }
