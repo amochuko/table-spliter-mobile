@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.partum.tabsplit.data.api.SessionRequest
 import com.partum.tabsplit.data.model.Session
-import com.partum.tabsplit.data.model.SessionWithExpensesAndParticipants
 import com.partum.tabsplit.data.repository.SessionRepository
 import com.partum.tabsplit.ui.auth.AuthViewModel
 import com.partum.tabsplit.ui.expense.ExpenseViewModel
@@ -43,11 +42,12 @@ class SessionViewModel(
         _uiState.update { it.copy(loading = true) }
 
         try {
-            val sessions = sessionRepo.getSessions()
+            val result = sessionRepo.getSessions()
 
             _uiState.update {
                 it.copy(
-                    sessions = sessions,
+                    ownedSessions = result.ownedSessions!!,
+                    joinedSessions = result.joinedSessions!!,
                     loading = false
                 )
             }
@@ -106,7 +106,7 @@ class SessionViewModel(
                 _uiState.update { s ->
                     s.copy(
                         sessions = s.sessions + it,
-                        joinedSession = true,
+                        hasJoinedSession = true,
                         session = it
                     )
                 }
@@ -168,4 +168,14 @@ class SessionViewModel(
         }
     }
 
+    fun getUserSessions(userId: String?): Pair<List<Session>, List<Session>> {
+        val sessions = _uiState.value.sessions
+
+        if (userId == null) return Pair(emptyList(), emptyList())
+
+        val mySessions = sessions.filter { it.owner.id == userId }
+        val joinedSessions = sessions.filter { it.owner.id != userId }
+
+        return Pair(mySessions, joinedSessions)
+    }
 }
