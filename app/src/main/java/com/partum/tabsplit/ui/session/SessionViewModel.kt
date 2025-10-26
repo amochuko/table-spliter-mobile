@@ -44,7 +44,6 @@ class SessionViewModel(
 
         try {
             val sessions = sessionRepo.getSessions()
-//            val mapped = sessions.map { it.toFullSession() }
 
             _uiState.update {
                 it.copy(
@@ -133,32 +132,25 @@ class SessionViewModel(
 
         try {
             val response = sessionRepo.getSession(sessionId)
-            Log.d("SessionViewModel::FetchSession", "$response")
 
             response?.let { res ->
-                val (session, participants, expenses) = res.sessionWithExpensesAndParticipants
-
-                val combined = SessionWithExpensesAndParticipants(
-                    session,
-                    participants,
-                    expenses,
-                )
+                val swa = res.sessionWithExpensesAndParticipants!!
 
                 _uiState.update {
                     it.copy(
                         loading = false,
-                        session = session,
-                        sessions = (it.sessions + session).distinctBy { s -> s.id },
-                        sessionWithExpensesAndParticipants = combined
+                        session = swa.session,
+                        sessions = (it.sessions + swa.session).distinctBy { s -> s.id },
+                        sessionWithExpensesAndParticipants = swa
                     )
                 }
 
                 participantViewModel.updateParticipants(
-                    sessionId, participants
+                    sessionId, swa.participants
                 )
 
                 expenseViewModel.updateExpenses(
-                    sessionId, expenses
+                    sessionId, swa.expenses
                 )
             }
 
