@@ -1,12 +1,12 @@
-
-
 package com.partum.tabsplit.ui.navigation
 
+import android.graphics.drawable.Icon
 import androidx.annotation.OptIn
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
@@ -34,7 +34,9 @@ import com.partum.tabsplit.ui.components.WalletDialog
 fun MainTopBar(
     authViewModel: AuthViewModel,
     navController: NavController,
-    onPersistZaddr: suspend (String) -> Boolean = { true }
+    onPersistZaddr: suspend (String) -> Boolean = { true },
+    canNavigateBack: Boolean,
+    title: String
 ) {
 
     val authUiState by authViewModel.uiState.collectAsState()
@@ -44,7 +46,16 @@ fun MainTopBar(
     var showWalletDialog by remember { mutableStateOf(false) }
 
     TopAppBar(
-        title = { Text("TabSplit") },
+        title = { Text(title) },
+        navigationIcon = {
+            if (canNavigateBack) {
+
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                }
+
+            } else null
+        },
         actions = {
 
             Box {
@@ -100,7 +111,7 @@ fun MainTopBar(
                             authViewModel.logout()
 
                             navController.navigate(Screen.Login.route) {
-                                popUpTo(0) {inclusive = true}
+                                popUpTo(0) { inclusive = true }
                             }
                         }
                     )
