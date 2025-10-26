@@ -10,7 +10,8 @@ import com.partum.tabsplit.data.model.AddExpenseRequest
 import com.partum.tabsplit.data.model.SessionWithExpensesAndParticipants
 
 data class SessionsResponse(
-    val sessions: List<Session>?
+    val ownedSessions: List<Session>?,
+    val joinedSessions: List<Session>?
 )
 
 data class SessionWithExpensesAndParticipantsResponse(
