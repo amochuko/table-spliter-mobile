@@ -46,7 +46,7 @@
     <string name="share_link">Share link</string>
     <string name="session_qr_code">Session QR Code</string>
     <string name="welcome_to_tablesplit">Welcome to TableSplit!</string>
-    <string name="no_session_yet">No session yet!</string>
+    <string name="no_session_yet">No created session yet!</string>
     <string name="wallet_updated">Wallet updated</string>
     <string name="wallet_save_failed_try_again">Wallet save failed. Try again</string>
     <string name="wallet_address">Wallet Address</string>
@@ -79,4 +79,9 @@
     <string name="no_wallet_app_found">No wallet app found</string>
     <string name="open_in_wallet">Open in Wallet</string>
     <string name="if_your_wallet_asks_you_to_rescan_just_point_your_camera_at_this_qr_code">If your Wallet asks you to rescan, just point your camera at this QR code.</string>
+    <string name="my_sessions">My Sessions</string>
+    <string name="joined_session">Joined Session</string>
+    <string name="no_joined_sessions_yet">No joined Sessions yet</string>
+    <string name="you_haven_t_created_any_session_yet">You haven\'t created any session yet.</string>
+    <string name="you_haven_t_joined_any_session_yet">You haven\'t joined any session yet</string>
 </resources>
