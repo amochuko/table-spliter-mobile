@@ -10,5 +10,7 @@ data class SessionUiState(
     val loading: Boolean = false,
     val error: String? = null,
     val pendingInviteCode: String? = null,
-    val joinedSession: Boolean = false
+    val hasJoinedSession: Boolean = false,
+    val ownedSessions: List<Session> = emptyList(),
+    val joinedSessions: List<Session> = emptyList()
 )
