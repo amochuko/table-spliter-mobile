@@ -1,5 +1,6 @@
 package com.partum.tabsplit.ui.session
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -20,7 +21,7 @@ import com.partum.tabsplit.ui.components.ui.ZcashIntegration
 import androidx.compose.material3.*
 import androidx.compose.ui.res.stringResource
 import com.partum.tabsplit.R
-import com.partum.tabsplit.data.model.FullSession
+import com.partum.tabsplit.data.model.Session
 import com.partum.tabsplit.ui.expense.ExpenseViewModel
 import com.partum.tabsplit.ui.participant.ParticipantViewModel
 import com.partum.tabsplit.utils.calculateBalances
@@ -50,7 +51,7 @@ fun SessionDetailsScreen(
     var recipientAddress by remember { mutableStateOf("") }
 
     // Fetch session details when screen is opened
-    var session by remember { mutableStateOf<FullSession?>(null) }
+    var session by remember { mutableStateOf<Session?>(null) }
 
     LaunchedEffect(sessionId) {
         sessionViewModel.fetchSession(sessionId)
@@ -60,8 +61,8 @@ fun SessionDetailsScreen(
     }
 
     // Update invite URL and recipient address whenever sessions or user changes
-    LaunchedEffect(sessionUiState.sessions, session?.owner?.zaddr) {
-        session = sessionUiState.sessions.find { it.id == sessionId }
+    LaunchedEffect(sessionUiState) {
+        session = sessionUiState.sessionWithExpensesAndParticipants?.session
         inviteUrl = session?.inviteUrl
         recipientAddress = session?.owner?.zaddr.orEmpty()
     }
