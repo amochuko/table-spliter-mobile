@@ -8,12 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import com.partum.tabsplit.R
 import com.partum.tabsplit.ui.auth.AuthViewModel
 import com.partum.tabsplit.ui.auth.SignupScreen
 import com.partum.tabsplit.ui.join.JoinSessionScreen
@@ -43,10 +45,10 @@ fun AppNavHost(
     val canNavigateBack = navController.previousBackStackEntry != null
 
     val title = when {
-        currentRoute?.startsWith(Screen.SessionDetails.route) == true -> "Session Details"
-        currentRoute == Screen.Sessions.route -> "Sessions"
-        currentRoute == Screen.Join.route -> "Join Session"
-        else -> "TableSplit"
+        currentRoute?.startsWith(Screen.SessionDetails.route) == true -> stringResource(R.string.session_details)
+        currentRoute == Screen.Sessions.route -> stringResource(R.string.sessions)
+        currentRoute == Screen.Join.route -> stringResource(R.string.join_session)
+        else -> stringResource(R.string.tablesplit)
     }
 
     Scaffold(
