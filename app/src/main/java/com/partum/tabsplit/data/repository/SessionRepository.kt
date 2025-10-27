@@ -51,6 +51,8 @@ class SessionRepository(private val api: SessionApi) : ISessionRepo {
 
     override suspend fun joinByInvite(code: String): Session? {
         val res = api.joinByInvite(JoinRequest(code))
+
+        Log.d("SessionRepo:joinByInvite", "Code: ${res.code()}, Body: ${res.body()}")
         return if (res.isSuccessful) res.body() else null
     }
 }
