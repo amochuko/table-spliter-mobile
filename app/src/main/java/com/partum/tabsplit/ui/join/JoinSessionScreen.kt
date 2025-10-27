@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Text
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.partum.tabsplit.R
 import com.partum.tabsplit.data.model.Session
 import com.partum.tabsplit.ui.auth.AuthViewModel
 import com.partum.tabsplit.ui.session.SessionViewModel
@@ -69,7 +70,8 @@ fun JoinSessionScreen(
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                Toast.makeText(context, "Unable to join session", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context,
+                    context.getString(R.string.unable_to_join_session), Toast.LENGTH_SHORT).show()
 
                 onJoinFailed()
             }
