@@ -8,6 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Payments
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -236,12 +237,21 @@ fun SessionDetailsScreen(
             horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
         ) {
             if (expenses.orEmpty().isNotEmpty()) {
-                Button(
+                ExtendedFloatingActionButton(
                     onClick = { showZcash = true },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF16A34A))
-                ) {
-                    Text(stringResource(R.string.settle_with_zec))
-                }
+                    expanded = isFabExpanded,
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Payments,
+                            contentDescription = stringResource(R.string.settle_with_zec)
+                        )
+                    },
+                    text = {
+                        Text(text = stringResource(R.string.settle_with_zec))
+                    },
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
+                )
             }
 
             if (session?.owner?.id == authUiState.user?.id) {
