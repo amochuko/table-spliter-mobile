@@ -80,11 +80,6 @@ class SessionViewModel(
         val startDateTime = combineDateAndTime(startDate, startTime)
         val endDateTime = combineDateAndTime(endDate, endTime)
 
-        Log.d(
-            "SessionViewModel::createSessionArgs",
-            "$title, $description, " +
-                    "$startDateTime, $endDateTime"
-        )
         return try {
             val session = sessionRepo.createSession(
                 SessionRequest(
