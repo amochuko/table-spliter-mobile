@@ -131,21 +131,22 @@ fun SessionsScreen(
                                 Card(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(vertical = 4.dp)
+                                        .padding(vertical = 8.dp)
                                         .clickable {
                                             onSessionClick(s.id)
                                         }
                                 ) {
                                     Column(
-                                        modifier = Modifier.padding(8.dp)
+                                        modifier = Modifier.padding(12.dp)
                                     ) {
                                         Text(
                                             text = s.title,
-                                            style = MaterialTheme.typography.titleMedium
+                                            style = MaterialTheme.typography.titleMedium,
+                                            modifier = Modifier.padding(bottom = 8.dp)
                                         )
                                         Text(
                                             text = s.description,
-                                            style = MaterialTheme.typography.bodySmall,
+                                            style = MaterialTheme.typography.bodyMedium,
                                             color = MaterialTheme.colorScheme.onSurface.copy(
                                                 alpha = 0.7f
                                             )
