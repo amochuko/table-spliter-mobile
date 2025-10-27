@@ -109,18 +109,33 @@ class SessionViewModel(
         try {
             val joinedSession = sessionRepo.joinByInvite(code)
 
-            joinedSession?.let { it ->
+            if (joinedSession != null) {
+
                 _uiState.update { s ->
                     s.copy(
-                        sessions = s.sessions + it,
+                        sessions = s.sessions + joinedSession,
                         hasJoinedSession = true,
-                        session = it
+                        session = joinedSession,
+                        error = null
+                    )
+                }
+            } else {
+                _uiState.update {
+                    it.copy(
+                        hasJoinedSession = false,
+                        error = "Invalid or expired Invite Code!"
                     )
                 }
             }
+
         } catch (e: Exception) {
-            _uiState.update { it -> it.copy(error = e.message) }
-            null
+            e.printStackTrace()
+            _uiState.update { it ->
+                it.copy(
+                    hasJoinedSession = false,
+                    error = e.message ?: "Unable to join session."
+                )
+            }
         }
     }
 
