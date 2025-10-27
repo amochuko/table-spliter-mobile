@@ -1,11 +1,9 @@
 package com.partum.tabsplit.ui.session
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,14 +17,17 @@ import com.partum.tabsplit.ui.components.ui.BalancesList
 import com.partum.tabsplit.ui.components.ui.SessionQRCode
 import com.partum.tabsplit.ui.components.ui.ZcashIntegration
 import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import com.partum.tabsplit.R
 import com.partum.tabsplit.data.model.Session
 import com.partum.tabsplit.ui.expense.ExpenseViewModel
 import com.partum.tabsplit.ui.participant.ParticipantViewModel
 import com.partum.tabsplit.utils.calculateBalances
-import java.util.Locale
-
+import com.partum.tabsplit.utils.formatDate
+import com.partum.tabsplit.utils.formatTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,6 +68,27 @@ fun SessionDetailsScreen(
         recipientAddress = session?.owner?.zaddr.orEmpty()
     }
 
+    val title = session?.title ?: stringResource(R.string.session_not_found)
+    val description = session?.description ?: ""
+    val startDateTime = session?.startDateTime
+    val endDateTime = session?.endDateTime
+
+    val formattedStartDate = remember(startDateTime) {
+        startDateTime?.let { formatDate(it.toString()) } ?: ""
+    }
+
+    val formattedStartTime = remember(startDateTime) {
+        startDateTime?.let { formatTime(it.toString()) } ?: ""
+    }
+
+    val formattedEndDate = remember(endDateTime) {
+        endDateTime?.let { formatDate(it.toString()) } ?: ""
+    }
+
+    val formattedEndTime = remember(endDateTime) {
+        endDateTime?.let { formatTime(it.toString()) } ?: ""
+    }
+
     val participants = participantUiState.participants[sessionId].orEmpty()
     val expenses = expenseUiState.expenses[sessionId].orEmpty()
 
@@ -85,7 +107,72 @@ fun SessionDetailsScreen(
             .padding(16.dp),
     ) {
 
-        inviteUrl?.let { SessionQRCode(inviteUrl = it) }
+        session.let {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+
+            if (description.isNotBlank()) {
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                )
+            }
+
+            inviteUrl?.let { SessionQRCode(inviteUrl = it) }
+
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Text(
+                        text = stringResource(R.string.start_date_time),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = "$formattedStartDate at $formattedStartTime",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                Column(
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Text(
+                        text = stringResource(R.string.end_date_time),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = "$formattedEndDate at $formattedEndTime",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.End
+                    )
+                }
+            }
+
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                thickness = DividerDefaults.Thickness,
+                color = DividerDefaults.color
+            )
+        }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(stringResource(R.string.participants, participants.size), fontSize = 16.sp)
