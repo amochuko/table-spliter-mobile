@@ -25,6 +25,7 @@ import com.partum.tabsplit.ui.session.SessionsScreen
 import com.partum.tabsplit.ui.SplashScreen
 import com.partum.tabsplit.ui.expense.ExpenseViewModel
 import com.partum.tabsplit.ui.participant.ParticipantViewModel
+import com.partum.tabsplit.ui.profile.ProfileScreen
 import com.partum.tabsplit.ui.session.SessionViewModel
 
 @Composable
@@ -48,6 +49,7 @@ fun AppNavHost(
         currentRoute?.startsWith(Screen.SessionDetails.route) == true -> stringResource(R.string.session_details)
         currentRoute?.startsWith(Screen.Join.route) == true -> stringResource(R.string.join_session)
         currentRoute == Screen.Sessions.route -> stringResource(R.string.sessions)
+        currentRoute == Screen.Profile.route -> stringResource(R.string.profile_details)
         else -> stringResource(R.string.tablesplit)
     }
 
@@ -79,6 +81,10 @@ fun AppNavHost(
 
             composable(Screen.Splash.route) {
                 SplashScreen(navController, authViewModel)
+            }
+
+            composable(Screen.Profile.route){
+                ProfileScreen(navController, authViewModel)
             }
 
             composable(Screen.Login.route) {
