@@ -86,4 +86,8 @@
     <string name="you_haven_t_joined_any_session_yet">You haven\'t joined any session yet</string>
     <string name="start_date_time">Start</string>
     <string name="end_date_time">End</string>
+    <string name="session_details">Session Details</string>
+    <string name="sessions">Sessions</string>
+    <string name="join_session">Join Session</string>
+    <string name="tablesplit">TableSplit</string>
 </resources>
