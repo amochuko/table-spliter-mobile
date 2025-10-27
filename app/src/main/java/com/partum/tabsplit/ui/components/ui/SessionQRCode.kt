@@ -43,14 +43,14 @@ fun SessionQRCode(inviteUrl: String) {
 
     // Get screen width for adaptive QR size
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val qrSize = (screenWidth * 0.7f).coerceAtMost(300.dp) // max 300dp
+    val qrSize = (screenWidth * 0.7f).coerceAtMost(480.dp) // max 480dp
 
     // Generate QR bitmap and cache it
     val qrBitmap by remember(inviteUrl) { mutableStateOf(generateQrCode(inviteUrl)) }
 
     Column(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(8.dp)
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -61,7 +61,7 @@ fun SessionQRCode(inviteUrl: String) {
                 contentDescription = stringResource(R.string.session_qr_code),
                 modifier = Modifier
                     .size(qrSize)
-                    .padding(vertical = 16.dp)
+                    .padding(vertical = 8.dp)
             )
         }
 
