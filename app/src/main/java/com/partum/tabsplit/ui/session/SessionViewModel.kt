@@ -134,7 +134,7 @@ class SessionViewModel(
             _uiState.update { it ->
                 it.copy(
                     hasJoinedSession = false,
-                    error ="Unable to join session: ${e.message}"
+                    error = "Unable to join session: ${e.message}"
                 )
             }
         }
@@ -189,5 +189,9 @@ class SessionViewModel(
                 )
             }
         }
+    }
+
+    fun clearError() {
+        _uiState.update { it.copy(error = null) }
     }
 }
