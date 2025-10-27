@@ -132,7 +132,7 @@ fun LoginScreen(
                         onLoginSuccess()
 
                     } catch (e: CancellationException) {
-                        Log.w(
+                        Log.e(
                             "LoginScreen",
                             "Coroutine cancelled due to recomposition or navigation"
                         )
@@ -145,9 +145,7 @@ fun LoginScreen(
 
                         Log.e("LoginError", e.message.toString())
                     }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !authUiState.loading
+                }, modifier = Modifier.fillMaxWidth(), enabled = !authUiState.loading
             ) {
                 if (authUiState.loading) {
                     CircularProgressIndicator(
