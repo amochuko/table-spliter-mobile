@@ -106,6 +106,8 @@ class SessionViewModel(
     }
 
     fun joinSessionByInvite(code: String) = viewModelScope.launch {
+        _uiState.update { it.copy(error = null, hasJoinedSession = false) }
+
         try {
             val joinedSession = sessionRepo.joinByInvite(code)
 
@@ -122,8 +124,7 @@ class SessionViewModel(
             } else {
                 _uiState.update {
                     it.copy(
-                        hasJoinedSession = false,
-                        error = "Invalid or expired Invite Code!"
+                        error = "Invalid or expired invite code!"
                     )
                 }
             }
@@ -133,7 +134,7 @@ class SessionViewModel(
             _uiState.update { it ->
                 it.copy(
                     hasJoinedSession = false,
-                    error = e.message ?: "Unable to join session."
+                    error ="Unable to join session: ${e.message}"
                 )
             }
         }
