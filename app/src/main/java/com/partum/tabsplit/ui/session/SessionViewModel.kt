@@ -15,6 +15,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.net.ConnectException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.time.LocalTime
 import java.util.Date
 
@@ -48,11 +51,20 @@ class SessionViewModel(
                 it.copy(
                     ownedSessions = result.ownedSessions!!,
                     joinedSessions = result.joinedSessions!!,
-                    loading = false
+                    loading = false,
+                    error = null
                 )
             }
         } catch (e: Exception) {
-            _uiState.update { it.copy(error = e.message, loading = false) }
+            val errorMsg = when (e) {
+                is UnknownHostException,
+                is SocketTimeoutException,
+                is ConnectException -> "No internet"
+
+                else -> e.localizedMessage ?: "An unexpected error occurred"
+            }
+
+            _uiState.update { it.copy(error = errorMsg, loading = false) }
         }
     }
 
