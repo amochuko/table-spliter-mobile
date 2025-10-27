@@ -84,16 +84,18 @@ fun JoinSessionScreen(
                     Icon(
                         imageVector = Icons.Default.ErrorOutline,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error,
+                        tint = MaterialTheme.colorScheme.error.copy(alpha = 0.7f),
                         modifier = Modifier.size(60.dp)
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = sessionUiState.error ?: stringResource(R.string.unable_to_join_session),
+                        text = sessionUiState.error
+                            ?: stringResource(R.string.unable_to_join_session),
                         style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -103,7 +105,7 @@ fun JoinSessionScreen(
                             onJoinFailed()
                         }, shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text(text = stringResource(R.string.go_back))
+                        Text(text = "Go Back")
                     }
                 }
             }
