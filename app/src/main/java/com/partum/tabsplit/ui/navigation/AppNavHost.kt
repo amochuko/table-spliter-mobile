@@ -51,7 +51,7 @@ fun AppNavHost(
         currentRoute?.startsWith(Screen.Join.route) == true -> stringResource(R.string.join_session)
         currentRoute == Screen.Sessions.route -> stringResource(R.string.sessions)
         currentRoute == Screen.Profile.route -> stringResource(R.string.profile_details)
-        currentRoute == Screen.AboutApp.route -> stringResource(R.string.about_tabsplit)
+        currentRoute == Screen.AboutApp.route -> stringResource(R.string.about_app)
         else -> stringResource(R.string.tablesplit)
     }
 
