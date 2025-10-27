@@ -41,23 +41,23 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val appContainer = (application as TabSplit).appContainer
+            val navController = rememberNavController()
 
             CompositionLocalProvider(
                 LocalViewModelFactory provides appContainer.viewModelFactory
             ) {
+
+                val authViewModel: AuthViewModel = injectedViewModel()
+                val sessionViewModel: SessionViewModel = injectedViewModel()
+                val expenseViewModel: ExpenseViewModel = injectedViewModel()
+                val participantViewModel: ParticipantViewModel = injectedViewModel()
+
+                val authUiState by authViewModel.uiState.collectAsState()
+
+                // observe deep link
+                val joinCode by deepLinkFlow.asStateFlow().collectAsState()
+
                 TabSplitTheme {
-                    val navController = rememberNavController()
-
-                    val authViewModel: AuthViewModel = injectedViewModel()
-                    val sessionViewModel: SessionViewModel = injectedViewModel()
-                    val expenseViewModel: ExpenseViewModel = injectedViewModel()
-                    val participantViewModel: ParticipantViewModel = injectedViewModel()
-
-                    val authUiState by authViewModel.uiState.collectAsState()
-
-                    // observe deep link
-                    val joinCode by deepLinkFlow.asStateFlow().collectAsState()
-
                     // Wait for authStore to finish loading
                     if (authUiState.loading) {
                         Box(
@@ -83,7 +83,7 @@ class MainActivity : ComponentActivity() {
                                         popUpTo(0)
                                     }
                                 } catch (e: Exception) {
-                                    Log.w("MainActivity", "navigate to login failed")
+                                    Log.e("MainActivity", "navigate to login failed")
                                 }
                             } else {
                                 // authenticated: navigate to Sessions and remove Login from backstack
@@ -93,21 +93,32 @@ class MainActivity : ComponentActivity() {
                                         launchSingleTop = true
                                     }
                                 } catch (e: Exception) {
-                                    Log.w("MainActivity", "navigate to login failed")
+                                    Log.e("MainActivity", "navigate to login failed")
                                 }
                             }
                         }
 
 
                         LaunchedEffect(joinCode, authUiState.token) {
+                            Log.d("MainActivity::joinCode", "$joinCode")
+
                             if (!joinCode.isNullOrEmpty()) {
-                                try {
-                                    // go to join screen
-                                    navController.navigate("${Screen.Join.route}/$joinCode")
-                                } catch (e: Exception) {
-                                    Log.w("MainActivity", "Deep link nav failed")
-                                } finally {
-                                    deepLinkFlow.value = null
+
+                                if (authUiState.loading) return@LaunchedEffect
+
+                                if (authUiState.token.isNullOrEmpty()) {
+                                    // Not logged in -> redirect to login, and keep code for later
+                                    sessionViewModel.setPendingInviteCode(joinCode)
+                                    navController.navigate(Screen.Login.route)
+                                } else {
+                                    try {
+                                        // go to join screen
+                                        navController.navigate("${Screen.Join.route}/$joinCode")
+                                    } catch (e: Exception) {
+                                        Log.e("MainActivity", "Deep link nav failed")
+                                    } finally {
+                                        deepLinkFlow.value = null
+                                    }
                                 }
                             }
                         }
