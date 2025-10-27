@@ -46,8 +46,8 @@ fun AppNavHost(
 
     val title = when {
         currentRoute?.startsWith(Screen.SessionDetails.route) == true -> stringResource(R.string.session_details)
+        currentRoute?.startsWith(Screen.Join.route) == true -> stringResource(R.string.join_session)
         currentRoute == Screen.Sessions.route -> stringResource(R.string.sessions)
-        currentRoute == Screen.Join.route -> stringResource(R.string.join_session)
         else -> stringResource(R.string.tablesplit)
     }
 
