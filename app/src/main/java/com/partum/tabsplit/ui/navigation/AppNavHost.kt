@@ -132,7 +132,8 @@ fun AppNavHost(
                         sessionId,
                         sessionViewModel,
                         expenseViewModel,
-                        participantViewModel
+                        participantViewModel,
+                        authUiState
                     )
                 }
             }
