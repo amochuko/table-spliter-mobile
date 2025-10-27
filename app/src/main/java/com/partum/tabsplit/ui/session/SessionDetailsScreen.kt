@@ -1,9 +1,13 @@
 package com.partum.tabsplit.ui.session
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.partum.tabsplit.R
 import com.partum.tabsplit.data.model.Session
+import com.partum.tabsplit.ui.auth.AuthUiState
 import com.partum.tabsplit.ui.expense.ExpenseViewModel
 import com.partum.tabsplit.ui.participant.ParticipantViewModel
 import com.partum.tabsplit.utils.calculateBalances
@@ -36,7 +41,8 @@ fun SessionDetailsScreen(
     sessionId: String,
     sessionViewModel: SessionViewModel,
     expenseViewModel: ExpenseViewModel,
-    participantViewModel: ParticipantViewModel
+    participantViewModel: ParticipantViewModel,
+    authUiState: AuthUiState
 ) {
     // Collect reactive state from AppStore
     val sessionUiState by sessionViewModel.uiState.collectAsState()
@@ -44,6 +50,12 @@ fun SessionDetailsScreen(
     val expenseUiState by expenseViewModel.uiState.collectAsState()
 
     val scrollState = rememberScrollState()
+
+    // FAB control
+    val listState = rememberLazyListState()
+    val isFabExpanded by remember {
+        derivedStateOf { listState.firstVisibleItemIndex == 0 }
+    }
 
     // UI local state
     var showZcash by remember { mutableStateOf(false) }
@@ -232,8 +244,22 @@ fun SessionDetailsScreen(
                 }
             }
 
-            Button(onClick = { showAddExpense = true }) {
-                Text(stringResource(R.string.add_expense))
+            if (session?.createdBy == authUiState.user?.id) {
+                ExtendedFloatingActionButton(
+                    onClick = { showAddExpense = true },
+                    expanded = isFabExpanded,
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = stringResource(R.string.add_expense)
+                        )
+                    },
+                    text = {
+                        Text(text = stringResource(R.string.add_expense))
+                    },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                )
             }
         }
     }
