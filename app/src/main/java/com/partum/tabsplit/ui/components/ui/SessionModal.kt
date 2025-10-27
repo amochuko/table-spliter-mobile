@@ -198,10 +198,11 @@ fun SessionModal(
                                         it.title,
                                         it.description,
                                         it.currency,
+                                        it.owner,
                                         it.inviteCode,
                                         it.qrDataUrl,
                                         it.inviteUrl,
-                                        it.createdBy ?: "",
+                                        it.createdBy,
                                         parseIsoDate(it.createdAt.toString()) ?: Date(),
                                         it.startDateTime,
                                         it.endDateTime

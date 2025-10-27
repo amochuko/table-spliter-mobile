@@ -30,6 +30,7 @@ fun JoinSessionScreen(
     val scope = rememberCoroutineScope()
 
     val authUiState by authViewModel.uiState.collectAsState()
+    val sessionUiState by sessionViewModel.uiState.collectAsState()
 
     LaunchedEffect(inviteCode, authUiState.token) {
         if (inviteCode.isBlank()) return@LaunchedEffect
@@ -40,24 +41,29 @@ fun JoinSessionScreen(
                     // No token -> redirect to auth
                     sessionViewModel.setPendingInviteCode(inviteCode)
                     onAuthRequired(inviteCode)
+
                     return@launch
                 }
 
-                sessionViewModel.joinSessionByInvite(inviteCode)?.let { res ->
+                sessionViewModel.joinSessionByInvite(inviteCode)
+
+                if (sessionUiState.hasJoinedSession) {
+                    val ses = sessionUiState.session!!
 
                     onJoinSuccess(
                         Session(
-                            res.id,
-                            res.title,
-                            res.description,
-                            res.currency,
-                            res.inviteCode,
-                            res.qrDataUrl,
-                            res.inviteUrl,
-                            res.createdBy ?: "",
-                            parseIsoDate(res.createdAt.toString()) ?: Date(),
-                            startDateTime = parseIsoDate(res.startDateTime.toString()) ?: Date(),
-                            endDateTime = parseIsoDate(res.endDateTime.toString()) ?: Date(),
+                            ses.id,
+                            ses.title,
+                            ses.description,
+                            ses.currency,
+                            ses.owner,
+                            ses.inviteCode,
+                            ses.qrDataUrl,
+                            ses.inviteUrl,
+                            ses.createdBy,
+                            parseIsoDate(ses.createdAt.toString()) ?: Date(),
+                            startDateTime = parseIsoDate(ses.startDateTime.toString()) ?: Date(),
+                            endDateTime = parseIsoDate(ses.endDateTime.toString()) ?: Date(),
                         )
                     )
                 }

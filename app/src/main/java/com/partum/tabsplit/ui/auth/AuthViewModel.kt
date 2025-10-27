@@ -6,8 +6,6 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 import com.partum.tabsplit.data.api.ApiClient
 import com.partum.tabsplit.data.api.AuthApi
 import com.partum.tabsplit.data.api.UserApi
@@ -15,6 +13,7 @@ import com.partum.tabsplit.data.model.User
 import com.partum.tabsplit.data.repository.AuthRepository
 import com.partum.tabsplit.data.repository.UserRepository
 import com.partum.tabsplit.utils.Config
+import com.partum.tabsplit.utils.AuthSessionManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -23,57 +22,39 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
     @SuppressLint("StaticFieldLeak")
     val ctx: Context = getApplication<Application>().applicationContext;
 
-    private val JwtKey = "jwt_token"
-
-    private val masterKey = MasterKey
-        .Builder(ctx)
-        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-        .build()
-
-    private val prefs = EncryptedSharedPreferences.create(
-        ctx, "auth_store", masterKey,
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
-
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState
 
     private val authApi = ApiClient.create<AuthApi>(baseUrl = Config.API_BASE_URL)
     private val authRepo = AuthRepository(authApi, ctx)
-
-
     private val userApi = ApiClient.create<UserApi>(getToken(), baseUrl = Config.API_BASE_URL)
     private val userRepo = UserRepository(userApi)
 
 
     init {
-        loadToken()
+        loadAuthSession()
     }
 
     fun getToken(): String? {
-        return prefs.getString(JwtKey, null)
+        return AuthSessionManager.token
     }
 
-    fun saveToken(token: String?) {
-        prefs.edit().apply {
-            if (token != null) {
-                putString(JwtKey, token)
-            } else {
-                remove(JwtKey)
-            }
-        }.apply()
+    fun saveSession(token: String?, user: User) {
+        AuthSessionManager.save(token, user)
     }
 
-    fun loadToken() {
+    fun clearSession() {
+        AuthSessionManager.clear()
+    }
+
+    fun loadAuthSession() {
         viewModelScope.launch {
             val token = getToken()
+            val user = AuthSessionManager.user
 
-            _uiState.value = _uiState.value.copy(
-                token,
-                isLoggedIn = token != null,
-                loading = false
-            )
+            if (token != null && user != null) {
+                updateState(user, token, isLoggedIn = true, loading = false)
+            }
         }
     }
 
@@ -97,10 +78,10 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
             if (result != null) {
                 val (user, token) = result
 
-                saveToken(token)
+                saveSession(token, user)
                 updateState(user, token, isLoggedIn = true)
 
-                Log.d("[AuthViewModel] Signup successful -> user:", token)
+                Log.d("[AuthViewModel] Signup successful -> user:", "$token, ${user.toString()} ")
             } else {
                 updateState(error = "Signup failed: null result")
             }
@@ -111,33 +92,32 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun logout() = viewModelScope.launch {
-        saveToken(token = null)
+        clearSession()
         updateState(user = null, token = null, isLoggedIn = false)
     }
 
-    suspend fun login(email: String, password: String): Boolean {
+    fun login(email: String, password: String) = viewModelScope.launch {
         updateState(loading = true)
 
-        return try {
+        try {
             val result = authRepo.login(email, password)
             if (result != null) {
-                val (user, token) = result
-                saveToken(token)
 
+                val (user, token) = result
+
+                saveSession(token, user)
                 updateState(user, token, true)
-                println("[AuthViewModel] Login successful -> user: ${user.email}")
-                true
+
+                Log.d("[AuthViewModel] Login successful -> user:", "$token, ${user.toString()}")
             } else {
-                updateState(error = "Invalid credentials", loading = false)
-                // This block is executed if loginResult is null
                 // Handle the failed
+                updateState(error = "Invalid credentials", loading = false)
+
                 println("[AuthViewModel] Login failed -> null result")
-                false
             }
         } catch (e: Exception) {
-            Log.e("AppStore", "Login failed", e)
+            Log.e("[AuthViewModel]", "Login failed", e)
             updateState(error = e.localizedMessage, loading = false)
-            false
         }
     }
 
@@ -151,8 +131,7 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
                     updateState(user = currentUser)
                 }
                 true
-            } else
-                false
+            } else false
         } catch (e: Exception) {
             Log.e("AuthViewModel", "failed to update zaddr $e")
             updateState(error = e.localizedMessage)

@@ -22,7 +22,9 @@ import  android.util.Log
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
+import com.partum.tabsplit.R
 
 @Composable
 fun WalletDialog(
@@ -48,12 +50,12 @@ fun WalletDialog(
     }
 
     AlertDialog(
-        title = { Text("Wallet Address") },
+        title = { Text(stringResource(R.string.wallet_address)) },
         text = {
             Column {
                 Text(
-                    if (user?.zaddr == null) "Enter your wallet address (ZADDR)"
-                    else "Edit your wallet address"
+                    if (user?.zaddr == null) stringResource(R.string.enter_your_wallet_address_zaddr)
+                    else stringResource(R.string.edit_your_wallet_address)
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -65,11 +67,14 @@ fun WalletDialog(
                         validationError = when {
                             zaddr.isBlank() -> null
                             isValidaZAddress(zaddr) -> null
-                            else -> "Invalid Zcash address. Must be Sapling (za...) " +
-                                    "or Orchard (u1...)"
+                            else -> ctx.getString(
+                                R.string
+                                    .invalid_zcash_address_must_be_sapling_za
+                            ) +
+                                    ctx.getString(R.string.or_orchard_u1)
                         }
                     },
-                    label = { Text("ZADDR") },
+                    label = { Text(stringResource(R.string.zaddr)) },
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -88,7 +93,11 @@ fun WalletDialog(
             TextButton(
                 onClick = {
                     if (zaddr.isBlank()) {
-                        Toast.makeText(ctx, "Wallet address required", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            ctx,
+                            ctx.getString(R.string.wallet_address_required), Toast.LENGTH_SHORT
+                        )
+                            .show()
 
                         return@TextButton
                     }
@@ -113,16 +122,19 @@ fun WalletDialog(
 
                             if (updatedUser != null) {
 //                                authViewModel.setUser(updatedUser, currentToken)
-                                authViewModel.saveToken(currentToken)
+                                authViewModel.saveSession(currentToken, updatedUser)
                             }
 
-                            Toast.makeText(ctx, "Wallet updated", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                ctx,
+                                ctx.getString(R.string.wallet_updated), Toast.LENGTH_SHORT
+                            ).show()
                             onDismiss()
                         } else {
 
                             Toast.makeText(
                                 ctx,
-                                "Wallet save failed. Try again",
+                                ctx.getString(R.string.wallet_save_failed_try_again),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -137,13 +149,13 @@ fun WalletDialog(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Text("Save")
+                    Text(stringResource(R.string.save))
                 }
             }
         },
         dismissButton = {
             TextButton(onClick = { if (!saving) onDismiss() }) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
     )

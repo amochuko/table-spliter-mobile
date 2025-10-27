@@ -8,6 +8,7 @@ data class Session(
     val title: String,
     val description: String,
     val currency: String,
+    val owner: User,
 
     @SerializedName("invite_code")
     val inviteCode: String? = null,

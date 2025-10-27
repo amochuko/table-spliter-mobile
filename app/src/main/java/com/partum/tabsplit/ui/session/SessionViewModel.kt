@@ -4,8 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.partum.tabsplit.data.api.SessionRequest
-import com.partum.tabsplit.data.model.FullSession
-import com.partum.tabsplit.data.model.toFullSession
+import com.partum.tabsplit.data.model.Session
 import com.partum.tabsplit.data.repository.SessionRepository
 import com.partum.tabsplit.ui.auth.AuthViewModel
 import com.partum.tabsplit.ui.expense.ExpenseViewModel
@@ -43,12 +42,12 @@ class SessionViewModel(
         _uiState.update { it.copy(loading = true) }
 
         try {
-            val sessions = sessionRepo.getSessions()
-            val mapped = sessions.map { it.toFullSession() }
+            val result = sessionRepo.getSessions()
 
             _uiState.update {
                 it.copy(
-                    sessions = mapped,
+                    ownedSessions = result.ownedSessions!!,
+                    joinedSessions = result.joinedSessions!!,
                     loading = false
                 )
             }
@@ -64,7 +63,7 @@ class SessionViewModel(
         endDate: Date,
         startTime: LocalTime,
         endTime: LocalTime,
-    ): FullSession? {
+    ): Session? {
 
         val startDateTime = combineDateAndTime(startDate, startTime)
         val endDateTime = combineDateAndTime(endDate, endTime)
@@ -75,7 +74,7 @@ class SessionViewModel(
                     "$startDateTime, $endDateTime"
         )
         return try {
-            val response = sessionRepo.createSession(
+            val session = sessionRepo.createSession(
                 SessionRequest(
                     title,
                     description,
@@ -84,13 +83,13 @@ class SessionViewModel(
                 )
             )
 
-            response?.let {
+            session?.let {
                 _uiState.update { s ->
-                    s.copy(sessions = s.sessions + it.toFullSession())
+                    s.copy(sessions = s.sessions + it)
                 }
             }
 
-            response?.toFullSession()
+            session
         } catch (e: Exception) {
             Log.e("SessionViewModel::createSession", e.message.toString())
 
@@ -99,15 +98,19 @@ class SessionViewModel(
         }
     }
 
-    suspend fun joinSessionByInvite(code: String): FullSession? {
-        return try {
+    fun joinSessionByInvite(code: String) = viewModelScope.launch {
+        try {
             val joinedSession = sessionRepo.joinByInvite(code)
 
             joinedSession?.let { it ->
-                _uiState.update { s -> s.copy(sessions = s.sessions + it.toFullSession()) }
+                _uiState.update { s ->
+                    s.copy(
+                        sessions = s.sessions + it,
+                        hasJoinedSession = true,
+                        session = it
+                    )
+                }
             }
-
-            joinedSession?.toFullSession()
         } catch (e: Exception) {
             _uiState.update { it -> it.copy(error = e.message) }
             null
@@ -126,21 +129,29 @@ class SessionViewModel(
 
     fun fetchSession(sessionId: String): Any? = viewModelScope.launch {
         _uiState.update { it.copy(loading = true) }
+
         try {
             val response = sessionRepo.getSession(sessionId)
+
             response?.let { res ->
+                val swa = res.sessionWithExpensesAndParticipants!!
 
                 _uiState.update {
                     it.copy(
                         loading = false,
-                        sessions = (it.sessions + response.session.toFullSession()).distinctBy { s ->
-                            s.id
-                        }
+                        session = swa.session,
+                        sessions = (it.sessions + swa.session).distinctBy { s -> s.id },
+                        sessionWithExpensesAndParticipants = swa
                     )
                 }
 
-                participantViewModel.updateParticipants(sessionId, res.participants)
-                expenseViewModel.updateExpenses(sessionId, res.expenses)
+                participantViewModel.updateParticipants(
+                    sessionId, swa.participants
+                )
+
+                expenseViewModel.updateExpenses(
+                    sessionId, swa.expenses
+                )
             }
 
             return@launch
@@ -154,7 +165,6 @@ class SessionViewModel(
                     error = e.message
                 )
             }
-            null
         }
     }
 }
