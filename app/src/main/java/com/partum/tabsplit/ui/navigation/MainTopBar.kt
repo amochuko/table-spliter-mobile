@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Badge
@@ -106,7 +107,8 @@ fun MainTopBar(
                                 Icons.Default.Person,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                            ) },
+                            )
+                        },
                         onClick = {
                             expanded = false
                             navController.navigate(Screen.Profile.route)
@@ -119,7 +121,8 @@ fun MainTopBar(
                                 Icons.Default.ExitToApp,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                            ) },
+                            )
+                        },
                         onClick = {
                             expanded = false
                             authViewModel.logout()
@@ -127,6 +130,21 @@ fun MainTopBar(
                             navController.navigate(Screen.Login.route) {
                                 popUpTo(0) { inclusive = true }
                             }
+                        }
+                    )
+
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.about_tabsplit)) },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Info,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            )
+                        },
+                        onClick = {
+                            expanded = false
+                            navController.navigate(Screen.AboutApp.route)
                         }
                     )
                 }
