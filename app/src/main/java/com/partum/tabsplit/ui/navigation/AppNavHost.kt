@@ -155,12 +155,14 @@ fun AppNavHost(
                             Screen.SessionDetails
                                 .createRoute(sessionId.toString())
                         ) {
-                            popUpTo(Screen.Join.route) { inclusive = true }
+                            popUpTo(Screen.Join.route) { inclusive = false }
+                            launchSingleTop = true
                         }
                     },
                     onJoinFailed = {
                         navController.navigate(Screen.Sessions.route) {
-                            popUpTo(Screen.Join.route) { inclusive = true }
+                            popUpTo(0)
+                            launchSingleTop = true
                         }
                     },
                     authViewModel = authViewModel,
