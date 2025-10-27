@@ -26,6 +26,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.ui.res.stringResource
 import com.partum.tabsplit.R
 import com.partum.tabsplit.data.model.Session
+import com.partum.tabsplit.ui.components.NoInternetView
 
 @Composable
 fun SessionsScreen(
@@ -92,6 +93,10 @@ fun SessionsScreen(
                     CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
+                }
+
+                uiState.error == stringResource(R.string.no_internet) -> {
+                    NoInternetView(onRetry = { sessionViewModel.loadSessions() })
                 }
 
                 uiState.error != null -> {
