@@ -244,7 +244,7 @@ fun SessionDetailsScreen(
                 }
             }
 
-            if (session?.createdBy == authUiState.user?.id) {
+            if (session?.owner?.id == authUiState.user?.id) {
                 ExtendedFloatingActionButton(
                     onClick = { showAddExpense = true },
                     expanded = isFabExpanded,
