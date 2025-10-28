@@ -111,6 +111,11 @@ fun SessionDetailsScreen(
         )
     }
 
+    val currentUserId = authUiState.user?.id
+    val currentParticipant = participants.find { it.userId == currentUserId }
+    val currentBalance = balances[currentParticipant?.id] ?: 0.0
+
+
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier
@@ -235,7 +240,7 @@ fun SessionDetailsScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
         ) {
-            if (expenses.orEmpty().isNotEmpty()) {
+            if (expenses.orEmpty().isNotEmpty() && currentBalance != 0.0) {
                 ExtendedFloatingActionButton(
                     onClick = { showZcash = true },
                     expanded = isFabExpanded,
@@ -249,7 +254,7 @@ fun SessionDetailsScreen(
                         Text(text = stringResource(R.string.settle_with_zec))
                     },
                     containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary
+                    contentColor = MaterialTheme.colorScheme.onSecondary,
                 )
             }
 
