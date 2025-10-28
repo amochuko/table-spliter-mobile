@@ -1,5 +1,6 @@
 package com.partum.tabsplit.ui.components.ui
 
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.foundation.background
@@ -43,6 +44,8 @@ fun BalancesList(
             val isPositive = balance > 0
             val isZero = balance == 0.0
 
+            Log.d("BalanceList", "${p.toString()} ")
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -54,6 +57,7 @@ fun BalancesList(
                     text = when {
                         !p.username.isNullOrEmpty() -> p.username
                         !p.userId.isNullOrEmpty() -> shortString(p.userId)
+                        !p.email.isNullOrEmpty() -> shortString(p.email, prefix = 2, suffix = 1)
                         else -> "Unnamed"
                     }, style = MaterialTheme.typography.bodyMedium.copy(
                         fontWeight = FontWeight.Medium, color = Color(0xFF333333)
