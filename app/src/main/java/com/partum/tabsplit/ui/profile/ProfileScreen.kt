@@ -1,38 +1,46 @@
 package com.partum.tabsplit.ui.profile
 
-import android.R
+
+import android.util.Log
+import com.partum.tabsplit.R
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.partum.tabsplit.ui.auth.AuthViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(
     navController: NavController,
     authViewModel: AuthViewModel
 ) {
+    val scope = rememberCoroutineScope()
+
     val authUiState by authViewModel.uiState.collectAsState()
     val user = authUiState.user
 
@@ -52,7 +60,7 @@ fun ProfileScreen(
         OutlinedTextField(
             value = username,
             onValueChange = { if (isEditing) username = it },
-            label = { Text(stringResource(com.partum.tabsplit.R.string.username)) },
+            label = { Text(stringResource(R.string.username)) },
             enabled = isEditing,
             modifier = Modifier.fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
@@ -69,7 +77,7 @@ fun ProfileScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { if (isEditing) email = it },
-            label = { Text(stringResource(com.partum.tabsplit.R.string.email)) },
+            label = { Text(stringResource(R.string.email)) },
             enabled = false, // usually immutable
             modifier = Modifier.fillMaxWidth()
         )
@@ -77,23 +85,26 @@ fun ProfileScreen(
         OutlinedTextField(
             value = zaddr,
             onValueChange = { if (isEditing) zaddr = it },
-            label = { Text(stringResource(com.partum.tabsplit.R.string.zcash_address)) },
+            label = { Text(stringResource(R.string.zcash_address)) },
             enabled = isEditing,
             modifier = Modifier.fillMaxWidth()
         )
+
+        Spacer(modifier = Modifier.height(20.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+
             if (isEditing) {
                 OutlinedButton(
                     onClick = {
                         isEditing = false
-                        authViewModel.updateProfile(username, zaddr, email)
+                        authViewModel.updateProfile(username, email, zaddr)
                     }
                 ) {
-                    Text(stringResource(com.partum.tabsplit.R.string.save_changes))
+                    Text(text = stringResource(R.string.save_changes))
                 }
             } else {
                 Button(onClick = { isEditing = true }) {
