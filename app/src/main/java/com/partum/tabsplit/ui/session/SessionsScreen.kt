@@ -26,6 +26,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.ui.res.stringResource
 import com.partum.tabsplit.R
 import com.partum.tabsplit.data.model.Session
+import com.partum.tabsplit.ui.components.NoInternetView
 
 @Composable
 fun SessionsScreen(
@@ -94,6 +95,10 @@ fun SessionsScreen(
                     )
                 }
 
+                uiState.error == stringResource(R.string.no_internet) -> {
+                    NoInternetView(onRetry = { sessionViewModel.loadSessions() })
+                }
+
                 uiState.error != null -> {
                     Text(
                         text = "Error: ${uiState.error}",
@@ -126,21 +131,22 @@ fun SessionsScreen(
                                 Card(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(vertical = 4.dp)
+                                        .padding(vertical = 8.dp)
                                         .clickable {
                                             onSessionClick(s.id)
                                         }
                                 ) {
                                     Column(
-                                        modifier = Modifier.padding(8.dp)
+                                        modifier = Modifier.padding(12.dp)
                                     ) {
                                         Text(
                                             text = s.title,
-                                            style = MaterialTheme.typography.titleMedium
+                                            style = MaterialTheme.typography.titleMedium,
+                                            modifier = Modifier.padding(bottom = 8.dp)
                                         )
                                         Text(
                                             text = s.description,
-                                            style = MaterialTheme.typography.bodySmall,
+                                            style = MaterialTheme.typography.bodyMedium,
                                             color = MaterialTheme.colorScheme.onSurface.copy(
                                                 alpha = 0.7f
                                             )

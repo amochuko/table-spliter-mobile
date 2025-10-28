@@ -15,6 +15,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.net.ConnectException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.time.LocalTime
 import java.util.Date
 
@@ -48,11 +51,20 @@ class SessionViewModel(
                 it.copy(
                     ownedSessions = result.ownedSessions!!,
                     joinedSessions = result.joinedSessions!!,
-                    loading = false
+                    loading = false,
+                    error = null
                 )
             }
         } catch (e: Exception) {
-            _uiState.update { it.copy(error = e.message, loading = false) }
+            val errorMsg = when (e) {
+                is UnknownHostException,
+                is SocketTimeoutException,
+                is ConnectException -> "No internet"
+
+                else -> e.localizedMessage ?: "An unexpected error occurred"
+            }
+
+            _uiState.update { it.copy(error = errorMsg, loading = false) }
         }
     }
 
@@ -68,11 +80,6 @@ class SessionViewModel(
         val startDateTime = combineDateAndTime(startDate, startTime)
         val endDateTime = combineDateAndTime(endDate, endTime)
 
-        Log.d(
-            "SessionViewModel::createSessionArgs",
-            "$title, $description, " +
-                    "$startDateTime, $endDateTime"
-        )
         return try {
             val session = sessionRepo.createSession(
                 SessionRequest(
@@ -99,21 +106,37 @@ class SessionViewModel(
     }
 
     fun joinSessionByInvite(code: String) = viewModelScope.launch {
+        _uiState.update { it.copy(error = null, hasJoinedSession = false) }
+
         try {
             val joinedSession = sessionRepo.joinByInvite(code)
 
-            joinedSession?.let { it ->
+            if (joinedSession != null) {
+
                 _uiState.update { s ->
                     s.copy(
-                        sessions = s.sessions + it,
+                        sessions = s.sessions + joinedSession,
                         hasJoinedSession = true,
-                        session = it
+                        session = joinedSession,
+                        error = null
+                    )
+                }
+            } else {
+                _uiState.update {
+                    it.copy(
+                        error = "Invalid or expired invite code!"
                     )
                 }
             }
+
         } catch (e: Exception) {
-            _uiState.update { it -> it.copy(error = e.message) }
-            null
+            e.printStackTrace()
+            _uiState.update { it ->
+                it.copy(
+                    hasJoinedSession = false,
+                    error = "Unable to join session: ${e.message}"
+                )
+            }
         }
     }
 
@@ -166,5 +189,9 @@ class SessionViewModel(
                 )
             }
         }
+    }
+
+    fun clearError() {
+        _uiState.update { it.copy(error = null) }
     }
 }

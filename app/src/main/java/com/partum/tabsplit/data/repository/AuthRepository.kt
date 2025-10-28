@@ -2,9 +2,12 @@ package com.partum.tabsplit.data.repository
 
 
 import android.content.Context
+import android.util.Log
 import com.partum.tabsplit.data.api.AuthApi
 import com.partum.tabsplit.data.api.LoginRequest
 import com.partum.tabsplit.data.api.RegisterRequest
+import com.partum.tabsplit.data.api.UpdateProfileRequest
+import com.partum.tabsplit.data.api.UpdateProfileResponse
 import com.partum.tabsplit.data.model.User
 
 
@@ -33,5 +36,16 @@ class AuthRepository(private val api: AuthApi, private val ctx: Context) {
         }
 
         return null;
+    }
+
+    suspend fun updateProfile(username: String?, email: String?, zaddr: String?):
+            UpdateProfileResponse? {
+        val res = api.updateProfile(UpdateProfileRequest(username, email, zaddr))
+
+        if (res.isSuccessful) {
+            return res.body()
+        }
+
+        return null
     }
 }

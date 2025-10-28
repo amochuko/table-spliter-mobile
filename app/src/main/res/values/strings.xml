@@ -86,4 +86,43 @@
     <string name="you_haven_t_joined_any_session_yet">You haven\'t joined any session yet</string>
     <string name="start_date_time">Start</string>
     <string name="end_date_time">End</string>
+    <string name="session_details">Session Details</string>
+    <string name="sessions">Sessions</string>
+    <string name="join_session">Join Session</string>
+    <string name="joining_session">Joining Session</string>
+    <string name="tablesplit">TableSplit</string>
+    <string name="no_internet">No internet</string>
+    <string name="retry">Retry</string>
+    <string name="no_internet2">No internet</string>
+    <string name="no_internet_connection">No Internet Connection</string>
+    <string name="unable_to_join_session">Unable to join session!</string>
+    <string name="joining">Joining %1$s...</string>
+    <string name="wallet">Wallet</string>
+    <string name="profile">Profile</string>
+    <string name="logout">Logout</string>
+    <string name="username">Username</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="log_out">Log out</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="zcash_address">Zcash Address</string>
+    <string name="email">Email</string>
+    <string name="profile_details">Profile Details</string>
+    <string name="tabsplit_helps_groups_manage_shared_expenses_easily_and_settle_with_zcash">TabSplit helps groups manage shared expenses easily and settle with Zcash.\n\n</string>
+    <string name="built_with_by_the_partum_team">Built with ❤️ by the Partum team.</string>
+    <string name="open_source_libraries">Open Source Libraries</string>
+    <string name="jetpack_compose_retrofit_express_js_postgresql_zcash_sdk">- Jetpack Compose\n- Retrofit\n- Express.js\n- PostgreSQL\n- Zcash SDK</string>
+    <string name="about_tabsplit">About TabSplit</string>
+    <string name="about_app">About App</string>
+    <string name="saving_changes">Saving changes…</string>
+    <string name="you_need_to_set_your_zcash_address_first">You need to set your zcash address first!</string>
+    <string name="you_need_to_set_up_your_zcash_address_first_sapling_or_orchard">You need to set
+        up your Zcash address first (Sapling or Orchard). Go to Settings -> Wallet</string>
+    <string name="an_amount_is_required">An amount is required!</string>
+    <string name="amount">Amount</string>
+    <string name="a_memo_is_required">A memo is required!</string>
+    <string name="memo">Memo</string>
+    <string name="memo_and_amount_required">Memo and amount required!</string>
+    <string name="failed_to_add_expense">Failed to add expense</string>
+
+
 </resources>

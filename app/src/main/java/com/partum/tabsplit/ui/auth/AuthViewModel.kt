@@ -16,6 +16,7 @@ import com.partum.tabsplit.utils.Config
 import com.partum.tabsplit.utils.AuthSessionManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AuthViewModel(app: Application) : AndroidViewModel(app) {
@@ -136,6 +137,36 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
             Log.e("AuthViewModel", "failed to update zaddr $e")
             updateState(error = e.localizedMessage)
             false
+        }
+    }
+
+    fun updateProfile(username: String, email: String?, zaddr: String?) = viewModelScope.launch {
+        _uiState.update { it.copy(loading = true, isSaving = true) }
+
+        try {
+            val response = authRepo.updateProfile(username, email, zaddr)
+
+            response?.let { res ->
+
+                _uiState.update {
+                    it.copy(
+                        loading = false,
+                        user = it.user?.copy(
+                            username = res.user.username!!,
+                            zaddr = res.user.zaddr,
+                            email = res.user.email!!
+                        ),
+                        isSaving = false
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("AuthViewModel::updateProfile", "Failed to update profile", e)
+            _uiState.update {
+                it.copy(
+                    loading = false, error = e.message, isSaving = false
+                )
+            }
         }
     }
 }

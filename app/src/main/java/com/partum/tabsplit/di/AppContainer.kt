@@ -11,10 +11,15 @@ import com.partum.tabsplit.ui.expense.ExpenseViewModel
 import com.partum.tabsplit.ui.participant.ParticipantViewModel
 import com.partum.tabsplit.utils.Config
 import com.partum.tabsplit.data.api.ExpenseApi
+import com.partum.tabsplit.data.api.ZecApi
+import com.partum.tabsplit.data.repository.ZecRepository
+import com.partum.tabsplit.ui.zec.ZecViewModel
 
 interface IAppContainer {
     val sessionRepository: SessionRepository
     val expenseRepository: ExpenseRepository
+
+    val zecRepository: ZecRepository
 }
 
 class AppContainer(app: Application) : IAppContainer {
@@ -27,6 +32,10 @@ class AppContainer(app: Application) : IAppContainer {
         ApiClient.create<ExpenseApi>(null, Config.API_BASE_URL)
     }
 
+    private val zecApi: ZecApi by lazy {
+        ApiClient.create(null, baseUrl = Config.API_BASE_URL)
+    }
+
     // --- Repository
     override val sessionRepository: SessionRepository by lazy {
         SessionRepository(sessionApi)
@@ -36,8 +45,14 @@ class AppContainer(app: Application) : IAppContainer {
         ExpenseRepository(expenseApi)
     }
 
+    override val zecRepository: ZecRepository by lazy {
+        ZecRepository(zecApi)
+    }
+
     // --- ViewModels
     val authViewModel = AuthViewModel(app)
+    val zecViewModel = ZecViewModel(zecRepo = zecRepository)
+
 //    val expenseViewModel = ExpenseViewModel(
 //        sessionRepository,
 //        expenseRepository
@@ -50,7 +65,8 @@ class AppContainer(app: Application) : IAppContainer {
         AppViewModelFactory(
             sessionRepository,
             expenseRepository,
-            authViewModel
+            authViewModel,
+            zecViewModel
         )
     }
 }

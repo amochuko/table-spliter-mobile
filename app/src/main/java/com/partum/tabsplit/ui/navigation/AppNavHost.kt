@@ -8,12 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import com.partum.tabsplit.R
 import com.partum.tabsplit.ui.auth.AuthViewModel
 import com.partum.tabsplit.ui.auth.SignupScreen
 import com.partum.tabsplit.ui.join.JoinSessionScreen
@@ -21,9 +23,12 @@ import com.partum.tabsplit.ui.auth.LoginScreen
 import com.partum.tabsplit.ui.session.SessionDetailsScreen
 import com.partum.tabsplit.ui.session.SessionsScreen
 import com.partum.tabsplit.ui.SplashScreen
+import com.partum.tabsplit.ui.about.AboutAppScreen
 import com.partum.tabsplit.ui.expense.ExpenseViewModel
 import com.partum.tabsplit.ui.participant.ParticipantViewModel
+import com.partum.tabsplit.ui.profile.ProfileScreen
 import com.partum.tabsplit.ui.session.SessionViewModel
+import com.partum.tabsplit.ui.zec.ZecViewModel
 
 @Composable
 fun AppNavHost(
@@ -31,7 +36,8 @@ fun AppNavHost(
     authViewModel: AuthViewModel,
     sessionViewModel: SessionViewModel,
     expenseViewModel: ExpenseViewModel,
-    participantViewModel: ParticipantViewModel
+    participantViewModel: ParticipantViewModel,
+    zecViewModel: ZecViewModel
 ) {
 
     val authUiState by authViewModel.uiState.collectAsState()
@@ -43,10 +49,12 @@ fun AppNavHost(
     val canNavigateBack = navController.previousBackStackEntry != null
 
     val title = when {
-        currentRoute?.startsWith(Screen.SessionDetails.route) == true -> "Session Details"
-        currentRoute == Screen.Sessions.route -> "Sessions"
-        currentRoute == Screen.Join.route -> "Join Session"
-        else -> "TableSplit"
+        currentRoute?.startsWith(Screen.SessionDetails.route) == true -> stringResource(R.string.session_details)
+        currentRoute?.startsWith(Screen.Join.route) == true -> stringResource(R.string.join_session)
+        currentRoute == Screen.Sessions.route -> stringResource(R.string.sessions)
+        currentRoute == Screen.Profile.route -> stringResource(R.string.profile_details)
+        currentRoute == Screen.AboutApp.route -> stringResource(R.string.about_app)
+        else -> stringResource(R.string.tablesplit)
     }
 
     Scaffold(
@@ -77,6 +85,14 @@ fun AppNavHost(
 
             composable(Screen.Splash.route) {
                 SplashScreen(navController, authViewModel)
+            }
+
+            composable(Screen.Profile.route) {
+                ProfileScreen(navController, authViewModel)
+            }
+
+            composable(Screen.AboutApp.route) {
+                AboutAppScreen(navController)
             }
 
             composable(Screen.Login.route) {
@@ -130,7 +146,9 @@ fun AppNavHost(
                         sessionId,
                         sessionViewModel,
                         expenseViewModel,
-                        participantViewModel
+                        participantViewModel,
+                        authUiState,
+                        zecViewModel
                     )
                 }
             }
@@ -153,12 +171,14 @@ fun AppNavHost(
                             Screen.SessionDetails
                                 .createRoute(sessionId.toString())
                         ) {
-                            popUpTo(Screen.Join.route) { inclusive = true }
+                            popUpTo(Screen.Join.route) { inclusive = false }
+                            launchSingleTop = true
                         }
                     },
                     onJoinFailed = {
                         navController.navigate(Screen.Sessions.route) {
-                            popUpTo(Screen.Join.route) { inclusive = true }
+                            popUpTo(0)
+                            launchSingleTop = true
                         }
                     },
                     authViewModel = authViewModel,

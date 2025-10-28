@@ -43,15 +43,19 @@
             </intent-filter>
 
             <!--     Deep link intent -->
-            <intent-filter>
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
+                <!--                <data-->
+                <!--                    android:host="join"-->
+                <!--                    android:scheme="tabsplit" />-->
                 <data
-                    android:host="join"
-                    android:scheme="tabsplit" />
+                    android:host="tabsplit.app"
+                    android:pathPrefix="/join"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
     </application>

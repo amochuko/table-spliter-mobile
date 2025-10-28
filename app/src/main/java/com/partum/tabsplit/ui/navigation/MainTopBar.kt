@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Badge
@@ -17,6 +18,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -27,6 +29,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import com.partum.tabsplit.R
 import com.partum.tabsplit.ui.components.WalletDialog
 
 @kotlin.OptIn(ExperimentalMaterial3Api::class)
@@ -83,11 +87,12 @@ fun MainTopBar(
                     onDismissRequest = { expanded = false }
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Wallet") },
+                        text = { Text(stringResource(R.string.wallet)) },
                         leadingIcon = {
                             Icon(
                                 Icons.Default.AccountCircle,
-                                contentDescription = null
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                             )
                         },
                         onClick = {
@@ -96,16 +101,28 @@ fun MainTopBar(
                         })
 
                     DropdownMenuItem(
-                        text = { Text("Profile") },
-                        leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
+                        text = { Text(stringResource(R.string.profile)) },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Person,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            )
+                        },
                         onClick = {
                             expanded = false
                             navController.navigate(Screen.Profile.route)
                         })
 
                     DropdownMenuItem(
-                        text = { Text("Logout") },
-                        leadingIcon = { Icon(Icons.Default.ExitToApp, contentDescription = null) },
+                        text = { Text(stringResource(R.string.logout)) },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.ExitToApp,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            )
+                        },
                         onClick = {
                             expanded = false
                             authViewModel.logout()
@@ -113,6 +130,21 @@ fun MainTopBar(
                             navController.navigate(Screen.Login.route) {
                                 popUpTo(0) { inclusive = true }
                             }
+                        }
+                    )
+
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.about_tabsplit)) },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Info,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            )
+                        },
+                        onClick = {
+                            expanded = false
+                            navController.navigate(Screen.AboutApp.route)
                         }
                     )
                 }

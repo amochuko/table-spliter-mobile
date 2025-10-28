@@ -1,13 +1,17 @@
 package com.partum.tabsplit.ui.session
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Payments
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,11 +27,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.partum.tabsplit.R
 import com.partum.tabsplit.data.model.Session
+import com.partum.tabsplit.ui.auth.AuthUiState
 import com.partum.tabsplit.ui.expense.ExpenseViewModel
 import com.partum.tabsplit.ui.participant.ParticipantViewModel
+import com.partum.tabsplit.ui.zec.ZecViewModel
 import com.partum.tabsplit.utils.calculateBalances
 import com.partum.tabsplit.utils.formatDate
 import com.partum.tabsplit.utils.formatTime
+import com.partum.tabsplit.utils.shortString
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,7 +43,9 @@ fun SessionDetailsScreen(
     sessionId: String,
     sessionViewModel: SessionViewModel,
     expenseViewModel: ExpenseViewModel,
-    participantViewModel: ParticipantViewModel
+    participantViewModel: ParticipantViewModel,
+    authUiState: AuthUiState,
+    zecViewModel: ZecViewModel
 ) {
     // Collect reactive state from AppStore
     val sessionUiState by sessionViewModel.uiState.collectAsState()
@@ -44,6 +53,12 @@ fun SessionDetailsScreen(
     val expenseUiState by expenseViewModel.uiState.collectAsState()
 
     val scrollState = rememberScrollState()
+
+    // FAB control
+    val listState = rememberLazyListState()
+    val isFabExpanded by remember {
+        derivedStateOf { listState.firstVisibleItemIndex == 0 }
+    }
 
     // UI local state
     var showZcash by remember { mutableStateOf(false) }
@@ -98,6 +113,12 @@ fun SessionDetailsScreen(
             sessionId, participantUiState.participants, expenseUiState.expenses
         )
     }
+
+    val isSessionOwner = session?.owner?.id == authUiState.user?.id
+    val currentUserId = authUiState.user?.id
+    val currentParticipant = participants.find { it.userId == currentUserId }
+    val currentBalance = balances[currentParticipant?.id] ?: 0.0
+
 
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -184,17 +205,32 @@ fun SessionDetailsScreen(
 
             if (expenses.isNotEmpty()) {
                 expenses.forEach { e ->
-                    val payerName =
-                        participants.find { it.id == e.payerId }?.username ?: e.payerId.take(6)
+                    val participant = participants.find { it.id == e.payerId }
+                    val payerName = if (participant?.email != null) {
+                        shortString(
+                            participant.email,
+                            prefix = 2, suffix = 1
+                        )
+                    } else e.payerId.take(6)
+
+                    val isHost = participant?.userId == session?.owner?.id
+                    val currencySymbol = if (session?.currency == "USD") "$" else "$"
+                    val formatterAmount = "$currencySymbol${"%.2f".format(e.amount.toDouble())}"
 
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         elevation = CardDefaults.cardElevation(4.dp)
                     ) {
                         Column(modifier = Modifier.padding(8.dp)) {
-                            Text(e.memo, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                             Text(
-                                stringResource(R.string.paid_by, e.amount, payerName),
+                                e.memo, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier
+                                = Modifier.padding(bottom = 4.dp)
+                            )
+
+                            val payerLabel = if (isHost) "$payerName (Host)" else payerName
+
+                            Text(
+                                stringResource(R.string.paid_by, formatterAmount, payerLabel),
                                 fontSize = 12.sp
                             )
                         }
@@ -224,16 +260,46 @@ fun SessionDetailsScreen(
             horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
         ) {
             if (expenses.orEmpty().isNotEmpty()) {
-                Button(
-                    onClick = { showZcash = true },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF16A34A))
-                ) {
-                    Text(stringResource(R.string.settle_with_zec))
+                Log.d(
+                    "SessionDetailsScreen", "isOwner: ${!isSessionOwner}, balance: " +
+                            "${currentBalance}"
+                )
+
+                if (!isSessionOwner) {
+                    ExtendedFloatingActionButton(
+                        onClick = { showZcash = true },
+                        expanded = isFabExpanded,
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Payments,
+                                contentDescription = stringResource(R.string.settle_with_zec)
+                            )
+                        },
+                        text = {
+                            Text(text = stringResource(R.string.settle_with_zec))
+                        },
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                    )
                 }
             }
 
-            Button(onClick = { showAddExpense = true }) {
-                Text(stringResource(R.string.add_expense))
+            if (session?.owner?.id == authUiState.user?.id) {
+                ExtendedFloatingActionButton(
+                    onClick = { showAddExpense = true },
+                    expanded = isFabExpanded,
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = stringResource(R.string.add_expense)
+                        )
+                    },
+                    text = {
+                        Text(text = stringResource(R.string.add_expense))
+                    },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                )
             }
         }
     }
@@ -244,14 +310,18 @@ fun SessionDetailsScreen(
             balances = balances,
             recipientAddress = recipientAddress,
             sessionId = sessionId,
-            onClose = { showZcash = false })
+            onClose = { showZcash = false },
+            zecViewModel = zecViewModel
+        )
     }
 
     if (showAddExpense) {
         AddExpenseDialog(
             sessionId = sessionId,
             onClose = { showAddExpense = false },
-            expensesViewModel = expenseViewModel
+            expensesViewModel = expenseViewModel,
+            hasSetZaddr = authUiState.user?.zaddr.isNullOrBlank()
         )
+
     }
 }
