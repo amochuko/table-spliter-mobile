@@ -21,8 +21,10 @@ import com.google.zxing.qrcode.QRCodeWriter
 import com.partum.tabsplit.utils.createZcashUri
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.util.Log
 import androidx.compose.ui.res.stringResource
 import com.partum.tabsplit.R
+import com.partum.tabsplit.ui.zec.ZecViewModel
 
 @Composable
 fun ZcashIntegration(
@@ -30,7 +32,8 @@ fun ZcashIntegration(
     onClose: () -> Unit,
     sessionId: String,
     balances: Map<String, Double>,
-    recipientAddress: String
+    recipientAddress: String,
+    zecViewModel: ZecViewModel
 ) {
     if (!visible) return
 
@@ -39,6 +42,14 @@ fun ZcashIntegration(
 
     // compute amount owed
     val totalAmount = balances.values.filter { it > 0 }.sum()
+
+    val zecUiState by zecViewModel.uiState.collectAsState()
+
+    LaunchedEffect(totalAmount, zecUiState.usdRate) {
+        zecViewModel.getUsdRate()
+    }
+
+    val amountInZec = totalAmount.div(zecUiState.usdRate)
 
     Dialog(onDismissRequest = onClose) {
         Surface(
@@ -81,7 +92,7 @@ fun ZcashIntegration(
                 else -> {
                     val paymentUri = createZcashUri(
                         recipientAddress,
-                        totalAmount,
+                        amountInZec,
                         stringResource(R.string.session_settlement, sessionId)
                     )
 
@@ -102,11 +113,20 @@ fun ZcashIntegration(
                         val qrBitmap = remember(paymentUri) {
                             val size = 512
                             val writer = QRCodeWriter()
-                            val bitMatrix = writer.encode(paymentUri, BarcodeFormat.QR_CODE, size, size)
-                            val bmp = android.graphics.Bitmap.createBitmap(size, size, android.graphics.Bitmap.Config.RGB_565)
+                            val bitMatrix =
+                                writer.encode(paymentUri, BarcodeFormat.QR_CODE, size, size)
+                            val bmp = android.graphics.Bitmap.createBitmap(
+                                size,
+                                size,
+                                android.graphics.Bitmap.Config.RGB_565
+                            )
                             for (x in 0 until size) {
                                 for (y in 0 until size) {
-                                    bmp.setPixel(x, y, if (bitMatrix[x, y]) android.graphics.Color.BLACK else android.graphics.Color.WHITE)
+                                    bmp.setPixel(
+                                        x,
+                                        y,
+                                        if (bitMatrix[x, y]) android.graphics.Color.BLACK else android.graphics.Color.WHITE
+                                    )
                                 }
                             }
                             bmp.asImageBitmap()
@@ -137,10 +157,16 @@ fun ZcashIntegration(
                             Button(onClick = {
                                 // Copy to clipboard
                                 clipboard.setPrimaryClip(
-                                    ClipData.newPlainText(context.getString(R.string.zcash_payment_uri), paymentUri)
+                                    ClipData.newPlainText(
+                                        context.getString(R.string.zcash_payment_uri),
+                                        paymentUri
+                                    )
                                 )
-                                Toast.makeText(context,
-                                    context.getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.copied_to_clipboard),
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }) {
                                 Text(stringResource(R.string.copy))
                             }
@@ -149,11 +175,17 @@ fun ZcashIntegration(
                                 // Share intent
                                 val shareIntent = Intent(Intent.ACTION_SEND).apply {
                                     type = "text/plain"
-                                    putExtra(Intent.EXTRA_TEXT,
-                                        context.getString(R.string.join_my_tabsplit_txt, paymentUri))
+                                    putExtra(
+                                        Intent.EXTRA_TEXT,
+                                        context.getString(R.string.join_my_tabsplit_txt, paymentUri)
+                                    )
                                 }
-                                context.startActivity(Intent.createChooser(shareIntent,
-                                    context.getString(R.string.share_via)))
+                                context.startActivity(
+                                    Intent.createChooser(
+                                        shareIntent,
+                                        context.getString(R.string.share_via)
+                                    )
+                                )
                             }) {
                                 Text(stringResource(R.string.share))
                             }
@@ -170,8 +202,11 @@ fun ZcashIntegration(
                                 try {
                                     context.startActivity(intent)
                                 } catch (_: Exception) {
-                                    Toast.makeText(context,
-                                        context.getString(R.string.no_wallet_app_found), Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.no_wallet_app_found),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }) {
                                 Text(stringResource(R.string.open_in_wallet))
