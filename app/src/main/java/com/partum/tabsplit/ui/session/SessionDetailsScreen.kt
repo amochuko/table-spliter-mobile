@@ -216,9 +216,12 @@ fun SessionDetailsScreen(
                         elevation = CardDefaults.cardElevation(4.dp)
                     ) {
                         Column(modifier = Modifier.padding(8.dp)) {
-                            Text(e.memo, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                             Text(
-                                stringResource(R.string.paid_by, e.amount, payerName),
+                                e.memo, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier
+                                = Modifier.padding(bottom = 4.dp)
+                            )
+                            Text(
+                                stringResource(R.string.paid_by, e.amount, "$payerName (Host)"),
                                 fontSize = 12.sp
                             )
                         }
