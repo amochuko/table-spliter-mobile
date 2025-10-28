@@ -211,6 +211,9 @@ fun SessionDetailsScreen(
                         )
                     } else e.payerId.take(6)
 
+                    val isHost = participant?.userId == session?.owner?.id
+                    val formatterAmount = "$${"%.2f".format(e.amount.toDouble())}"
+
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         elevation = CardDefaults.cardElevation(4.dp)
@@ -220,8 +223,11 @@ fun SessionDetailsScreen(
                                 e.memo, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier
                                 = Modifier.padding(bottom = 4.dp)
                             )
+
+                            val payerLabel = if(isHost) "$payerName (Host)" else payerName
+
                             Text(
-                                stringResource(R.string.paid_by, e.amount, "$payerName (Host)"),
+                                stringResource(R.string.paid_by, formatterAmount, payerLabel),
                                 fontSize = 12.sp
                             )
                         }
