@@ -30,6 +30,7 @@ import com.partum.tabsplit.data.model.Session
 import com.partum.tabsplit.ui.auth.AuthUiState
 import com.partum.tabsplit.ui.expense.ExpenseViewModel
 import com.partum.tabsplit.ui.participant.ParticipantViewModel
+import com.partum.tabsplit.ui.zec.ZecViewModel
 import com.partum.tabsplit.utils.calculateBalances
 import com.partum.tabsplit.utils.formatDate
 import com.partum.tabsplit.utils.formatTime
@@ -43,7 +44,8 @@ fun SessionDetailsScreen(
     sessionViewModel: SessionViewModel,
     expenseViewModel: ExpenseViewModel,
     participantViewModel: ParticipantViewModel,
-    authUiState: AuthUiState
+    authUiState: AuthUiState,
+    zecViewModel: ZecViewModel
 ) {
     // Collect reactive state from AppStore
     val sessionUiState by sessionViewModel.uiState.collectAsState()
@@ -212,7 +214,7 @@ fun SessionDetailsScreen(
                     } else e.payerId.take(6)
 
                     val isHost = participant?.userId == session?.owner?.id
-                    val currencySymbol = session?.currency?.ifBlank { "$" }
+                    val currencySymbol = if (session?.currency == "USD") "$" else "$"
                     val formatterAmount = "$currencySymbol${"%.2f".format(e.amount.toDouble())}"
 
                     Card(
@@ -225,7 +227,7 @@ fun SessionDetailsScreen(
                                 = Modifier.padding(bottom = 4.dp)
                             )
 
-                            val payerLabel = if(isHost) "$payerName (Host)" else payerName
+                            val payerLabel = if (isHost) "$payerName (Host)" else payerName
 
                             Text(
                                 stringResource(R.string.paid_by, formatterAmount, payerLabel),
@@ -308,7 +310,9 @@ fun SessionDetailsScreen(
             balances = balances,
             recipientAddress = recipientAddress,
             sessionId = sessionId,
-            onClose = { showZcash = false })
+            onClose = { showZcash = false },
+            zecViewModel = zecViewModel
+        )
     }
 
     if (showAddExpense) {
