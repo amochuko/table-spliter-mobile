@@ -212,7 +212,8 @@ fun SessionDetailsScreen(
                     } else e.payerId.take(6)
 
                     val isHost = participant?.userId == session?.owner?.id
-                    val formatterAmount = "$${"%.2f".format(e.amount.toDouble())}"
+                    val currencySymbol = session?.currency?.ifBlank { "$" }
+                    val formatterAmount = "$currencySymbol${"%.2f".format(e.amount.toDouble())}"
 
                     Card(
                         modifier = Modifier.fillMaxWidth(),
