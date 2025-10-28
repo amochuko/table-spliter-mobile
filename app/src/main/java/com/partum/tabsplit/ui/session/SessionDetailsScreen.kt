@@ -33,6 +33,7 @@ import com.partum.tabsplit.ui.participant.ParticipantViewModel
 import com.partum.tabsplit.utils.calculateBalances
 import com.partum.tabsplit.utils.formatDate
 import com.partum.tabsplit.utils.formatTime
+import com.partum.tabsplit.utils.shortString
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,6 +112,7 @@ fun SessionDetailsScreen(
         )
     }
 
+    val isSessionOwner = session?.owner?.id == authUiState.user?.id
     val currentUserId = authUiState.user?.id
     val currentParticipant = participants.find { it.userId == currentUserId }
     val currentBalance = balances[currentParticipant?.id] ?: 0.0
@@ -201,8 +203,13 @@ fun SessionDetailsScreen(
 
             if (expenses.isNotEmpty()) {
                 expenses.forEach { e ->
-                    val payerName =
-                        participants.find { it.id == e.payerId }?.username ?: e.payerId.take(6)
+                    val participant = participants.find { it.id == e.payerId }
+                    val payerName = if (participant?.email != null) {
+                        shortString(
+                            participant.email,
+                            prefix = 2, suffix = 1
+                        )
+                    } else e.payerId.take(6)
 
                     Card(
                         modifier = Modifier.fillMaxWidth(),
@@ -240,22 +247,29 @@ fun SessionDetailsScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
         ) {
-            if (expenses.orEmpty().isNotEmpty() && currentBalance != 0.0) {
-                ExtendedFloatingActionButton(
-                    onClick = { showZcash = true },
-                    expanded = isFabExpanded,
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Payments,
-                            contentDescription = stringResource(R.string.settle_with_zec)
-                        )
-                    },
-                    text = {
-                        Text(text = stringResource(R.string.settle_with_zec))
-                    },
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary,
+            if (expenses.orEmpty().isNotEmpty()) {
+                Log.d(
+                    "SessionDetailsScreen", "isOwner: ${!isSessionOwner}, balance: " +
+                            "${currentBalance}"
                 )
+
+                if (!isSessionOwner) {
+                    ExtendedFloatingActionButton(
+                        onClick = { showZcash = true },
+                        expanded = isFabExpanded,
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Payments,
+                                contentDescription = stringResource(R.string.settle_with_zec)
+                            )
+                        },
+                        text = {
+                            Text(text = stringResource(R.string.settle_with_zec))
+                        },
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                    )
+                }
             }
 
             if (session?.owner?.id == authUiState.user?.id) {
