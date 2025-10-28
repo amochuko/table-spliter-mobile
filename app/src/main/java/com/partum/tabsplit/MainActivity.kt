@@ -24,6 +24,7 @@ import com.partum.tabsplit.di.injectedViewModel
 import com.partum.tabsplit.ui.expense.ExpenseViewModel
 import com.partum.tabsplit.ui.participant.ParticipantViewModel
 import com.partum.tabsplit.ui.session.SessionViewModel
+import com.partum.tabsplit.ui.zec.ZecViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -51,6 +52,7 @@ class MainActivity : ComponentActivity() {
                 val sessionViewModel: SessionViewModel = injectedViewModel()
                 val expenseViewModel: ExpenseViewModel = injectedViewModel()
                 val participantViewModel: ParticipantViewModel = injectedViewModel()
+                val zecViewModel: ZecViewModel = injectedViewModel()
 
                 val authUiState by authViewModel.uiState.collectAsState()
 
@@ -72,7 +74,8 @@ class MainActivity : ComponentActivity() {
                             authViewModel,
                             sessionViewModel,
                             expenseViewModel,
-                            participantViewModel
+                            participantViewModel,
+                            zecViewModel
                         )
 
                         // Wait until appStore finishes loading

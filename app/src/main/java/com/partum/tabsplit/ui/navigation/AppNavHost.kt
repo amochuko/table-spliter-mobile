@@ -28,6 +28,7 @@ import com.partum.tabsplit.ui.expense.ExpenseViewModel
 import com.partum.tabsplit.ui.participant.ParticipantViewModel
 import com.partum.tabsplit.ui.profile.ProfileScreen
 import com.partum.tabsplit.ui.session.SessionViewModel
+import com.partum.tabsplit.ui.zec.ZecViewModel
 
 @Composable
 fun AppNavHost(
@@ -35,7 +36,8 @@ fun AppNavHost(
     authViewModel: AuthViewModel,
     sessionViewModel: SessionViewModel,
     expenseViewModel: ExpenseViewModel,
-    participantViewModel: ParticipantViewModel
+    participantViewModel: ParticipantViewModel,
+    zecViewModel: ZecViewModel
 ) {
 
     val authUiState by authViewModel.uiState.collectAsState()
@@ -145,7 +147,8 @@ fun AppNavHost(
                         sessionViewModel,
                         expenseViewModel,
                         participantViewModel,
-                        authUiState
+                        authUiState,
+                        zecViewModel
                     )
                 }
             }

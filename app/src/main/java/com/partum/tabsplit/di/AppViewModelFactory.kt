@@ -9,11 +9,13 @@ import com.partum.tabsplit.ui.auth.AuthViewModel
 import com.partum.tabsplit.ui.expense.ExpenseViewModel
 import com.partum.tabsplit.ui.participant.ParticipantViewModel
 import com.partum.tabsplit.ui.session.SessionViewModel
+import com.partum.tabsplit.ui.zec.ZecViewModel
 
 class AppViewModelFactory(
     private val sessionRepo: SessionRepository,
     private val expenseRepo: ExpenseRepository,
-    private val authViewModel: AuthViewModel
+    private val authViewModel: AuthViewModel,
+    private val zecViewModel: ZecViewModel
 ) : ViewModelProvider.Factory {
 
     // Lazily initialized child view models that need to share state
@@ -47,6 +49,10 @@ class AppViewModelFactory(
 
             modelClass.isAssignableFrom(AuthViewModel::class.java) -> {
                 authViewModel as T
+            }
+
+            modelClass.isAssignableFrom(ZecViewModel::class.java) -> {
+                zecViewModel as T
             }
 
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
