@@ -141,7 +141,7 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun updateProfile(username: String, email: String?, zaddr: String?) = viewModelScope.launch {
-        _uiState.update { it.copy(loading = true) }
+        _uiState.update { it.copy(loading = true, isSaving = true) }
 
         try {
             val response = authRepo.updateProfile(username, email, zaddr)
@@ -155,7 +155,8 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
                             username = res.user.username!!,
                             zaddr = res.user.zaddr,
                             email = res.user.email!!
-                        )
+                        ),
+                        isSaving = false
                     )
                 }
             }
@@ -163,7 +164,7 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
             Log.e("AuthViewModel::updateProfile", "Failed to update profile", e)
             _uiState.update {
                 it.copy(
-                    loading = false, error = e.message
+                    loading = false, error = e.message, isSaving = false
                 )
             }
         }

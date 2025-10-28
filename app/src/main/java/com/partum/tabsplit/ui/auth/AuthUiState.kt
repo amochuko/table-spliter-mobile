@@ -8,4 +8,5 @@ data class AuthUiState(
     val isLoggedIn: Boolean = false,
     val error: String? = null,
     val loading: Boolean = false,
+    val isSaving: Boolean = false,
 )
