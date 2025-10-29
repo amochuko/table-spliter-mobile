@@ -8,6 +8,7 @@ data class SessionUiState(
     val sessionWithExpensesAndParticipants: SessionWithExpensesAndParticipants? = null,
     val session: Session? = null,
     val loading: Boolean = false,
+    val isDeleted: Boolean = false,
     val error: String? = null,
     val pendingInviteCode: String? = null,
     val hasJoinedSession: Boolean = false,
