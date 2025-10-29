@@ -141,9 +141,31 @@ class SessionViewModel(
     }
 
     fun deleteSession(sessionId: String) = viewModelScope.launch {
-        _uiState.update {
-            it.copy(sessions = it.sessions.filterNot { s -> s.id == sessionId })
+        _uiState.update { it.copy(loading = true) }
+
+        try {
+            sessionRepo.deleteSession(sessionId).let {
+                _uiState.update {
+                    it.copy(
+                        loading = false,
+                        isDeleted = it.isDeleted,
+                        sessions = it.sessions.filterNot { s -> s.id == sessionId }
+                    )
+                }
+            }
+
+        } catch (e: Exception) {
+            Log.e("SessionViewModel::deleteSession", e.message!!)
+            _uiState.update {
+                it.copy(
+                    error = "Failed to delete of id: $sessionId",
+                    loading = false,
+                    isDeleted = false
+                )
+            }
         }
+
+
     }
 
     fun setPendingInviteCode(code: String?) {
