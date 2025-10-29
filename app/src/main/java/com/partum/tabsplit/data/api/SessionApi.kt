@@ -29,6 +29,11 @@ data class AddExpenseResponse(
     val expenses: List<Expense>
 )
 
+data class LeaveOrDeletionSessionResponse(
+    val message: String?,
+
+)
+
 data class SessionRequest(
     val title: String,
     val description: String,
@@ -56,5 +61,9 @@ interface SessionApi {
             Response<AddExpenseResponse>
 
     @DELETE("/sessions/{id}")
-    suspend fun deleteSession(@Path("id") id:String): Response<Boolean>
+    suspend fun deleteSession(@Path("id") id:String): Response<LeaveOrDeletionSessionResponse>
+
+    @DELETE("/sessions/{id}/leave")
+    suspend fun leaveSession(@Path("id") id:String): Response<LeaveOrDeletionSessionResponse>
+
 }
