@@ -216,4 +216,32 @@ class SessionViewModel(
     fun clearError() {
         _uiState.update { it.copy(error = null) }
     }
+
+    fun leaveSession(sessionId: String) = viewModelScope.launch {
+        _uiState.update {
+            it.copy(loading = true)
+        }
+
+        try {
+            sessionRepo.leaveSession(sessionId).let {
+                Log.d("SessionViewModel::leaveSession", it!!)
+
+                _uiState.update {
+                    it.copy(
+                        loading = false,
+                        sessions = it.sessions.filterNot { s -> s.id == sessionId },
+                    )
+                }
+            }
+        } catch (e: Exception) {
+
+            Log.d("SessionViewModel::leaveSession", e.message!!)
+            _uiState.update {
+                it.copy(
+                    loading = false,
+                    error = "Failed to leave session",
+                )
+            }
+        }
+    }
 }
