@@ -61,11 +61,15 @@ class SessionRepository(private val api: SessionApi) : ISessionRepo {
     override suspend fun deleteSession(sessionId: String): Boolean {
         val res = api.deleteSession(sessionId)
 
-        return (if(res.isSuccessful) res.body() else false) == true
+        return if (res.isSuccessful) {
+            res.body()?.message == true
+        } else {
+            false
+        }
     }
 
     override suspend fun leaveSession(sessionId: String): String? {
-        val res =api.leaveSession(sessionId)
+        val res = api.leaveSession(sessionId)
 
         return if (res.isSuccessful) res.body()?.message else null
     }
