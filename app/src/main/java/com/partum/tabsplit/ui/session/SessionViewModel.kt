@@ -144,28 +144,29 @@ class SessionViewModel(
         _uiState.update { it.copy(loading = true) }
 
         try {
-            sessionRepo.deleteSession(sessionId).let {
+            sessionRepo.deleteSession(sessionId).let { isDeleted ->
                 _uiState.update {
                     it.copy(
                         loading = false,
-                        isDeleted = it.isDeleted,
+                        isDeleted = isDeleted,
                         sessions = it.sessions.filterNot { s -> s.id == sessionId }
                     )
                 }
             }
-
         } catch (e: Exception) {
-            Log.e("SessionViewModel::deleteSession", e.message!!)
+            Log.e("SessionViewModel::deleteSession2", e.message ?: "Unknown error")
             _uiState.update {
                 it.copy(
-                    error = "Failed to delete of id: $sessionId",
+                    error = "Failed to delete session with id: $sessionId",
                     loading = false,
                     isDeleted = false
                 )
             }
         }
+    }
 
-
+    fun resetDeleteFlag() {
+        _uiState.update { it.copy(isDeleted = false) }
     }
 
     fun setPendingInviteCode(code: String?) {
