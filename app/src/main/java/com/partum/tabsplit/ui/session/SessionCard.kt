@@ -8,19 +8,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import com.partum.tabsplit.data.model.Session
 
 @Composable
 fun SessionCard(session: Session, onClick: (String) -> Unit) {
             Card(
+                shape = RectangleShape,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp)
                     .clickable {
                         onClick(session.id)
                     }
