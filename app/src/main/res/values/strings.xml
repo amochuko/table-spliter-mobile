@@ -123,6 +123,11 @@
     <string name="memo">Memo</string>
     <string name="memo_and_amount_required">Memo and amount required!</string>
     <string name="failed_to_add_expense">Failed to add expense</string>
+    <string name="failed_to_create_session">Failed to create session.</string>
+    <string name="you_cannot_delete_an_active_session">You cannot delete an active session.</string>
+    <string name="only_the_session_owner_can_delete_it">Only the session owner can delete it.</string>
+    <string name="you_cannot_leave_an_active_session">You cannot leave an active session</string>
+    <string name="owners_cannot_leave_their_own_session">Owners cannot leave their own session.</string>
 
 
 </resources>
