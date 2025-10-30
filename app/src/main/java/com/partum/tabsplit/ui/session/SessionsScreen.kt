@@ -59,6 +59,15 @@ fun SessionsScreen(
         sessionViewModel.loadSessions()
     }
 
+    LaunchedEffect(uiState.isDeleted) {
+        if (uiState.isDeleted) {
+            sessionViewModel.loadSessions()
+
+            // reset flag after refresh
+            sessionViewModel.resetDeleteFlag()
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
