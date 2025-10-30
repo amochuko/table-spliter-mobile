@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.partum.tabsplit.R
 import com.partum.tabsplit.data.model.Session
 import com.partum.tabsplit.data.model.SessionStatus
 import kotlinx.coroutines.delay
@@ -46,7 +47,8 @@ fun SessionItem(
                     if (isOwner) {
                         if (session.status == SessionStatus.ACTIVE) {
                             Toast.makeText(
-                                context, "You cannot delete an active session.", Toast.LENGTH_SHORT
+                                context,
+                                context.getString(R.string.you_cannot_delete_an_active_session), Toast.LENGTH_SHORT
                             ).show()
 
                             resetRequested = true // 👈 Reset after
@@ -57,7 +59,8 @@ fun SessionItem(
                         }
                     } else {
                         Toast.makeText(
-                            context, "Only the session owner can delete it.", Toast.LENGTH_SHORT
+                            context,
+                            context.getString(R.string.only_the_session_owner_can_delete_it), Toast.LENGTH_SHORT
                         ).show()
 
                         resetRequested = true
@@ -69,7 +72,8 @@ fun SessionItem(
                     if (!isOwner) {
                         if (session.status == SessionStatus.ACTIVE) {
                             Toast.makeText(
-                                context, "You cannot leave an active session", Toast.LENGTH_SHORT
+                                context,
+                                context.getString(R.string.you_cannot_leave_an_active_session), Toast.LENGTH_SHORT
                             ).show()
 
                             resetRequested = true
@@ -80,7 +84,8 @@ fun SessionItem(
                         }
                     } else {
                         Toast.makeText(
-                            context, "Owners cannot leave their own session.", Toast.LENGTH_SHORT
+                            context,
+                            context.getString(R.string.owners_cannot_leave_their_own_session), Toast.LENGTH_SHORT
                         ).show()
                         resetRequested = true
                         false
