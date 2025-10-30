@@ -133,8 +133,10 @@ fun AppNavHost(
                         )
                     },
                     onCreateSession = {
-//                    TODO:  log event or refresh
-                    }, sessionViewModel
+                        // TODO:  log event or refresh
+                    },
+                    sessionViewModel,
+                    authViewModel
                 )
             }
 

@@ -3,6 +3,12 @@ package com.partum.tabsplit.data.model
 import com.google.gson.annotations.SerializedName
 import java.util.Date
 
+enum class SessionStatus{
+    PENDING,
+    ACTIVE,
+    COMPLETED
+}
+
 data class Session(
     val id: String,
     val title: String,
@@ -29,5 +35,7 @@ data class Session(
     val startDateTime: Date,
 
     @SerializedName("end_datetime")
-    val endDateTime: Date
+    val endDateTime: Date,
+
+    val status: SessionStatus
 )

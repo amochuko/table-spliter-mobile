@@ -3,40 +3,54 @@ package com.partum.tabsplit.ui.session
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Card
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.partum.tabsplit.ui.components.ui.SessionModal
-import androidx.compose.material3.Text
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.partum.tabsplit.R
 import com.partum.tabsplit.data.model.Session
+import com.partum.tabsplit.ui.auth.AuthViewModel
 import com.partum.tabsplit.ui.components.NoInternetView
+import com.partum.tabsplit.ui.components.ui.SessionModal
 
 @Composable
 fun SessionsScreen(
     onSessionClick: (String) -> Unit,
     onCreateSession: (Session) -> Unit,
     sessionViewModel: SessionViewModel,
+    authViewModel: AuthViewModel
 ) {
 
     // Reactive state
     val uiState by sessionViewModel.uiState.collectAsState()
+    val authUiState by authViewModel.uiState.collectAsState()
 
     var showCreateModal by remember { mutableStateOf(false) }
 
@@ -50,6 +64,15 @@ fun SessionsScreen(
 
     LaunchedEffect(Unit) {
         sessionViewModel.loadSessions()
+    }
+
+    LaunchedEffect(uiState.isDeleted) {
+        if (uiState.isDeleted) {
+            sessionViewModel.loadSessions()
+
+            // reset flag after refresh
+            sessionViewModel.resetDeleteFlag()
+        }
     }
 
     Box(
@@ -127,32 +150,18 @@ fun SessionsScreen(
                         )
                     } else {
                         LazyColumn(state = listState) {
-                            items(sessions) { s ->
-                                Card(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 8.dp)
-                                        .clickable {
-                                            onSessionClick(s.id)
-                                        }
-                                ) {
-                                    Column(
-                                        modifier = Modifier.padding(12.dp)
-                                    ) {
-                                        Text(
-                                            text = s.title,
-                                            style = MaterialTheme.typography.titleMedium,
-                                            modifier = Modifier.padding(bottom = 8.dp)
-                                        )
-                                        Text(
-                                            text = s.description,
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.onSurface.copy(
-                                                alpha = 0.7f
-                                            )
-                                        )
-                                    }
-                                }
+                            items(sessions, key = { it.id }) { session ->
+                                SessionItem(
+                                    session,
+                                    isOwner = session.createdBy == authUiState.user?.id,
+                                    onLeave = {
+                                        sessionViewModel.leaveSession(session.id)
+                                    },
+                                    onDelete = {
+                                        sessionViewModel.deleteSession(session.id)
+                                    },
+                                    onClick = { onSessionClick(session.id) }
+                                )
                             }
                         }
                     }

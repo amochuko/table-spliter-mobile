@@ -16,6 +16,8 @@ interface ISessionRepo {
     suspend fun createSession(req: SessionRequest): Session?
     suspend fun addExpenses(sessionId: String, req: AddExpenseRequest): AddExpenseResponse?
     suspend fun joinByInvite(code: String): Session?
+    suspend fun deleteSession(sessionId: String): Boolean
+    suspend fun leaveSession(sessionId: String): String?
 }
 
 class SessionRepository(private val api: SessionApi) : ISessionRepo {
@@ -54,5 +56,21 @@ class SessionRepository(private val api: SessionApi) : ISessionRepo {
 
         Log.d("SessionRepo:joinByInvite", "Code: ${res.code()}, Body: ${res.body()}")
         return if (res.isSuccessful) res.body() else null
+    }
+
+    override suspend fun deleteSession(sessionId: String): Boolean {
+        val res = api.deleteSession(sessionId)
+
+        return if (res.isSuccessful) {
+            res.body()?.message == true
+        } else {
+            false
+        }
+    }
+
+    override suspend fun leaveSession(sessionId: String): String? {
+        val res = api.leaveSession(sessionId)
+
+        return if (res.isSuccessful) res.body()?.message else null
     }
 }

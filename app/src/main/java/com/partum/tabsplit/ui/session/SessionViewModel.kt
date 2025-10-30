@@ -141,9 +141,32 @@ class SessionViewModel(
     }
 
     fun deleteSession(sessionId: String) = viewModelScope.launch {
-        _uiState.update {
-            it.copy(sessions = it.sessions.filterNot { s -> s.id == sessionId })
+        _uiState.update { it.copy(loading = true) }
+
+        try {
+            sessionRepo.deleteSession(sessionId).let { isDeleted ->
+                _uiState.update {
+                    it.copy(
+                        loading = false,
+                        isDeleted = isDeleted,
+                        sessions = it.sessions.filterNot { s -> s.id == sessionId }
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("SessionViewModel::deleteSession2", e.message ?: "Unknown error")
+            _uiState.update {
+                it.copy(
+                    error = "Failed to delete session with id: $sessionId",
+                    loading = false,
+                    isDeleted = false
+                )
+            }
         }
+    }
+
+    fun resetDeleteFlag() {
+        _uiState.update { it.copy(isDeleted = false) }
     }
 
     fun setPendingInviteCode(code: String?) {
@@ -193,5 +216,33 @@ class SessionViewModel(
 
     fun clearError() {
         _uiState.update { it.copy(error = null) }
+    }
+
+    fun leaveSession(sessionId: String) = viewModelScope.launch {
+        _uiState.update {
+            it.copy(loading = true)
+        }
+
+        try {
+            sessionRepo.leaveSession(sessionId).let {
+                Log.d("SessionViewModel::leaveSession", it!!)
+
+                _uiState.update {
+                    it.copy(
+                        loading = false,
+                        sessions = it.sessions.filterNot { s -> s.id == sessionId },
+                    )
+                }
+            }
+        } catch (e: Exception) {
+
+            Log.d("SessionViewModel::leaveSession", e.message!!)
+            _uiState.update {
+                it.copy(
+                    loading = false,
+                    error = "Failed to leave session",
+                )
+            }
+        }
     }
 }

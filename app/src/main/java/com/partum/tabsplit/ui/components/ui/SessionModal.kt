@@ -192,29 +192,14 @@ fun SessionModal(
 
                             // navigate to SessionDetails
                             result?.let {
-                                onSessionCreated(
-                                    Session(
-                                        it.id,
-                                        it.title,
-                                        it.description,
-                                        it.currency,
-                                        it.owner,
-                                        it.inviteCode,
-                                        it.qrDataUrl,
-                                        it.inviteUrl,
-                                        it.createdBy,
-                                        parseIsoDate(it.createdAt.toString()) ?: Date(),
-                                        it.startDateTime,
-                                        it.endDateTime
-                                    )
-                                )
+                                onSessionCreated(it)
                             }
                         } catch (e: Exception) {
                             Log.d("SessionModal", e.message.toString())
 
                             Toast.makeText(
                                 context,
-                                "Failed to create session.",
+                                context.getString(R.string.failed_to_create_session),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }

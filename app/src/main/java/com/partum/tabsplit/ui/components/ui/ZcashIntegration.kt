@@ -21,10 +21,16 @@ import com.google.zxing.qrcode.QRCodeWriter
 import com.partum.tabsplit.utils.createZcashUri
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.Context
 import android.util.Log
 import androidx.compose.ui.res.stringResource
 import com.partum.tabsplit.R
 import com.partum.tabsplit.ui.zec.ZecViewModel
+import androidx.core.net.toUri
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun ZcashIntegration(
@@ -90,6 +96,7 @@ fun ZcashIntegration(
                 }
 
                 else -> {
+
                     val paymentUri = createZcashUri(
                         recipientAddress,
                         amountInZec,
@@ -197,17 +204,7 @@ fun ZcashIntegration(
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             Button(onClick = {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paymentUri))
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                try {
-                                    context.startActivity(intent)
-                                } catch (_: Exception) {
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.no_wallet_app_found),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
+                                openZcashWallet(context, paymentUri)
                             }) {
                                 Text(stringResource(R.string.open_in_wallet))
                             }
@@ -231,5 +228,43 @@ fun ZcashIntegration(
                 }
             }
         }
+    }
+}
+
+private fun openZcashWallet(context: Context, paymentUri: String) {
+
+    val uri = paymentUri.toUri()
+
+    try {
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(700)
+
+            val intent =
+                Intent(Intent.ACTION_VIEW, uri).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                }
+
+            try {
+                context.startActivity(intent)
+            } catch (e: Exception) {
+                Log.e("ZecIntegration::openZcashWallet", e.message!!)
+
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.no_wallet_app_found),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    } catch (e: Exception) {
+        Log.e("ZecIntegration::openZcashWallet", e.message!!)
+
+        Toast.makeText(
+            context,
+            context.getString(R.string.no_wallet_app_found),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 }
